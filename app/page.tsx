@@ -132,9 +132,9 @@ export default function Home() {
             <a href="#medecins" className="transition hover:text-[#118c87]">
               Médecins
             </a>
-            <a href="#offres" className="transition hover:text-[#118c87]">
-              Spécialités
-            </a>
+            <a href="/offres" className="transition hover:text-[#118c87]">
+  Offres
+</a>
             <a
               href="#etablissements"
               className="transition hover:text-[#118c87]"
@@ -493,11 +493,11 @@ export default function Home() {
               </p>
 
               <a
-                href="mailto:contact@cstmed.fr?subject=Demande%20d%27offres%20médicales"
-                className="mt-7 inline-flex rounded-full border border-[#118c87] px-6 py-3 font-semibold text-[#118c87] transition hover:bg-[#e5f7f5]"
-              >
-                Découvrir les opportunités
-              </a>
+              href="/offres"
+              className="mt-7 inline-flex rounded-full border border-[#118c87] px-6 py-3 font-semibold text-[#118c87] transition hover:bg-[#e5f7f5]"
+            >
+              Découvrir les opportunités
+            </a>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
