@@ -46,6 +46,12 @@ export function JobStatusActions({
 }: JobStatusActionsProps) {
   return (
     <div className="flex flex-wrap items-center gap-2">
+        <Link
+  href={`/admin/offres/${jobId}`}
+  className="rounded-full border border-[#118c87] px-4 py-2 text-xs font-bold text-[#118c87] transition hover:bg-[#e5f7f5]"
+>
+  Vérifier / modifier
+</Link>
       {status !== "published" ? (
         <StatusButton
           jobId={jobId}

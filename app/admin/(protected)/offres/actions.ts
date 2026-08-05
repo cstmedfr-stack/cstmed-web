@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
 const allowedStatuses = [
@@ -14,6 +15,18 @@ type JobStatus = (typeof allowedStatuses)[number];
 
 function isJobStatus(value: string): value is JobStatus {
   return allowedStatuses.includes(value as JobStatus);
+}
+
+function getRequiredString(formData: FormData, name: string) {
+  const value = formData.get(name);
+
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function getNullableString(formData: FormData, name: string) {
+  const value = getRequiredString(formData, name);
+
+  return value || null;
 }
 
 async function getAdminClient() {
@@ -47,14 +60,8 @@ async function getAdminClient() {
 }
 
 export async function updateJobStatus(formData: FormData) {
-  const jobIdValue = formData.get("jobId");
-  const statusValue = formData.get("status");
-
-  const jobId =
-    typeof jobIdValue === "string" ? jobIdValue.trim() : "";
-
-  const status =
-    typeof statusValue === "string" ? statusValue.trim() : "";
+  const jobId = getRequiredString(formData, "jobId");
+  const status = getRequiredString(formData, "status");
 
   if (!jobId) {
     throw new Error("Identificatorul ofertei lipsește.");
@@ -66,20 +73,76 @@ export async function updateJobStatus(formData: FormData) {
 
   const supabase = await getAdminClient();
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("jobs")
     .update({
       status,
     })
-    .eq("id", jobId);
+    .eq("id", jobId)
+    .select("id")
+    .single();
 
-  if (error) {
+  if (error || !data) {
     throw new Error(
-      `Oferta nu a putut fi actualizată: ${error.message}`,
+      `Oferta nu a putut fi actualizată: ${
+        error?.message ?? "Oferta nu a fost găsită."
+      }`,
     );
   }
 
   revalidatePath("/admin/offres");
+  revalidatePath(`/admin/offres/${jobId}`);
   revalidatePath("/offres");
   revalidatePath(`/offres/${jobId}`);
+}
+
+export async function updateJobDetails(formData: FormData) {
+  const jobId = getRequiredString(formData, "jobId");
+  const title = getRequiredString(formData, "title");
+
+  if (!jobId) {
+    throw new Error("Identificatorul ofertei lipsește.");
+  }
+
+  if (!title) {
+    throw new Error("Titlul ofertei este obligatoriu.");
+  }
+
+  const supabase = await getAdminClient();
+
+  const { data, error } = await supabase
+    .from("jobs")
+    .update({
+      title,
+      specialty: getNullableString(formData, "specialty"),
+      description: getNullableString(formData, "description"),
+      company_name: getNullableString(formData, "company_name"),
+      location_label: getNullableString(formData, "location_label"),
+      city: getNullableString(formData, "city"),
+      postal_code: getNullableString(formData, "postal_code"),
+      contract_type: getNullableString(formData, "contract_type"),
+      working_time: getNullableString(formData, "working_time"),
+      salary_text: getNullableString(formData, "salary_text"),
+      experience_text: getNullableString(formData, "experience_text"),
+      application_url: getNullableString(formData, "application_url"),
+      source_url: getNullableString(formData, "source_url"),
+    })
+    .eq("id", jobId)
+    .select("id")
+    .single();
+
+  if (error || !data) {
+    throw new Error(
+      `Oferta nu a putut fi salvată: ${
+        error?.message ?? "Oferta nu a fost găsită."
+      }`,
+    );
+  }
+
+  revalidatePath("/admin/offres");
+  revalidatePath(`/admin/offres/${jobId}`);
+  revalidatePath("/offres");
+  revalidatePath(`/offres/${jobId}`);
+
+  redirect(`/admin/offres/${jobId}?saved=1`);
 }
