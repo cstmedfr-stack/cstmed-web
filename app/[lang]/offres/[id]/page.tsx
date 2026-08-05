@@ -228,14 +228,12 @@ export default async function JobDetailsPage({
               {labels.applyText}
             </p>
 
-            <a
-              href={`mailto:contact@cstmed.fr?subject=${encodeURIComponent(
-                `Candidature – ${title}`,
-              )}`}
-              className="mt-7 flex justify-center rounded-full bg-[#65d9ce] px-6 py-3.5 text-center font-bold text-[#082a43]"
-            >
-              {labels.applyButton}
-            </a>
+            <Link
+                href={`/${lang}/candidature?jobId=${job.id}`}
+                className="mt-7 flex justify-center rounded-full bg-[#65d9ce] px-6 py-3.5 text-center font-bold text-[#082a43]"
+                >
+                {labels.applyButton}
+                </Link>
 
             <a
               href="tel:+33628262576"

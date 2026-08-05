@@ -268,6 +268,64 @@ export const fr = {
 
     viewFrench: "Consulter l’offre en français",
   },
+    application: {
+    eyebrow: "Candidature médicale",
+    title: "Présentez votre projet à CSTMed",
+
+    intro:
+      "Complétez ce formulaire et joignez votre CV. CSTMed étudiera votre profil et vous contactera pour échanger sur votre projet professionnel en France.",
+
+    selectedJob: "Offre sélectionnée",
+    spontaneous: "Candidature spontanée",
+    changeJob: "Choisir une autre offre",
+
+    personalSection: "Informations personnelles",
+    professionalSection: "Profil professionnel",
+    documentSection: "CV et message",
+
+    firstName: "Prénom",
+    lastName: "Nom",
+    email: "Adresse e-mail",
+    phone: "Téléphone",
+    specialty: "Spécialité médicale",
+    country: "Pays de résidence",
+    city: "Ville",
+    frenchLevel: "Niveau de français",
+    chooseLevel: "Sélectionner un niveau",
+
+    levels: {
+      none: "Débutant / aucun niveau",
+      a1: "A1 – Débutant",
+      a2: "A2 – Élémentaire",
+      b1: "B1 – Intermédiaire",
+      b2: "B2 – Indépendant",
+      c1: "C1 – Avancé",
+      c2: "C2 – Maîtrise",
+      native: "Langue maternelle",
+    },
+
+    message: "Votre projet ou votre message",
+    messagePlaceholder:
+      "Précisez votre disponibilité, vos critères géographiques ou toute information utile.",
+
+    cv: "Votre CV",
+    cvHelp: "Formats acceptés : PDF, DOC ou DOCX. Taille maximale : 5 Mo.",
+
+    consent:
+      "J’accepte que CSTMed utilise les informations transmises afin d’étudier ma candidature et de me contacter dans le cadre d’opportunités professionnelles.",
+
+    submit: "Envoyer ma candidature",
+    submitting: "Envoi en cours…",
+    requiredNotice: "Les champs marqués d’un astérisque sont obligatoires.",
+
+    successEyebrow: "Candidature transmise",
+    successTitle: "Merci pour votre candidature",
+    successText:
+      "Votre profil a bien été transmis à CSTMed. Nous étudierons les informations et le CV reçus avant de vous contacter.",
+    reference: "Référence de candidature",
+    backHome: "Retour à l’accueil",
+    viewJobs: "Voir les offres",
+  },
 };
 
 export type Dictionary = typeof fr;

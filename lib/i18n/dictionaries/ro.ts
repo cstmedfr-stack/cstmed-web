@@ -270,4 +270,62 @@ export const ro: Dictionary = {
 
     viewFrench: "Vezi oferta în franceză",
   },
+    application: {
+    eyebrow: "Candidatură medicală",
+    title: "Prezintă proiectul tău profesional către CSTMed",
+
+    intro:
+      "Completează formularul și atașează CV-ul. CSTMed îți va analiza profilul și te va contacta pentru a discuta despre proiectul tău profesional în Franța.",
+
+    selectedJob: "Oferta selectată",
+    spontaneous: "Candidatură spontană",
+    changeJob: "Alege o altă ofertă",
+
+    personalSection: "Informații personale",
+    professionalSection: "Profil profesional",
+    documentSection: "CV și mesaj",
+
+    firstName: "Prenume",
+    lastName: "Nume",
+    email: "Adresă de e-mail",
+    phone: "Telefon",
+    specialty: "Specialitate medicală",
+    country: "Țara de reședință",
+    city: "Localitate",
+    frenchLevel: "Nivelul de limba franceză",
+    chooseLevel: "Selectează nivelul",
+
+    levels: {
+      none: "Începător / fără cunoștințe",
+      a1: "A1 – Începător",
+      a2: "A2 – Elementar",
+      b1: "B1 – Intermediar",
+      b2: "B2 – Independent",
+      c1: "C1 – Avansat",
+      c2: "C2 – Stăpânire foarte bună",
+      native: "Limbă maternă",
+    },
+
+    message: "Proiectul sau mesajul tău",
+    messagePlaceholder:
+      "Poți preciza disponibilitatea, criteriile geografice sau alte informații utile.",
+
+    cv: "CV-ul tău",
+    cvHelp: "Formate acceptate: PDF, DOC sau DOCX. Dimensiune maximă: 5 MB.",
+
+    consent:
+      "Sunt de acord ca CSTMed să utilizeze informațiile transmise pentru analizarea candidaturii și pentru a mă contacta în legătură cu oportunități profesionale.",
+
+    submit: "Trimite candidatura",
+    submitting: "Candidatura se trimite…",
+    requiredNotice: "Câmpurile marcate cu asterisc sunt obligatorii.",
+
+    successEyebrow: "Candidatură transmisă",
+    successTitle: "Îți mulțumim pentru candidatură",
+    successText:
+      "Profilul tău a fost transmis către CSTMed. Vom analiza informațiile și CV-ul înainte de a te contacta.",
+    reference: "Referința candidaturii",
+    backHome: "Înapoi la pagina principală",
+    viewJobs: "Vezi ofertele",
+  },
 };
