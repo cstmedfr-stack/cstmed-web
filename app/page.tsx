@@ -1,3 +1,4 @@
+import Image from "next/image";
 const services = [
   {
     number: "01",
@@ -110,20 +111,16 @@ export default function Home() {
 
       <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-8 px-5 py-4 sm:px-8">
-          <a href="#top" className="flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#118c87] text-lg font-bold text-white shadow-sm">
-              C
-            </span>
-
-            <span>
-              <span className="block text-xl font-bold tracking-tight text-[#082a43]">
-                CST<span className="text-[#118c87]">Med</span>
-              </span>
-              <span className="block text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">
-                France – Europe
-              </span>
-            </span>
-          </a>
+          <a href="#top" className="shrink-0" aria-label="CSTMed – Accueil">
+  <Image
+    src="/images/cstmed-logo.jpg"
+    alt="CSTMed – Parce que ta valeur doit être appréciée"
+    width={240}
+    height={80}
+    priority
+    className="h-auto w-[185px] object-contain sm:w-[220px] lg:w-[240px]"
+  />
+</a>
 
           <nav
             aria-label="Navigation principale"
