@@ -391,6 +391,12 @@ export default async function JobsPage({
           </p>
 
           <div className="flex items-center gap-5">
+            <Link
+                        href="/admin/candidatures"
+                        className="rounded-full bg-[#082a43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0b3a59]"
+                        >
+                        Candidatures
+                        </Link>
             <a
               href="tel:+33628262576"
               className="hidden transition hover:text-[#8ce1d8] sm:inline"

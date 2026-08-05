@@ -225,7 +225,12 @@ export default async function AdminKeywordsPage({
                   type="checkbox"
                   className="h-5 w-5 accent-[#118c87]"
                 />
-
+<Link
+  href="/admin/candidatures"
+  className="rounded-full bg-[#082a43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0b3a59]"
+>
+  Candidatures
+</Link>
                 <span className="text-sm font-semibold">
                   CDI seulement
                 </span>

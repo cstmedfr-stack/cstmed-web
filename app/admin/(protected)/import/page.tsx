@@ -142,7 +142,12 @@ export default async function AdminImportPage({
             >
               Gestion des offres
             </Link>
-
+<Link
+  href="/admin/candidatures"
+  className="rounded-full bg-[#082a43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0b3a59]"
+>
+  Candidatures
+</Link>
             <Link
               href="/offres"
               target="_blank"
