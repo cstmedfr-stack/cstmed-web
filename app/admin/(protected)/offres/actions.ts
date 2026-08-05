@@ -146,3 +146,69 @@ export async function updateJobDetails(formData: FormData) {
 
   redirect(`/admin/offres/${jobId}?saved=1`);
 }
+
+export async function saveRomanianTranslation(
+  formData: FormData,
+) {
+  const jobId = getRequiredString(formData, "jobId");
+  const title = getNullableString(formData, "translationTitle");
+  const summary = getNullableString(formData, "translationSummary");
+  const description = getNullableString(
+    formData,
+    "translationDescription",
+  );
+
+  const translationStatus =
+    getRequiredString(formData, "translationStatus") === "published"
+      ? "published"
+      : "draft";
+
+  if (!jobId) {
+    throw new Error("Identificatorul ofertei lipsește.");
+  }
+
+  if (
+    translationStatus === "published" &&
+    (!title || !description)
+  ) {
+    throw new Error(
+      "Titlul și descrierea în limba română sunt obligatorii pentru publicare.",
+    );
+  }
+
+  const supabase = await getAdminClient();
+
+  const { error } = await supabase
+    .from("job_translations")
+    .upsert(
+      {
+        job_id: jobId,
+        locale: "ro",
+        title,
+        summary,
+        description,
+        status: translationStatus,
+        published_at:
+          translationStatus === "published"
+            ? new Date().toISOString()
+            : null,
+      },
+      {
+        onConflict: "job_id,locale",
+      },
+    );
+
+  if (error) {
+    throw new Error(
+      `Traducerea nu a putut fi salvată: ${error.message}`,
+    );
+  }
+
+  revalidatePath(`/admin/offres/${jobId}`);
+  revalidatePath("/ro/offres");
+  revalidatePath(`/ro/offres/${jobId}`);
+
+  redirect(
+    `/admin/offres/${jobId}?translationSaved=1`,
+  );
+}

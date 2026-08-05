@@ -2,8 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { updateJobDetails } from "../actions";
 import { JobStatusActions } from "../job-status-actions";
+import {  saveRomanianTranslation,  updateJobDetails,} from "../actions";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +20,7 @@ type AdminJobPageProps = {
 
   searchParams: Promise<{
     saved?: string;
+    translationSaved?: string;
   }>;
 };
 
@@ -79,8 +80,11 @@ export default async function AdminJobDetailsPage({
   params,
   searchParams,
 }: AdminJobPageProps) {
-  const { id } = await params;
-  const { saved } = await searchParams;
+  
+const { id } = await params;
+
+const query = await searchParams;
+const saved = query.saved;
 
   const supabase = await createClient();
 
@@ -120,6 +124,20 @@ export default async function AdminJobDetailsPage({
   }
 
   const job = data as Job;
+const {
+  data: romanianTranslation,
+  error: translationError,
+} = await supabase
+  .from("job_translations")
+  .select("title, summary, description, status")
+  .eq("job_id", id)
+  .eq("locale", "ro")
+  .maybeSingle();
+
+if (translationError) {
+  throw new Error(translationError.message);
+}
+    
 
   return (
     <main className="min-h-screen bg-[#f5f9fb] text-[#102435]">
@@ -170,6 +188,9 @@ export default async function AdminJobDetailsPage({
           </p>
         </div>
       </section>
+
+
+
 
       <section className="px-5 py-10 sm:px-8">
         <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1fr_330px]">
@@ -447,6 +468,120 @@ export default async function AdminJobDetailsPage({
                 </button>
               </div>
             </form>
+                    <div className="mt-8">
+              {query.translationSaved === "1" ? (
+                <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 font-semibold text-emerald-700">
+                  Traducerea în limba română a fost salvată.
+                </div>
+              ) : null}
+
+              <form
+                action={saveRomanianTranslation}
+                className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-9"
+              >
+                <input
+                  type="hidden"
+                  name="jobId"
+                  value={job.id}
+                />
+
+                <div className="flex flex-col gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm font-bold uppercase tracking-[0.16em] text-[#118c87]">
+                      Versiunea română
+                    </p>
+
+                    <h2 className="mt-2 text-2xl font-bold text-[#082a43]">
+                      Traducerea ofertei
+                    </h2>
+                  </div>
+
+                  <select
+                    name="translationStatus"
+                    defaultValue={
+                      romanianTranslation?.status ?? "draft"
+                    }
+                    className="rounded-2xl border border-slate-300 bg-white px-4 py-3 font-semibold"
+                  >
+                    <option value="draft">
+                      Traducere în lucru
+                    </option>
+
+                    <option value="published">
+                      Traducere publicată
+                    </option>
+                  </select>
+                </div>
+
+                <div className="mt-6 space-y-6">
+                  <div>
+                    <label
+                      htmlFor="translationTitle"
+                      className="block text-sm font-bold text-[#082a43]"
+                    >
+                      Titlul în limba română
+                    </label>
+
+                    <input
+                      id="translationTitle"
+                      name="translationTitle"
+                      type="text"
+                      defaultValue={
+                        romanianTranslation?.title ?? ""
+                      }
+                      className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="translationSummary"
+                      className="block text-sm font-bold text-[#082a43]"
+                    >
+                      Rezumat scurt
+                    </label>
+
+                    <textarea
+                      id="translationSummary"
+                      name="translationSummary"
+                      rows={4}
+                      defaultValue={
+                        romanianTranslation?.summary ?? ""
+                      }
+                      className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 leading-7"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="translationDescription"
+                      className="block text-sm font-bold text-[#082a43]"
+                    >
+                      Descrierea în limba română
+                    </label>
+
+                    <textarea
+                      id="translationDescription"
+                      name="translationDescription"
+                      rows={18}
+                      defaultValue={
+                        romanianTranslation?.description ?? ""
+                      }
+                      className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 leading-7"
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-7 flex justify-end border-t border-slate-200 pt-7">
+                  <button
+                    type="submit"
+                    className="rounded-full bg-[#118c87] px-7 py-3 font-bold text-white transition hover:bg-[#0c7773]"
+                  >
+                    Salvează traducerea
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
 
           <aside className="h-fit space-y-5 lg:sticky lg:top-6">
@@ -497,6 +632,9 @@ export default async function AdminJobDetailsPage({
                 </div>
               </dl>
 
+
+
+
               {job.source_url ? (
                 <a
                   href={job.source_url}
@@ -510,6 +648,9 @@ export default async function AdminJobDetailsPage({
             </div>
           </aside>
         </div>
+
+
+        
       </section>
     </main>
   );

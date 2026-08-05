@@ -1,0 +1,273 @@
+export const fr = {
+  common: {
+    topLine: "Recrutement médical • France – Europe",
+    phone: "+33 (0) 6 28 26 25 76",
+    email: "contact@cstmed.fr",
+
+    nav: {
+      home: "Accueil",
+      doctors: "Pour les médecins",
+      establishments: "Pour les établissements",
+      jobs: "Offres",
+      method: "Notre méthode",
+      contact: "Nous contacter",
+    },
+
+    footerDescription:
+      "Recrutement de médecins et accompagnement des établissements de santé en France.",
+
+    rights: "Tous droits réservés.",
+  },
+
+  home: {
+    badge: "Accompagnement complet et personnalisé",
+
+    title: "Recrutement médical entre la France et l’Europe",
+
+    intro:
+      "CSTMed accompagne les médecins dans leur projet professionnel en France et aide les établissements de santé à identifier les profils adaptés à leurs besoins.",
+
+    doctorButton: "Je suis médecin",
+    establishmentButton: "Je recrute un médecin",
+
+    highlights: [
+      "Suivi personnalisé",
+      "Double expertise France–Roumanie",
+      "Accompagnement humain",
+    ],
+
+    audiencesEyebrow: "Deux besoins, un même partenaire",
+    audiencesTitle: "CSTMed vous accompagne à chaque étape",
+
+    audiencesIntro:
+      "Une approche claire et personnalisée pour les candidats et les établissements de santé.",
+
+    doctors: {
+      eyebrow: "Pour les médecins",
+      title: "Construisez votre projet professionnel en France",
+
+      description:
+        "Nous étudions votre parcours, vos attentes et votre disponibilité afin de vous proposer un accompagnement adapté.",
+
+      bullets: [
+        "Étude personnalisée de votre profil",
+        "Opportunités correspondant à votre spécialité",
+        "Préparation des entretiens",
+        "Aide dans les démarches administratives",
+        "Suivi avant et après la prise de poste",
+      ],
+
+      button: "Déposer mon CV",
+    },
+
+    establishments: {
+      eyebrow: "Pour les établissements",
+
+      title:
+        "Identifiez des médecins correspondant réellement à vos besoins",
+
+      description:
+        "Nous vous accompagnons depuis l’analyse du besoin jusqu’à l’intégration du candidat sélectionné.",
+
+      bullets: [
+        "Analyse du poste et du besoin médical",
+        "Présélection de profils adaptés",
+        "Vérification des informations professionnelles",
+        "Organisation des entretiens",
+        "Accompagnement jusqu’à l’intégration",
+      ],
+
+      button: "Demander des profils",
+    },
+
+    expertise: {
+      eyebrow: "Notre expertise",
+      title: "Un accompagnement structuré et transparent",
+
+      items: [
+        {
+          number: "01",
+          title: "Sélection rigoureuse",
+          description:
+            "Analyse du profil, de l’expérience, des diplômes et du niveau de français.",
+        },
+        {
+          number: "02",
+          title: "Accompagnement administratif",
+          description:
+            "Soutien dans les démarches nécessaires à l’exercice en France.",
+        },
+        {
+          number: "03",
+          title: "Mise en relation ciblée",
+          description:
+            "Présentation de candidats correspondant aux besoins du poste.",
+        },
+        {
+          number: "04",
+          title: "Suivi d’intégration",
+          description:
+            "Accompagnement avant, pendant et après la prise de poste.",
+        },
+      ],
+    },
+
+    method: {
+      eyebrow: "Notre méthode",
+
+      title:
+        "Un processus simple, de la première prise de contact à l’intégration",
+
+      description:
+        "Chaque projet est étudié individuellement afin de construire une collaboration durable.",
+
+      steps: [
+        {
+          number: "1",
+          title: "Analyse du besoin",
+          description:
+            "Nous étudions le projet du médecin ou le besoin de l’établissement.",
+        },
+        {
+          number: "2",
+          title: "Sélection ciblée",
+          description:
+            "Nous identifions les profils et les opportunités adaptés.",
+        },
+        {
+          number: "3",
+          title: "Entretiens et validation",
+          description:
+            "Nous organisons les échanges entre candidat et établissement.",
+        },
+        {
+          number: "4",
+          title: "Installation et suivi",
+          description:
+            "Nous accompagnons les démarches et l’intégration.",
+        },
+      ],
+    },
+
+    specialties: {
+      eyebrow: "Spécialités médicales",
+
+      title: "Des opportunités dans de nombreuses spécialités",
+
+      description:
+        "Les besoins évoluent selon les établissements partenaires et les régions.",
+
+      button: "Découvrir les opportunités",
+
+      list: [
+        "Médecine générale",
+        "Gériatrie",
+        "Anesthésie-Réanimation",
+        "Médecine d’urgence",
+        "Cardiologie",
+        "Radiologie",
+        "Psychiatrie",
+        "Gynécologie-obstétrique",
+        "Chirurgie",
+        "Pneumologie",
+        "Neurologie",
+        "Autres spécialités",
+      ],
+    },
+
+    contact: {
+      eyebrow: "Parlons de votre projet",
+
+      title:
+        "Vous êtes médecin ou vous représentez un établissement de santé ?",
+
+      description:
+        "Contactez CSTMed pour un premier échange confidentiel et personnalisé.",
+    },
+  },
+
+  jobs: {
+    eyebrow: "Opportunités médicales",
+    title: "Offres d’emploi pour médecins en France",
+
+    intro:
+      "Découvrez les opportunités sélectionnées par CSTMed et bénéficiez d’un accompagnement personnalisé.",
+
+    searchLabel: "Quel poste recherchez-vous ?",
+    searchPlaceholder: "Ex. cardiologue, urgentiste…",
+    specialtyLabel: "Spécialité",
+    allSpecialties: "Toutes les spécialités",
+    locationLabel: "Localisation",
+    locationPlaceholder: "Ville, département ou code postal",
+    contractLabel: "Contrat",
+    allContracts: "Tous les contrats",
+    sortLabel: "Classer les offres",
+    newest: "Plus récentes",
+    oldest: "Plus anciennes",
+    searchButton: "Rechercher les offres",
+    clearFilters: "Effacer les filtres",
+
+    results: "Offres disponibles",
+    opportunity: "opportunité",
+    opportunities: "opportunités",
+    resultRange: "Résultats",
+    page: "Page",
+    on: "sur",
+
+    publishedOn: "Publiée le",
+    selectedByCstmed: "Offre sélectionnée par CSTMed",
+    salary: "Rémunération",
+    viewOffer: "Voir l’offre",
+
+    noResultsTitle: "Aucune offre ne correspond à votre recherche",
+
+    noResultsText:
+      "Modifiez vos critères ou transmettez directement votre CV à CSTMed.",
+
+    allJobsButton: "Voir toutes les offres",
+    sendCv: "Envoyer mon CV",
+    previousPage: "Page précédente",
+    nextPage: "Page suivante",
+
+    spontaneousEyebrow: "Candidature spontanée",
+
+    spontaneousTitle:
+      "Vous ne trouvez pas encore l’opportunité recherchée ?",
+
+    spontaneousText:
+      "Transmettez-nous votre profil et vos critères. CSTMed pourra vous contacter pour une future opportunité adaptée.",
+
+    spontaneousButton: "Déposer ma candidature",
+  },
+
+  job: {
+    backToJobs: "Retour aux offres",
+    description: "Description du poste",
+    information: "Informations sur l’offre",
+    location: "Localisation",
+    contract: "Type de contrat",
+    workingTime: "Temps de travail",
+    experience: "Expérience",
+    salary: "Rémunération",
+    unspecified: "Non précisé",
+
+    applyEyebrow: "Candidature accompagnée",
+    applyTitle: "Cette offre vous intéresse ?",
+
+    applyText:
+      "CSTMed vous accompagne dans l’analyse du poste, la préparation de la candidature et les démarches nécessaires.",
+
+    applyButton: "Postuler avec CSTMed",
+    callButton: "Appeler CSTMed",
+
+    frenchOnlyTitle:
+      "Cette offre n’est pas encore traduite en roumain.",
+
+    frenchOnlyText:
+      "Vous pouvez consulter immédiatement le contenu original en français.",
+
+    viewFrench: "Consulter l’offre en français",
+  },
+};
+
+export type Dictionary = typeof fr;

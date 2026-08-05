@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { headers } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
+
+import { isLocale } from "@/lib/i18n/config";
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,38 +19,32 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://cstmed.fr"),
+
   title: {
     default: "CSTMed | Recrutement médical France–Europe",
     template: "%s | CSTMed",
   },
+
   description:
-    "CSTMed accompagne les médecins européens et les établissements de santé français dans chaque étape du recrutement et de l’intégration.",
-  keywords: [
-    "recrutement médecins",
-    "médecins roumains en France",
-    "recrutement médical France",
-    "emploi médecin France",
-    "CSTMed",
-  ],
-  openGraph: {
-    title: "CSTMed | Recrutement médical France–Europe",
-    description:
-      "Un accompagnement humain et personnalisé pour les médecins et les établissements de santé.",
-    url: "https://cstmed.fr",
-    siteName: "CSTMed",
-    locale: "fr_FR",
-    type: "website",
-  },
+    "CSTMed accompagne les médecins européens et les établissements de santé français.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: ReactNode;
 }>) {
+  const requestHeaders = await headers();
+  const requestedLocale =
+    requestHeaders.get("x-cstmed-locale") ?? undefined;
+
+  const documentLocale = isLocale(requestedLocale)
+    ? requestedLocale
+    : "fr";
+
   return (
     <html
-      lang="fr"
+      lang={documentLocale}
       className={`${geistSans.variable} ${geistMono.variable}`}
     >
       <body>{children}</body>
