@@ -205,14 +205,12 @@ export default async function JobsPage() {
                             : "Offre sélectionnée par CSTMed"}
                         </span>
 
-                        <a
-                          href={`mailto:contact@cstmed.fr?subject=${encodeURIComponent(
-                            `Candidature – ${job.title}`,
-                          )}`}
-                          className="rounded-full bg-[#118c87] px-5 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-[#0c7773]"
-                        >
-                          Postuler
-                        </a>
+                       <Link
+                            href={`/offres/${job.id}`}
+                            className="rounded-full bg-[#118c87] px-5 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-[#0c7773]"
+                            >
+                            Voir l’offre
+                            </Link>
                       </div>
                     </article>
                   );
