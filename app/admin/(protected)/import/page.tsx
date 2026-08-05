@@ -131,6 +131,12 @@ export default async function AdminImportPage({
 
           <div className="flex flex-wrap gap-3">
             <Link
+                href="/admin/mots-cles"
+                className="rounded-full bg-[#082a43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0b3a59]"
+                >
+                Gérer les mots-clés
+                </Link>
+            <Link
               href="/admin/offres"
               className="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
             >
