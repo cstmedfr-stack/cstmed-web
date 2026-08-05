@@ -44,14 +44,23 @@ export default async function AdminJobsPage() {
             />
           </Link>
 
-          <form action={logoutAdmin}>
-            <button
-              type="submit"
-              className="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-red-300 hover:bg-red-50 hover:text-red-700"
-            >
-              Se déconnecter
-            </button>
-          </form>
+          <div className="flex flex-wrap items-center gap-3">
+  <Link
+    href="/admin/import"
+    className="rounded-full bg-[#118c87] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0c7773]"
+  >
+    Importer France Travail
+  </Link>
+
+  <form action={logoutAdmin}>
+    <button
+      type="submit"
+      className="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-red-300 hover:bg-red-50 hover:text-red-700"
+    >
+      Se déconnecter
+    </button>
+  </form>
+</div>
         </div>
       </header>
 
