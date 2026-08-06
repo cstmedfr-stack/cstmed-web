@@ -9,6 +9,7 @@ import type { Metadata } from "next";
 import { JsonLd } from "@/components/seo/json-ld";
 import {  absoluteUrl,  createSeoDescription,  defaultSocialImage,  getOpenGraphLocale,  seoContent,
   siteName,} from "@/lib/seo/site";
+import { createGoogleMapsSearchUrl } from "@/lib/maps/google-maps";
 
 export const dynamic = "force-dynamic";
 
@@ -303,6 +304,13 @@ export default async function JobDetailsPage({
       .filter(Boolean)
       .join(" ") ||
     "France";
+
+    const googleMapsUrl = location
+  ? createGoogleMapsSearchUrl(
+      `${location}, France`,
+    )
+  : null;
+
 const hasJobLocation = Boolean(
   job.city ||
     job.postal_code ||
@@ -402,9 +410,37 @@ const jobPostingJsonLd = {
             {title}
           </h1>
 
-          <p className="mt-5 text-lg text-slate-200">
-            📍 {location}
-          </p>
+          <div className="rounded-2xl bg-[#f5f9fb] p-5">
+  <p className="text-sm font-semibold text-slate-500">
+    {lang === "ro"
+      ? "Localizare"
+      : "Localisation"}
+  </p>
+
+  <p className="mt-2 font-bold text-[#082a43]">
+    {location ||
+      (lang === "ro"
+        ? "Localitate neprecizată"
+        : "Localisation non précisée")}
+  </p>
+
+  {googleMapsUrl ? (
+    <a
+      href={googleMapsUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="mt-4 inline-flex items-center gap-2 rounded-full border border-[#118c87] px-5 py-2.5 text-sm font-bold text-[#118c87] transition hover:bg-[#e5f7f5]"
+    >
+      <span aria-hidden="true">📍</span>
+
+      {lang === "ro"
+        ? "Vezi zona pe Google Maps"
+        : "Voir la zone sur Google Maps"}
+
+      <span aria-hidden="true">↗</span>
+    </a>
+  ) : null}
+</div>
         </div>
       </section>
 

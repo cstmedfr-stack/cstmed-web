@@ -1,17 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
 import { SiteFooter } from "@/components/public/site-footer";
 import { SiteHeader } from "@/components/public/site-header";
-
-import {
-  isLocale,
-  type Locale,
-} from "@/lib/i18n/config";
-
+import {  isLocale,  type Locale,} from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import type { Metadata } from "next";
-
+import { JsonLd } from "@/components/seo/json-ld";
 import {
   absoluteUrl,
   defaultSocialImage,
@@ -21,13 +15,14 @@ import {
   siteUrl,
 } from "@/lib/seo/site";
 
-import { JsonLd } from "@/components/seo/json-ld";
+
 
 type HomePageProps = {
   params: Promise<{
     lang: string;
   }>;
 };
+
 export async function generateMetadata({
   params,
 }: HomePageProps): Promise<Metadata> {
@@ -40,6 +35,7 @@ export async function generateMetadata({
   const locale: Locale = requestedLang;
   const content = seoContent[locale].home;
   const canonicalPath = `/${locale}`;
+  
 
   return {
     title: content.title,
@@ -112,6 +108,91 @@ export default async function HomePage({
   const lang: Locale = requestedLang;
   const dictionary = getDictionary(lang);
   const home = dictionary.home;
+const serviceCommitments =
+  lang === "ro"
+    ? [
+        {
+          value: "24 h",
+          title: "Răspuns rapid",
+          text: "Răspundem solicitării tale în maximum 24 de ore lucrătoare.",
+        },
+        {
+          value: "48 h",
+          title: "Primele profiluri",
+          text: "Unitățile medicale pot primi o primă selecție de profiluri în maximum 48 de ore, în funcție de disponibilitate.",
+        },
+        {
+          value: "100%",
+          title: "Sprijin personalizat",
+          text: "Urmărim proiectul până la recrutare, instalare și integrare.",
+        },
+      ]
+    : [
+        {
+          value: "24 h",
+          title: "Réponse rapide",
+          text: "Nous répondons à votre demande sous 24 heures ouvrées.",
+        },
+        {
+          value: "48 h",
+          title: "Premiers profils",
+          text: "Une première sélection de profils peut être transmise sous 48 heures, selon la spécialité et les disponibilités.",
+        },
+        {
+          value: "100%",
+          title: "Suivi personnalisé",
+          text: "Nous accompagnons le projet jusqu’au recrutement, à l’installation et à l’intégration.",
+        },
+      ];
+
+const informationCards =
+  lang== "ro"
+    ? [
+        {
+          eyebrow: "Proiect profesional",
+          title: "Lucrează ca medic în Franța",
+          text: "Descoperă oportunitățile profesionale, condițiile generale de exercitare și sprijinul oferit de CSTMed.",
+          href: `/${lang}/offres`,
+          linkLabel: "Vezi ofertele",
+        },
+        {
+          eyebrow: "Instalare",
+          title: "Instalarea ca medic în Franța",
+          text: "Te sprijinim pentru documente, înscrierea profesională, cazare și organizarea vieții de zi cu zi.",
+          href: `/${lang}/candidature`,
+          linkLabel: "Prezintă-ne proiectul tău",
+        },
+        {
+          eyebrow: "Condiții profesionale",
+          title: "Posturi, venituri și regiuni",
+          text: "Condițiile diferă în funcție de specialitate, statut, unitatea medicală și regiunea aleasă.",
+          href: `/${lang}/offres`,
+          linkLabel: "Caută un post",
+        },
+      ]
+    : [
+        {
+          eyebrow: "Projet professionnel",
+          title: "Travailler comme médecin en France",
+          text: "Découvrez les opportunités professionnelles, les principales conditions d’exercice et l’accompagnement CSTMed.",
+          href: `/${lang}/offres`,
+          linkLabel: "Voir les offres",
+        },
+        {
+          eyebrow: "Installation",
+          title: "S’installer comme médecin en France",
+          text: "Nous vous accompagnons pour les documents, l’inscription professionnelle, le logement et les démarches du quotidien.",
+          href: `/${lang}/candidature`,
+          linkLabel: "Présenter mon projet",
+        },
+        {
+          eyebrow: "Conditions professionnelles",
+          title: "Postes, revenus et régions",
+          text: "Les conditions varient selon la spécialité, le statut, l’établissement de santé et la région choisie.",
+          href: `/${lang}/offres`,
+          linkLabel: "Rechercher un poste",
+        },
+      ];
 
   return (
     <main className="min-h-screen bg-white text-[#102435]">
@@ -234,6 +315,100 @@ export default async function HomePage({
           </div>
         </div>
       </section>
+
+<section className="relative z-10 -mt-6 px-5 sm:px-8">
+  <div className="mx-auto grid max-w-7xl overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-xl md:grid-cols-3">
+    {serviceCommitments.map(
+      (commitment, index) => (
+        <article
+          key={commitment.title}
+          className={`p-7 sm:p-8 ${
+            index > 0
+              ? "border-t border-slate-200 md:border-l md:border-t-0"
+              : ""
+          }`}
+        >
+          <div className="flex items-center gap-4">
+            <span className="flex h-16 min-w-16 items-center justify-center rounded-2xl bg-[#e5f7f5] px-3 text-xl font-black text-[#118c87]">
+              {commitment.value}
+            </span>
+
+            <h2 className="text-xl font-bold text-[#082a43]">
+              {commitment.title}
+            </h2>
+          </div>
+
+          <p className="mt-4 leading-7 text-slate-600">
+            {commitment.text}
+          </p>
+        </article>
+      ),
+    )}
+  </div>
+</section>
+
+<section className="px-5 py-16 sm:px-8">
+  <div className="mx-auto max-w-7xl">
+    <div className="max-w-3xl">
+      <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#118c87]">
+        {lang === "ro"
+          ? "Informații pentru medici"
+          : "Informations pour les médecins"}
+      </p>
+
+      <h2 className="mt-4 text-3xl font-bold text-[#082a43] sm:text-4xl">
+        {lang === "ro"
+          ? "Pregătește-ți proiectul profesional în Franța"
+          : "Préparez votre projet professionnel en France"}
+      </h2>
+
+      <p className="mt-4 leading-7 text-slate-600">
+        {lang === "ro"
+          ? "CSTMed îți oferă informații clare și sprijin personalizat în fiecare etapă."
+          : "CSTMed vous apporte des informations claires et un accompagnement personnalisé à chaque étape."}
+      </p>
+    </div>
+
+    <div className="mt-9 grid gap-6 lg:grid-cols-3">
+      {informationCards.map(
+        (card, index) => (
+          <article
+            key={card.title}
+            className="group flex min-h-[310px] flex-col rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-xl sm:p-8"
+          >
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#118c87]">
+                {card.eyebrow}
+              </p>
+
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e5f7f5] font-bold text-[#118c87]">
+                {index + 1}
+              </span>
+            </div>
+
+            <h3 className="mt-6 text-2xl font-bold leading-tight text-[#082a43]">
+              {card.title}
+            </h3>
+
+            <p className="mt-4 flex-1 leading-7 text-slate-600">
+              {card.text}
+            </p>
+
+            <Link
+              href={card.href}
+              className="mt-7 inline-flex items-center font-bold text-[#0965d8] transition group-hover:gap-3"
+            >
+              {card.linkLabel}
+              <span className="ml-2" aria-hidden="true">
+                →
+              </span>
+            </Link>
+          </article>
+        ),
+      )}
+    </div>
+  </div>
+</section>
 
       <section
         id="medecins"

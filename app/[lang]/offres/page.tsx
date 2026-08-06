@@ -7,6 +7,7 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getPublicJobs } from "@/lib/jobs/get-public-jobs";
 import type { Metadata } from "next";
 import {  defaultSocialImage,  getOpenGraphLocale,  seoContent,  siteName,} from "@/lib/seo/site";
+import { createGoogleMapsSearchUrl } from "@/lib/maps/google-maps";
 
 export const dynamic = "force-dynamic";
 
@@ -335,12 +336,7 @@ export default async function JobsPage({
               </div>
 
               <div className="flex gap-3">
-                <Link
-              href="/admin"
-              className="rounded-full bg-[#082a43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0b3a59]"
-            >
-              Tableau de bord
-            </Link>
+              
                 <Link
                   href={`/${lang}/offres`}
                   className="rounded-full border border-slate-300 px-6 py-3 font-bold"

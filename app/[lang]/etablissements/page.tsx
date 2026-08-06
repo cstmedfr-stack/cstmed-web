@@ -87,6 +87,54 @@ export default async function EstablishmentsPage({
         </div>
       </section>
 
+<section className="relative z-10 -mt-7 px-5 sm:px-8">
+  <div className="mx-auto grid max-w-5xl overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-xl sm:grid-cols-2">
+    <article className="p-7 sm:p-8">
+      <div className="flex items-center gap-4">
+        <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#e5f7f5] text-xl font-black text-[#118c87]">
+          24 h
+        </span>
+
+        <div>
+          <h2 className="font-bold text-[#082a43]">
+            {locale === "ro"
+              ? "Răspuns la solicitare"
+              : "Réponse à votre demande"}
+          </h2>
+
+          <p className="mt-1 text-sm leading-6 text-slate-600">
+            {locale === "ro"
+              ? "Analizăm solicitarea și revenim în maximum 24 de ore lucrătoare."
+              : "Nous analysons votre besoin et revenons vers vous sous 24 heures ouvrées."}
+          </p>
+        </div>
+      </div>
+    </article>
+
+    <article className="border-t border-slate-200 p-7 sm:border-l sm:border-t-0 sm:p-8">
+      <div className="flex items-center gap-4">
+        <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#e8efff] text-xl font-black text-[#0965d8]">
+          48 h
+        </span>
+
+        <div>
+          <h2 className="font-bold text-[#082a43]">
+            {locale === "ro"
+              ? "Prima selecție de profiluri"
+              : "Première sélection de profils"}
+          </h2>
+
+          <p className="mt-1 text-sm leading-6 text-slate-600">
+            {locale === "ro"
+              ? "În funcție de specialitate și disponibilitate, putem prezenta primele profiluri în maximum 48 de ore."
+              : "Selon la spécialité et les disponibilités, les premiers profils peuvent être présentés sous 48 heures."}
+          </p>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
       <section className="px-5 py-12 sm:px-8">
         <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1fr_340px]">
           <div>
