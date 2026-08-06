@@ -351,6 +351,12 @@ export default async function ApplicationsPage({
 
           <div className="flex flex-wrap items-center gap-3">
             <Link
+              href="/admin"
+              className="rounded-full bg-[#082a43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0b3a59]"
+            >
+              Tableau de bord
+            </Link>
+            <Link
               href="/admin/offres"
               className="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
             >

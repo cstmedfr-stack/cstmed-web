@@ -55,7 +55,7 @@ export async function loginAdmin(formData: FormData) {
     loginError("Acest cont nu are drepturi de administrator CSTMed.");
   }
 
-  redirect("/admin/offres");
+redirect("/admin");
 }
 
 export async function logoutAdmin() {

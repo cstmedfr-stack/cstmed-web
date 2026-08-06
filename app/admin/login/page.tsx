@@ -29,7 +29,7 @@ export default async function AdminLoginPage({
       .maybeSingle();
 
     if (adminMembership) {
-      redirect("/admin/offres");
+  redirect("/admin");
     }
   }
 

@@ -281,6 +281,12 @@ export default async function JobsPage({
 
               <div className="flex gap-3">
                 <Link
+              href="/admin"
+              className="rounded-full bg-[#082a43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0b3a59]"
+            >
+              Tableau de bord
+            </Link>
+                <Link
                   href={`/${lang}/offres`}
                   className="rounded-full border border-slate-300 px-6 py-3 font-bold"
                 >

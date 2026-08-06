@@ -12,12 +12,30 @@ export function SiteFooter({
   locale,
   labels,
 }: SiteFooterProps) {
+  const legalLabels =
+    locale === "ro"
+      ? {
+          legal: "Mențiuni legale",
+          privacy: "Confidențialitate",
+          cookies: "Cookie-uri",
+          legalTitle: "Informații juridice",
+        }
+      : {
+          legal: "Mentions légales",
+          privacy: "Confidentialité",
+          cookies: "Cookies",
+          legalTitle: "Informations juridiques",
+        };
+
   return (
     <footer className="bg-[#061f33] px-5 py-12 text-slate-300 sm:px-8">
-      <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-3">
+      <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-4">
         <div>
           <p className="text-2xl font-bold text-white">
-            CST<span className="text-[#65d9ce]">Med</span>
+            CST
+            <span className="text-[#65d9ce]">
+              Med
+            </span>
           </p>
 
           <p className="mt-3 max-w-sm leading-7">
@@ -26,13 +44,19 @@ export function SiteFooter({
         </div>
 
         <div>
-          <p className="font-bold text-white">Navigation</p>
+          <p className="font-bold text-white">
+            Navigation
+          </p>
 
           <div className="mt-4 flex flex-col gap-3 text-sm">
-            <Link href={`/${locale}`}>{labels.nav.home}</Link>
+            <Link href={`/${locale}`}>
+              {labels.nav.home}
+            </Link>
+
             <Link href={`/${locale}/offres`}>
               {labels.nav.jobs}
             </Link>
+
             <Link href={`/${locale}#medecins`}>
               {labels.nav.doctors}
             </Link>
@@ -40,13 +64,38 @@ export function SiteFooter({
         </div>
 
         <div>
-          <p className="font-bold text-white">Contact</p>
+          <p className="font-bold text-white">
+            {legalLabels.legalTitle}
+          </p>
+
+          <div className="mt-4 flex flex-col gap-3 text-sm">
+            <Link href={`/${locale}/mentions-legales`}>
+              {legalLabels.legal}
+            </Link>
+
+            <Link href={`/${locale}/confidentialite`}>
+              {legalLabels.privacy}
+            </Link>
+
+            <Link href={`/${locale}/cookies`}>
+              {legalLabels.cookies}
+            </Link>
+          </div>
+        </div>
+
+        <div>
+          <p className="font-bold text-white">
+            Contact
+          </p>
 
           <div className="mt-4 flex flex-col gap-3 text-sm">
             <a href={`mailto:${labels.email}`}>
               {labels.email}
             </a>
-            <a href="tel:+33628262576">{labels.phone}</a>
+
+            <a href="tel:+33628262576">
+              {labels.phone}
+            </a>
           </div>
         </div>
       </div>

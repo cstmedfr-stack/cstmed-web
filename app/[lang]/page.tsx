@@ -207,12 +207,12 @@ export default async function HomePage({
                 ))}
               </ul>
 
-              <a
-                href="mailto:contact@cstmed.fr"
-                className="mt-8 inline-flex rounded-full bg-[#65d9ce] px-6 py-3 font-bold text-[#082a43]"
-              >
-                {home.establishments.button}
-              </a>
+              <Link
+  href={`/${lang}/etablissements`}
+  className="mt-8 inline-flex rounded-full bg-[#65d9ce] px-6 py-3 font-bold text-[#082a43]"
+>
+  {home.establishments.button}
+</Link>
             </article>
           </div>
         </div>

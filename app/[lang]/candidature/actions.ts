@@ -2,7 +2,9 @@
 
 import { randomUUID } from "node:crypto";
 import { redirect } from "next/navigation";
-
+import {
+  sendApplicationNotifications,
+} from "@/lib/email/application-notifications";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   isLocale,
@@ -176,6 +178,9 @@ export async function submitApplication(
   const consent =
     formData.get("consent") === "on";
 
+    const talentPoolConsent =
+  formData.get("talentPoolConsent") === "on";
+
   if (
     !firstName ||
     !lastName ||
@@ -298,7 +303,8 @@ export async function submitApplication(
 
   const supabase = createAdminClient();
 
-  let jobId: string | null = null;
+ let jobId: string | null = null;
+let jobTitle: string | null = null;
 
   if (requestedJobId) {
     if (!uuidPattern.test(requestedJobId)) {
@@ -315,7 +321,7 @@ export async function submitApplication(
       error: selectedJobError,
     } = await supabase
       .from("jobs")
-      .select("id")
+      .select("id, title")
       .eq("id", requestedJobId)
       .eq("status", "published")
       .maybeSingle();
@@ -333,6 +339,7 @@ export async function submitApplication(
     }
 
     jobId = selectedJob.id;
+    jobTitle = selectedJob.title;
   }
 
   const applicationId = randomUUID();
@@ -407,6 +414,9 @@ export async function submitApplication(
       cv_size_bytes: cvValue.size,
 
       consent_at: now.toISOString(),
+      talent_pool_consent_at: talentPoolConsent
+  ? now.toISOString()
+  : null,
     });
 
   if (applicationError) {
@@ -431,7 +441,24 @@ export async function submitApplication(
       jobId ?? undefined,
     );
   }
+await sendApplicationNotifications({
+  applicationId,
+  locale,
 
+  firstName,
+  lastName,
+  email,
+  phone,
+
+  specialty,
+  country,
+  city,
+
+  frenchLevel: frenchLevelValue || null,
+  message,
+
+  jobTitle,
+});
   const successParameters =
     new URLSearchParams({
       reference: applicationId,

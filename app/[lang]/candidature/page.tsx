@@ -463,18 +463,44 @@ export default async function ApplicationPage({
                     </p>
                   </div>
 
-                  <label className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-[#f8fbfc] p-5">
-                    <input
-                      name="consent"
-                      type="checkbox"
-                      required
-                      className="mt-1 h-5 w-5 shrink-0 accent-[#118c87]"
-                    />
+                 <div className="rounded-2xl border border-[#9fded8] bg-[#e5f7f5] p-5">
+  <p className="text-sm leading-6 text-slate-700">
+    {labels.privacySummary}
+  </p>
 
-                    <span className="text-sm leading-6 text-slate-700">
-                      {labels.consent} *
-                    </span>
-                  </label>
+  <Link
+    href={`/${lang}/confidentialite`}
+    target="_blank"
+    className="mt-3 inline-flex text-sm font-bold text-[#0c7773] underline underline-offset-4"
+  >
+    {labels.privacyLink} ↗
+  </Link>
+</div>
+
+<label className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-[#f8fbfc] p-5">
+  <input
+    name="consent"
+    type="checkbox"
+    required
+    className="mt-1 h-5 w-5 shrink-0 accent-[#118c87]"
+  />
+
+  <span className="text-sm leading-6 text-slate-700">
+    {labels.consent} *
+  </span>
+</label>
+
+<label className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-5">
+  <input
+    name="talentPoolConsent"
+    type="checkbox"
+    className="mt-1 h-5 w-5 shrink-0 accent-[#118c87]"
+  />
+
+  <span className="text-sm leading-6 text-slate-700">
+    {labels.talentPoolConsent}
+  </span>
+</label>
                 </div>
               </section>
 

@@ -83,6 +83,13 @@ export default async function AdminKeywordsPage({
           </Link>
 
           <div className="flex flex-wrap gap-3">
+
+            <Link
+  href="/admin"
+  className="rounded-full bg-[#082a43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0b3a59]"
+>
+  Tableau de bord
+</Link>
             <Link
               href="/admin/import"
               className="rounded-full bg-[#118c87] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0c7773]"

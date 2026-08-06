@@ -268,7 +268,8 @@ export const fr = {
 
     viewFrench: "Consulter l’offre en français",
   },
-    application: {
+    application: 
+  {
     eyebrow: "Candidature médicale",
     title: "Présentez votre projet à CSTMed",
 
@@ -312,7 +313,16 @@ export const fr = {
     cvHelp: "Formats acceptés : PDF, DOC ou DOCX. Taille maximale : 5 Mo.",
 
     consent:
-      "J’accepte que CSTMed utilise les informations transmises afin d’étudier ma candidature et de me contacter dans le cadre d’opportunités professionnelles.",
+  "Je confirme avoir pris connaissance de la politique de confidentialité et demande à CSTMed de traiter ma candidature.",
+
+privacySummary:
+  "Les informations et le CV transmis sont utilisés pour étudier votre candidature et vous contacter dans le cadre du recrutement.",
+
+privacyLink: "Consulter la politique de confidentialité",
+
+talentPoolConsent:
+  "J’accepte que CSTMed conserve mon profil afin de me proposer d’autres opportunités professionnelles adaptées. Ce choix est facultatif.",
+      
 
     submit: "Envoyer ma candidature",
     submitting: "Envoi en cours…",
@@ -325,6 +335,105 @@ export const fr = {
     reference: "Référence de candidature",
     backHome: "Retour à l’accueil",
     viewJobs: "Voir les offres",
+
+ 
+  },
+ establishmentRequest: {
+    eyebrow: "Recrutement médical",
+    title: "Présentez votre besoin de recrutement à CSTMed",
+
+    intro:
+      "Décrivez le poste et le profil recherché. CSTMed vous contactera afin d’analyser votre besoin et de définir les prochaines étapes.",
+
+    establishmentSection: "Votre établissement",
+    contactSection: "Personne à contacter",
+    recruitmentSection: "Besoin de recrutement",
+
+    establishmentName: "Nom de l’établissement",
+    establishmentType: "Type d’établissement",
+    chooseType: "Sélectionner un type",
+
+    types: {
+      hospital: "Hôpital ou centre hospitalier",
+      clinic: "Clinique",
+      healthCenter: "Centre de santé",
+      ehpad: "EHPAD",
+      medicalPractice: "Cabinet ou maison médicale",
+      other: "Autre structure",
+    },
+
+    contactName: "Nom et prénom du contact",
+    contactRole: "Fonction",
+    email: "Adresse e-mail professionnelle",
+    phone: "Téléphone",
+
+    city: "Ville",
+    department: "Département",
+
+    specialty: "Spécialité recherchée",
+    positionsCount: "Nombre de postes",
+
+    contractType: "Type de contrat",
+    chooseContract: "Sélectionner un contrat",
+
+    contracts: {
+      cdi: "CDI",
+      cdd: "CDD",
+      replacement: "Remplacement",
+      liberal: "Exercice libéral",
+      mixed: "Exercice mixte",
+      other: "Autre",
+    },
+
+    desiredStartDate: "Date souhaitée de prise de poste",
+    urgency: "Niveau d’urgence",
+
+    urgencies: {
+      normal: "Besoin à moyen terme",
+      urgent: "Besoin urgent",
+      veryUrgent: "Besoin très urgent",
+    },
+
+    housingSupport:
+      "Une aide au logement ou à l’installation peut être proposée.",
+
+    message: "Informations complémentaires",
+
+    messagePlaceholder:
+      "Précisez le contexte, les conditions proposées, le profil recherché ou toute autre information utile.",
+
+    privacySummary:
+      "Les informations transmises seront utilisées pour analyser votre demande et vous recontacter.",
+
+    privacyLink: "Consulter la politique de confidentialité",
+
+    consent:
+      "Je confirme être autorisé(e) à transmettre cette demande au nom de l’établissement et j’accepte son traitement par CSTMed.",
+
+    requiredNotice:
+      "Les champs marqués d’un astérisque sont obligatoires.",
+
+    submit: "Transmettre ma demande",
+    submitting: "Envoi en cours…",
+
+    sideTitle: "Pourquoi faire appel à CSTMed ?",
+
+    sideItems: [
+      "Analyse personnalisée du besoin",
+      "Recherche de profils médicaux adaptés",
+      "Accompagnement des entretiens",
+      "Suivi administratif et intégration",
+    ],
+
+    successEyebrow: "Demande transmise",
+    successTitle: "Merci pour votre demande",
+
+    successText:
+      "Votre besoin de recrutement a bien été transmis à CSTMed. Nous vous contacterons pour analyser le poste et le profil recherché.",
+
+    reference: "Référence de la demande",
+    backHome: "Retour à l’accueil",
+    newRequest: "Transmettre une autre demande",
   },
 };
 

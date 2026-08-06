@@ -314,8 +314,16 @@ export const ro: Dictionary = {
     cvHelp: "Formate acceptate: PDF, DOC sau DOCX. Dimensiune maximă: 5 MB.",
 
     consent:
-      "Sunt de acord ca CSTMed să utilizeze informațiile transmise pentru analizarea candidaturii și pentru a mă contacta în legătură cu oportunități profesionale.",
+  "Confirm că am consultat politica de confidențialitate și solicit CSTMed să îmi analizeze candidatura.",
 
+privacySummary:
+  "Informațiile și CV-ul transmise sunt utilizate pentru analizarea candidaturii și pentru contactarea ta în cadrul procesului de recrutare.",
+
+privacyLink: "Consultă politica de confidențialitate",
+
+talentPoolConsent:
+  "Sunt de acord ca CSTMed să îmi păstreze profilul pentru a-mi propune și alte oportunități profesionale potrivite. Această opțiune este facultativă.",
+      
     submit: "Trimite candidatura",
     submitting: "Candidatura se trimite…",
     requiredNotice: "Câmpurile marcate cu asterisc sunt obligatorii.",
@@ -327,5 +335,104 @@ export const ro: Dictionary = {
     reference: "Referința candidaturii",
     backHome: "Înapoi la pagina principală",
     viewJobs: "Vezi ofertele",
+
+ 
+  },
+  establishmentRequest : {
+    eyebrow: "Recrutare medicală",
+    title: "Prezintă către CSTMed nevoia unității medicale",
+
+    intro:
+      "Descrie postul și profilul medicului căutat. CSTMed va contacta unitatea pentru analizarea nevoii și stabilirea etapelor următoare.",
+
+    establishmentSection: "Unitatea medicală",
+    contactSection: "Persoana de contact",
+    recruitmentSection: "Nevoia de recrutare",
+
+    establishmentName: "Denumirea unității",
+    establishmentType: "Tipul unității",
+    chooseType: "Selectează tipul",
+
+    types: {
+      hospital: "Spital sau centru spitalicesc",
+      clinic: "Clinică",
+      healthCenter: "Centru medical",
+      ehpad: "Centru pentru persoane vârstnice",
+      medicalPractice: "Cabinet sau casă medicală",
+      other: "Altă structură",
+    },
+
+    contactName: "Numele și prenumele persoanei de contact",
+    contactRole: "Funcția",
+    email: "Adresa profesională de e-mail",
+    phone: "Telefon",
+
+    city: "Localitate",
+    department: "Departament",
+
+    specialty: "Specialitatea căutată",
+    positionsCount: "Numărul de posturi",
+
+    contractType: "Tipul contractului",
+    chooseContract: "Selectează contractul",
+
+    contracts: {
+      cdi: "Contract pe perioadă nedeterminată",
+      cdd: "Contract pe perioadă determinată",
+      replacement: "Înlocuire temporară",
+      liberal: "Activitate liberală",
+      mixed: "Activitate mixtă",
+      other: "Alt tip",
+    },
+
+    desiredStartDate: "Data dorită pentru începerea activității",
+    urgency: "Gradul de urgență",
+
+    urgencies: {
+      normal: "Necesitate pe termen mediu",
+      urgent: "Necesitate urgentă",
+      veryUrgent: "Necesitate foarte urgentă",
+    },
+
+    housingSupport:
+      "Unitatea poate oferi sprijin pentru cazare sau instalare.",
+
+    message: "Informații suplimentare",
+
+    messagePlaceholder:
+      "Precizați contextul, condițiile oferite, profilul căutat sau alte informații utile.",
+
+    privacySummary:
+      "Informațiile transmise vor fi utilizate pentru analizarea solicitării și contactarea unității.",
+
+    privacyLink: "Consultă politica de confidențialitate",
+
+    consent:
+      "Confirm că sunt autorizat(ă) să transmit această solicitare în numele unității și sunt de acord cu prelucrarea ei de către CSTMed.",
+
+    requiredNotice:
+      "Câmpurile marcate cu asterisc sunt obligatorii.",
+
+    submit: "Trimite solicitarea",
+    submitting: "Solicitarea se trimite…",
+
+    sideTitle: "De ce să apelați la CSTMed?",
+
+    sideItems: [
+      "Analiza personalizată a nevoii",
+      "Identificarea profilurilor medicale potrivite",
+      "Sprijin pentru organizarea interviurilor",
+      "Urmărirea demersurilor și a integrării",
+    ],
+
+    successEyebrow: "Solicitare transmisă",
+    successTitle: "Vă mulțumim pentru solicitare",
+
+    successText:
+      "Nevoia de recrutare a fost transmisă către CSTMed. Vom contacta unitatea pentru analizarea postului și a profilului căutat.",
+
+    reference: "Referința solicitării",
+    backHome: "Înapoi la pagina principală",
+    newRequest: "Trimite altă solicitare",
   },
 };
