@@ -73,7 +73,7 @@ export default async function AdminKeywordsPage({
         <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-4 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
           <Link href="/">
             <Image
-              src="/images/cstmed-logo.jpg"
+              src="/images/cstmed-logo.png"
               alt="CSTMed"
               width={220}
               height={74}

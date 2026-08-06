@@ -113,7 +113,7 @@ export default function Home() {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-8 px-5 py-4 sm:px-8">
           <a href="#top" className="shrink-0" aria-label="CSTMed – Accueil">
   <Image
-    src="/images/cstmed-logo.jpg"
+    src="/images/cstmed-logo.png"
     alt="CSTMed – Parce que ta valeur doit être appréciée"
     width={240}
     height={80}

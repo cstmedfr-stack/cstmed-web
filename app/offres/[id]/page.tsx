@@ -140,7 +140,7 @@ Cordialement,`,
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 py-4 sm:px-8">
           <Link href="/" aria-label="CSTMed – Accueil">
             <Image
-              src="/images/cstmed-logo.jpg"
+              src="/images/cstmed-logo.png"
               alt="CSTMed – Parce que ta valeur doit être appréciée"
               width={240}
               height={80}

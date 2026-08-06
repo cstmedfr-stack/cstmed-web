@@ -183,7 +183,7 @@ export default async function RequestDetailsPage({
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-5 px-5 py-4 sm:px-8">
           <Link href="/admin">
             <Image
-              src="/images/cstmed-logo.jpg"
+              src="/images/cstmed-logo.png"
               alt="CSTMed"
               width={220}
               height={74}

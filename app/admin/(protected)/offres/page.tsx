@@ -421,7 +421,7 @@ export default async function JobsPage({
             aria-label="CSTMed – Accueil"
           >
             <Image
-              src="/images/cstmed-logo.jpg"
+              src="/images/cstmed-logo.png"
               alt="CSTMed – Parce que ta valeur doit être appréciée"
               width={240}
               height={80}

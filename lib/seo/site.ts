@@ -11,7 +11,7 @@ export const siteUrl = (
 export const siteName = "CSTMed";
 
 export const defaultSocialImage =
-  "/images/cstmed-logo.jpg";
+  "/images/cstmed-logo.png";
 
 export const seoContent = {
   ro: {

@@ -39,7 +39,7 @@ export default async function AdminLoginPage({
         <div className="border-b border-slate-100 px-7 py-7 text-center sm:px-10">
           <Link href="/" className="inline-flex">
             <Image
-              src="/images/cstmed-logo.jpg"
+              src="/images/cstmed-logo.png"
               alt="CSTMed"
               width={240}
               height={80}

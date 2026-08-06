@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { HomeEstablishmentsSection } from "@/components/public/home-establishments-section";
 import { SiteFooter } from "@/components/public/site-footer";
 import { SiteHeader } from "@/components/public/site-header";
 import {  isLocale,  type Locale,} from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import type { Metadata } from "next";
 import { JsonLd } from "@/components/seo/json-ld";
+import { HomeVisualSections } from "@/components/public/home-visual-sections";
 import {
   absoluteUrl,
   defaultSocialImage,
@@ -205,7 +207,7 @@ const informationCards =
     url: siteUrl,
 
     logo: absoluteUrl(
-      "/images/cstmed-logo.jpg",
+      "/images/cstmed-logo.png",
     ),
 
     email: "contact@cstmed.fr",
@@ -633,7 +635,8 @@ const informationCards =
           </a>
         </div>
       </section>
-
+<HomeVisualSections locale={lang} />
+<HomeEstablishmentsSection locale={lang} />
       <SiteFooter
         locale={lang}
         labels={dictionary.common}

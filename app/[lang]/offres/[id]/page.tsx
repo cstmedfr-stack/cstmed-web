@@ -429,7 +429,7 @@ const jobPostingJsonLd = {
       href={googleMapsUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="mt-4 inline-flex items-center gap-2 rounded-full border border-[#118c87] px-5 py-2.5 text-sm font-bold text-[#118c87] transition hover:bg-[#e5f7f5]"
+      className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#118c87] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#0c7773] focus:outline-none focus:ring-4 focus:ring-[#118c87]/20"
     >
       <span aria-hidden="true">📍</span>
 
