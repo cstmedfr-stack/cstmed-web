@@ -262,6 +262,26 @@ export default async function AdminDashboardPage() {
       .limit(1),
   ]);
 
+  const [
+  totalEstablishmentRequestsResult,
+  newEstablishmentRequestsResult,
+] = await Promise.all([
+  supabase
+    .from("establishment_requests")
+    .select("id", {
+      count: "exact",
+      head: true,
+    }),
+
+  supabase
+    .from("establishment_requests")
+    .select("id", {
+      count: "exact",
+      head: true,
+    })
+    .eq("status", "new"),
+]);
+
   const databaseError =
     totalJobsResult.error?.message ??
     draftJobsResult.error?.message ??
@@ -273,6 +293,8 @@ export default async function AdminDashboardPage() {
     recentApplicationsResult.error?.message ??
     recentJobsResult.error?.message ??
     recentImportsResult.error?.message ??
+    totalEstablishmentRequestsResult.error?.message ??
+newEstablishmentRequestsResult.error?.message ??
     null;
 
   const totalJobs = totalJobsResult.count ?? 0;
@@ -379,11 +401,10 @@ export default async function AdminDashboardPage() {
             </div>
           ) : null}
 
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
             <Link
               href="/admin/offres"
-              className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-            >
+              className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
               <p className="text-sm font-semibold text-slate-500">
                 Toutes les offres
               </p>
@@ -460,6 +481,36 @@ export default async function AdminDashboardPage() {
                 Traductions actuellement publiées
               </p>
             </Link>
+            <Link
+              href="/admin/etablissements"
+              className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+            >
+              <p className="text-sm font-semibold text-slate-500">
+                Demandes établissements
+              </p>
+
+              <p className="mt-3 text-4xl font-bold text-[#082a43]">
+                {<Link
+  href="/admin/etablissements"
+  className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+>
+  <span className="text-2xl">🏥</span>
+
+  <h2 className="mt-4 font-bold text-[#082a43]">
+    Établissements
+  </h2>
+
+  <p className="mt-2 text-sm leading-6 text-slate-500">
+    Consulter les besoins de recrutement.
+  </p>
+</Link>}
+              </p>
+
+              <p className="mt-4 text-xs font-semibold text-blue-700">
+                {newEstablishmentRequests} nouvelles
+              </p>
+            </Link>
+            
           </div>
 
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
@@ -492,6 +543,21 @@ export default async function AdminDashboardPage() {
                 Consulter les profils et les CV.
               </p>
             </Link>
+
+<Link
+  href="/admin/etablissements"
+  className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+>
+  <span className="text-2xl">🏥</span>
+
+  <h2 className="mt-4 font-bold text-[#082a43]">
+    Établissements
+  </h2>
+
+  <p className="mt-2 text-sm leading-6 text-slate-500">
+    Consulter les besoins de recrutement.
+  </p>
+</Link>
 
             <Link
               href="/admin/import"
