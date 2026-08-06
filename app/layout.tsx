@@ -18,15 +18,45 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://cstmed.fr"),
+  metadataBase: new URL(
+    "https://cstmed.fr",
+  ),
+
+  applicationName: "CSTMed",
 
   title: {
-    default: "CSTMed | Recrutement médical France–Europe",
+    default:
+      "CSTMed | Recrutement médical France–Europe",
+
     template: "%s | CSTMed",
   },
 
   description:
     "CSTMed accompagne les médecins européens et les établissements de santé français.",
+
+  authors: [
+    {
+      name: "CSTMed",
+    },
+  ],
+
+  creator: "CSTMed",
+  publisher: "CSTMed",
+
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+
+  openGraph: {
+    type: "website",
+    siteName: "CSTMed",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default async function RootLayout({

@@ -1,16 +1,12 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-
 import { SiteFooter } from "@/components/public/site-footer";
 import { SiteHeader } from "@/components/public/site-header";
-
-import {
-  isLocale,
-  type Locale,
-} from "@/lib/i18n/config";
-
+import {  isLocale,  type Locale,} from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getPublicJobs } from "@/lib/jobs/get-public-jobs";
+import type { Metadata } from "next";
+import {  defaultSocialImage,  getOpenGraphLocale,  seoContent,  siteName,} from "@/lib/seo/site";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +26,65 @@ type JobsPageProps = {
     page?: string;
   }>;
 };
+
+export async function generateMetadata({
+  params,
+}: JobsPageProps): Promise<Metadata> {
+  const { lang: requestedLang } = await params;
+
+  if (!isLocale(requestedLang)) {
+    return {};
+  }
+
+  const locale: Locale = requestedLang;
+  const content = seoContent[locale].jobs;
+  const canonicalPath =
+    `/${locale}/offres`;
+
+  return {
+    title: content.title,
+    description: content.description,
+
+    alternates: {
+      canonical: canonicalPath,
+
+      languages: {
+        ro: "/ro/offres",
+        fr: "/fr/offres",
+        "x-default": "/ro/offres",
+      },
+    },
+
+    openGraph: {
+      type: "website",
+      siteName,
+      title: content.title,
+      description: content.description,
+      url: canonicalPath,
+      locale: getOpenGraphLocale(locale),
+
+      alternateLocale: [
+        locale === "ro"
+          ? "fr_FR"
+          : "ro_RO",
+      ],
+
+      images: [
+        {
+          url: defaultSocialImage,
+          alt: "CSTMed",
+        },
+      ],
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: content.title,
+      description: content.description,
+      images: [defaultSocialImage],
+    },
+  };
+}
 
 function clean(value: string | undefined, length = 100) {
   return (value ?? "")

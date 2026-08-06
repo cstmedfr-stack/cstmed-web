@@ -10,12 +10,87 @@ import {
 } from "@/lib/i18n/config";
 
 import { getDictionary } from "@/lib/i18n/get-dictionary";
+import type { Metadata } from "next";
+
+import {
+  absoluteUrl,
+  defaultSocialImage,
+  getOpenGraphLocale,
+  seoContent,
+  siteName,
+  siteUrl,
+} from "@/lib/seo/site";
+
+import { JsonLd } from "@/components/seo/json-ld";
 
 type HomePageProps = {
   params: Promise<{
     lang: string;
   }>;
 };
+export async function generateMetadata({
+  params,
+}: HomePageProps): Promise<Metadata> {
+  const { lang: requestedLang } = await params;
+
+  if (!isLocale(requestedLang)) {
+    return {};
+  }
+
+  const locale: Locale = requestedLang;
+  const content = seoContent[locale].home;
+  const canonicalPath = `/${locale}`;
+
+  return {
+    title: content.title,
+    description: content.description,
+
+    alternates: {
+      canonical: canonicalPath,
+
+      languages: {
+        ro: "/ro",
+        fr: "/fr",
+        "x-default": "/ro",
+      },
+    },
+
+    openGraph: {
+      type: "website",
+      siteName,
+      title: content.title,
+      description: content.description,
+      url: canonicalPath,
+
+      locale: getOpenGraphLocale(locale),
+
+      alternateLocale: [
+        locale === "ro"
+          ? "fr_FR"
+          : "ro_RO",
+      ],
+
+      images: [
+        {
+          url: defaultSocialImage,
+          alt: "CSTMed",
+        },
+      ],
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: content.title,
+      description: content.description,
+      images: [defaultSocialImage],
+    },
+
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
+}
 
 function CheckIcon() {
   return (
@@ -40,6 +115,40 @@ export default async function HomePage({
 
   return (
     <main className="min-h-screen bg-white text-[#102435]">
+      <JsonLd
+  data={{
+    "@context": "https://schema.org",
+    "@type": "Organization",
+
+    name: "CSTMed",
+    url: siteUrl,
+
+    logo: absoluteUrl(
+      "/images/cstmed-logo.jpg",
+    ),
+
+    email: "contact@cstmed.fr",
+    telephone: "+33628262576",
+
+    areaServed: [
+      {
+        "@type": "Country",
+        name: "France",
+      },
+
+      {
+        "@type": "Country",
+        name: "Romania",
+      },
+    ],
+
+    knowsAbout: [
+      "Recrutement médical",
+      "Médecins européens",
+      "Emploi médical en France",
+    ],
+  }}
+/>
       <SiteHeader
         locale={lang}
         labels={dictionary.common}

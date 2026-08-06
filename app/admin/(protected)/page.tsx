@@ -314,6 +314,12 @@ newEstablishmentRequestsResult.error?.message ??
   const publishedTranslations =
     publishedTranslationsResult.count ?? 0;
 
+    const totalEstablishmentRequests =
+  totalEstablishmentRequestsResult.count ?? 0;
+
+const newEstablishmentRequests =
+  newEstablishmentRequestsResult.count ?? 0;
+  
   const recentApplications =
     (recentApplicationsResult.data ??
       []) as unknown as RecentApplication[];

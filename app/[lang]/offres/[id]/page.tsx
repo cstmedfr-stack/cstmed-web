@@ -1,16 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
 import { SiteFooter } from "@/components/public/site-footer";
 import { SiteHeader } from "@/components/public/site-header";
-
-import {
-  isLocale,
-  type Locale,
-} from "@/lib/i18n/config";
-
+import {  isLocale,  type Locale,} from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { createClient } from "@/lib/supabase/server";
+import type { Metadata } from "next";
+import { JsonLd } from "@/components/seo/json-ld";
+import {  absoluteUrl,  createSeoDescription,  defaultSocialImage,  getOpenGraphLocale,  seoContent,
+  siteName,} from "@/lib/seo/site";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +19,177 @@ type JobDetailsPageProps = {
   }>;
 };
 
+export async function generateMetadata({
+  params,
+}: JobDetailsPageProps): Promise<Metadata> {
+  const {
+    lang: requestedLang,
+    id,
+  } = await params;
+
+  if (!isLocale(requestedLang)) {
+    return {};
+  }
+
+  const locale: Locale = requestedLang;
+  const supabase = await createClient();
+
+  const { data: job } = await supabase
+    .from("jobs")
+    .select(
+      `
+        id,
+        title,
+        description,
+        specialty,
+        location_label,
+        city,
+        status
+      `,
+    )
+    .eq("id", id)
+    .eq("status", "published")
+    .maybeSingle();
+
+  if (!job) {
+    return {
+      title:
+        locale === "ro"
+          ? "Ofertă indisponibilă"
+          : "Offre indisponible",
+
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+
+  const frenchPath =
+    `/fr/offres/${job.id}`;
+
+  const romanianPath =
+    `/ro/offres/${job.id}`;
+
+  let pageTitle = job.title;
+  let pageDescription = job.description;
+  let hasRomanianTranslation = false;
+
+  const { data: translation } =
+    await supabase
+      .from("job_translations")
+      .select(
+        `
+          title,
+          summary,
+          description,
+          status
+        `,
+      )
+      .eq("job_id", id)
+      .eq("locale", "ro")
+      .eq("status", "published")
+      .maybeSingle();
+
+  if (translation) {
+    hasRomanianTranslation = true;
+  }
+
+  if (locale === "ro") {
+    if (!translation) {
+      return {
+        title:
+          "Ofertă disponibilă numai în limba franceză",
+
+        description:
+          "Această ofertă medicală poate fi consultată momentan numai în limba franceză.",
+
+        alternates: {
+          canonical: frenchPath,
+
+          languages: {
+            fr: frenchPath,
+          },
+        },
+
+        robots: {
+          index: false,
+          follow: true,
+        },
+      };
+    }
+
+    pageTitle =
+      translation.title?.trim() ||
+      job.title;
+
+    pageDescription =
+      translation.summary?.trim() ||
+      translation.description?.trim() ||
+      job.description;
+  }
+
+  const description = createSeoDescription(
+    pageDescription,
+    seoContent[locale]
+      .jobFallbackDescription,
+  );
+
+  const canonicalPath =
+    locale === "ro"
+      ? romanianPath
+      : frenchPath;
+
+  const languageAlternates =
+    hasRomanianTranslation
+      ? {
+          ro: romanianPath,
+          fr: frenchPath,
+          "x-default": romanianPath,
+        }
+      : {
+          fr: frenchPath,
+          "x-default": frenchPath,
+        };
+
+  return {
+    title: pageTitle,
+    description,
+
+    alternates: {
+      canonical: canonicalPath,
+      languages: languageAlternates,
+    },
+
+    openGraph: {
+      type: "article",
+      siteName,
+      title: pageTitle,
+      description,
+      url: canonicalPath,
+      locale: getOpenGraphLocale(locale),
+
+      images: [
+        {
+          url: defaultSocialImage,
+          alt: "CSTMed",
+        },
+      ],
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: pageTitle,
+      description,
+      images: [defaultSocialImage],
+    },
+
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
+}
 export default async function JobDetailsPage({
   params,
 }: JobDetailsPageProps) {
@@ -40,21 +209,25 @@ export default async function JobDetailsPage({
 
   const { data: job, error } = await supabase
     .from("jobs")
-    .select(
-      `
-        id,
-        title,
-        description,
-        specialty,
-        location_label,
-        city,
-        postal_code,
-        contract_type,
-        working_time,
-        salary_text,
-        experience_text,
-        france_travail_published_at
-      `,
+.select(
+  `
+    id,
+    source_job_id,
+    title,
+    description,
+    company_name,
+    specialty,
+    location_label,
+    city,
+    postal_code,
+    contract_type,
+    working_time,
+    salary_text,
+    experience_text,
+    france_travail_published_at,
+    created_at
+  `,
+  
     )
     .eq("id", id)
     .eq("status", "published")
@@ -130,9 +303,80 @@ export default async function JobDetailsPage({
       .filter(Boolean)
       .join(" ") ||
     "France";
+const hasJobLocation = Boolean(
+  job.city ||
+    job.postal_code ||
+    job.location_label,
+);
 
+const canRenderJobPosting = Boolean(
+  description?.trim() &&
+    hasJobLocation,
+);
+
+const jobPostingJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "JobPosting",
+
+  title,
+  description,
+
+  datePosted:
+    job.france_travail_published_at ??
+    job.created_at,
+
+  directApply: true,
+
+  identifier: {
+    "@type": "PropertyValue",
+
+    name:
+      job.company_name?.trim() ||
+      "France Travail",
+
+    value: job.source_job_id,
+  },
+
+  hiringOrganization: {
+    "@type": "Organization",
+
+    name:
+      job.company_name?.trim() ||
+      "confidential",
+  },
+
+  jobLocation: {
+    "@type": "Place",
+
+    address: {
+      "@type": "PostalAddress",
+
+      addressLocality:
+        job.city ||
+        job.location_label ||
+        undefined,
+
+      addressRegion:
+        job.location_label ||
+        undefined,
+
+      postalCode:
+        job.postal_code ||
+        undefined,
+
+      addressCountry: "FR",
+    },
+  },
+
+  url: absoluteUrl(
+    `/${lang}/offres/${job.id}`,
+  ),
+};
   return (
     <main className="min-h-screen bg-[#f5f9fb] text-[#102435]">
+      {canRenderJobPosting ? (
+  <JsonLd data={jobPostingJsonLd} />
+) : null}
       <SiteHeader
         locale={lang}
         labels={dictionary.common}

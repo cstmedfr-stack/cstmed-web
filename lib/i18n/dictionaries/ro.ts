@@ -311,7 +311,7 @@ export const ro: Dictionary = {
       "Poți preciza disponibilitatea, criteriile geografice sau alte informații utile.",
 
     cv: "CV-ul tău",
-    cvHelp: "Formate acceptate: PDF, DOC sau DOCX. Dimensiune maximă: 5 MB.",
+    cvHelp: "Formate acceptate: PDF, DOC sau DOCX. Dimensiune maximă: 4 MB.",
 
     consent:
   "Confirm că am consultat politica de confidențialitate și solicit CSTMed să îmi analizeze candidatura.",

@@ -11,7 +11,7 @@ import {
   type Locale,
 } from "@/lib/i18n/config";
 
-const MAX_CV_SIZE = 5 * 1024 * 1024;
+const MAX_CV_SIZE = 4 * 1024 * 1024;
 
 const allowedExtensions = {
   pdf: "application/pdf",
@@ -262,8 +262,8 @@ export async function submitApplication(
     redirectWithError(
       locale,
       locale === "ro"
-        ? "CV-ul depășește limita de 5 MB."
-        : "Le CV dépasse la limite de 5 Mo.",
+        ? "CV-ul depășește limita de 4 MB."
+        : "Le CV dépasse la limite de 4 Mo.",
       requestedJobId,
     );
   }

@@ -310,7 +310,7 @@ export const fr = {
       "Précisez votre disponibilité, vos critères géographiques ou toute information utile.",
 
     cv: "Votre CV",
-    cvHelp: "Formats acceptés : PDF, DOC ou DOCX. Taille maximale : 5 Mo.",
+    cvHelp: "Formats acceptés : PDF, DOC ou DOCX. Taille maximale : 4 Mo.",
 
     consent:
   "Je confirme avoir pris connaissance de la politique de confidentialité et demande à CSTMed de traiter ma candidature.",
