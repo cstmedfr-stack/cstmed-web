@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
+import { publicLinks } from "@/lib/site/public-links";
 import { JsonLd } from "@/components/seo/json-ld";
 import { SiteFooter } from "@/components/public/site-footer";
 import { SiteHeader } from "@/components/public/site-header";
@@ -1003,16 +1003,19 @@ export default async function JobDetailsPage({
                 <div className="my-6 border-t border-white/10" />
 
                 <a
-                  href="tel:+33628262576"
+             href={`tel:${publicLinks.phoneRomaniaHref}`}
                   className="flex min-h-[50px] items-center justify-center gap-2 rounded-full border border-white/25 px-6 py-3 text-center font-black transition hover:border-[#65d9ce] hover:text-[#65d9ce]"
                 >
                   <span aria-hidden="true">
                     ☎
                   </span>
 
-                  {
-                    labels.callButton
-                  }
+                  <span>
+                  {labels.callButton}
+                  <span className="ml-2 text-xs font-semibold opacity-80">
+                    {publicLinks.phoneRomaniaDisplay}
+                  </span>
+                </span>
                 </a>
               </div>
 

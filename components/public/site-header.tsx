@@ -233,13 +233,35 @@ export function SiteHeader({
 
               </div>
 
-              <a
-                href={`tel:${publicLinks.phoneHref}`}
-                className="flex items-center gap-1.5 font-semibold transition hover:text-[#65d9ce]"
-              >
-                <PhoneIcon />
-                {publicLinks.phoneDisplay}
-              </a>
+             <div className="flex items-center gap-4">
+  <a
+    href={`tel:${publicLinks.phoneRomaniaHref}`}
+    className="flex items-center gap-1.5 font-semibold transition hover:text-[#65d9ce]"
+    title="CSTMed România"
+  >
+    <PhoneIcon />
+
+    <span className="font-black text-[#65d9ce]">
+      RO
+    </span>
+
+    {publicLinks.phoneRomaniaDisplay}
+  </a>
+
+  <a
+    href={`tel:${publicLinks.phoneHref}`}
+    className="flex items-center gap-1.5 font-semibold transition hover:text-[#65d9ce]"
+    title="CSTMed France"
+  >
+    <PhoneIcon />
+
+    <span className="font-black text-[#65d9ce]">
+      FR
+    </span>
+
+    {publicLinks.phoneDisplay}
+  </a>
+</div>
 
               <a
                 href={`mailto:${publicLinks.email}`}

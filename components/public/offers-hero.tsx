@@ -126,11 +126,13 @@ export function OffersHero({
             </div>
 
             <Link
-              href={`/${locale}/candidature`}
-              className="inline-flex min-h-14 items-center justify-center rounded-full bg-white px-7 py-3 font-black text-[#082a43] shadow-lg transition hover:-translate-y-0.5 hover:bg-slate-100"
-            >
-              {content.cvButton}
-            </Link>
+                    href={`/${locale}/candidature`}
+                    className="inline-flex min-h-14 items-center justify-center rounded-full bg-white px-7 py-3 font-black shadow-lg transition hover:-translate-y-0.5 hover:bg-slate-100"
+                    >
+                    <span style={{ color: "#082A43" }}>
+                        {content.cvButton}
+                    </span>
+                    </Link>
           </div>
         </div>
       </div>

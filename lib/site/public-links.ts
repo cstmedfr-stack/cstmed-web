@@ -1,25 +1,29 @@
 export const publicLinks = {
-  /*
-   * Adăugăm linkurile exacte după ce sunt verificate.
-   * Cât timp valoarea este goală, rețeaua nu apare
-   * în header sau în secțiunea de contact.
-   */
- facebook:
-  "https://www.facebook.com/people/CSTMed/61590001061344/",
+  facebook:
+    "https://www.facebook.com/people/CSTMed/61590001061344/",
 
-instagram:
-  "https://www.instagram.com/cstmed.fr",
+  instagram:
+    "https://www.instagram.com/cstmed.fr",
 
   linkedin: "",
 
-  email: "contact@cstmed.fr",
+  email:
+    "contact@cstmed.fr",
 
-  phoneDisplay: "+33 (0) 6 28 26 25 76",
-  phoneHref: "+33628262576",
+  // Franța
+  phoneDisplay:
+    "+33 (0) 6 28 26 25 76",
 
-  /*
-   * Pentru wa.me folosim doar cifrele,
-   * fără semnul + și fără spații.
-   */
-  whatsappNumber: "33628262576",
+  phoneHref:
+    "+33628262576",
+
+  // România
+  phoneRomaniaDisplay:
+    "+40 770 909 566",
+
+  phoneRomaniaHref:
+    "+40770909566",
+
+  whatsappNumber:
+    "33628262576",
 } as const;

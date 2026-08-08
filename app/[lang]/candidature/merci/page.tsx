@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
+import { publicLinks } from "@/lib/site/public-links";
 import { SiteFooter } from "@/components/public/site-footer";
 import { SiteHeader } from "@/components/public/site-header";
 
@@ -406,11 +406,14 @@ export default async function ApplicationSuccessPage({
               </p>
 
               <a
-                href="tel:+33628262576"
-                className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center rounded-full bg-[#118c87] px-5 py-3 text-sm font-black text-white transition hover:bg-[#0c7773]"
-              >
-                {content.call}
-              </a>
+                  href={`tel:${publicLinks.phoneRomaniaHref}`}
+                  className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center rounded-full bg-[#118c87] px-5 py-3 text-sm font-black text-white transition hover:bg-[#0c7773]"
+                >
+                  {content.call}
+                  <span className="ml-2">
+                    {publicLinks.phoneRomaniaDisplay}
+                  </span>
+                </a>
             </div>
           </aside>
         </div>
