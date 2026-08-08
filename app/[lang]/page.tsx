@@ -7,7 +7,10 @@ import {  isLocale,  type Locale,} from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import type { Metadata } from "next";
 import { JsonLd } from "@/components/seo/json-ld";
+import { HomeHero } from "@/components/public/home-hero";
+import { HomeContactSection } from "@/components/public/home-contact-section";
 import { HomeVisualSections } from "@/components/public/home-visual-sections";
+import { HomeAdministrativeSection } from "@/components/public/home-administrative-section";
 import {
   absoluteUrl,
   defaultSocialImage,
@@ -236,8 +239,8 @@ const informationCards =
         locale={lang}
         labels={dictionary.common}
       />
-
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#082a43] via-[#0c3c5d] to-[#11696d] text-white">
+<HomeHero locale={lang} />
+      <section className="hidden relative overflow-hidden bg-gradient-to-br from-[#082a43] via-[#0c...">
         <div className="mx-auto grid max-w-7xl gap-14 px-5 py-20 sm:px-8 sm:py-28 lg:grid-cols-2 lg:items-center">
           <div>
             <div className="inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm">
@@ -318,7 +321,7 @@ const informationCards =
         </div>
       </section>
 
-<section className="relative z-10 -mt-6 px-5 sm:px-8">
+<section className="hidden relative z-10 -mt-6 px-5 sm:px-8">
   <div className="mx-auto grid max-w-7xl overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-xl md:grid-cols-3">
     {serviceCommitments.map(
       (commitment, index) => (
@@ -636,7 +639,9 @@ const informationCards =
         </div>
       </section>
 <HomeVisualSections locale={lang} />
+<HomeAdministrativeSection locale={lang} />
 <HomeEstablishmentsSection locale={lang} />
+<HomeContactSection locale={lang} />
       <SiteFooter
         locale={lang}
         labels={dictionary.common}
