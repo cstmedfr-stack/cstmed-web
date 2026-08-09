@@ -102,7 +102,7 @@ export function HomeAdministrativeSection({
       <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[0.95fr_1.05fr]">
         <div className="relative min-h-[460px] overflow-hidden rounded-[2rem] shadow-xl sm:min-h-[570px]">
           <Image
-            src="/images/home/administrative-support.png"
+          src="/images/home/admin-support-cstmed.png"
             alt={
               locale === "ro"
                 ? "Sprijin CSTMed pentru demersurile administrative"
