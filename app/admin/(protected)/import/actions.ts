@@ -10,12 +10,40 @@ type ImportApiResponse = {
   importedCount?: number;
   duplicateCount?: number;
   errorCount?: number;
-  error?: string;
+
+  error?: unknown;
+
   errors?: Array<{
     keyword: string;
     message: string;
   }>;
 };
+
+function getImportErrorMessage(value: unknown) {
+  if (typeof value === "string") {
+    return value;
+  }
+
+  if (
+    value &&
+    typeof value === "object"
+  ) {
+    if (
+      "message" in value &&
+      typeof value.message === "string"
+    ) {
+      return value.message;
+    }
+
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return "Erreur inconnue lors de l’importation.";
+    }
+  }
+
+  return null;
+}
 
 function getFormString(formData: FormData, name: string) {
   const value = formData.get(name);
@@ -145,11 +173,28 @@ try {
   result =
     (await response.json()) as ImportApiResponse;
 
-  if (!response.ok) {
-    importError =
-      result.error ??
-      "L’importation France Travail a échoué.";
-  }
+if (
+  !response.ok ||
+  result.success === false
+) {
+  const generalError =
+    getImportErrorMessage(
+      result.error,
+    );
+
+  const detailedErrors =
+    result.errors
+      ?.map(
+        (item) =>
+          `${item.keyword}: ${item.message}`,
+      )
+      .join(" | ");
+
+  importError =
+    generalError ??
+    detailedErrors ??
+    "L’importation France Travail a échoué.";
+}
 } catch (error) {
   importError =
     error instanceof Error

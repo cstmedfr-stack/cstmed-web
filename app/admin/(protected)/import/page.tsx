@@ -134,13 +134,17 @@ export default async function AdminImportPage({
             href="/admin"
             className="rounded-full bg-[#082a43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0b3a59]"
           >
-            Tableau de bord
+          <span style={{ color: "#ffffff" }}>
+  Tableau de bord
+</span>
           </Link>
             <Link
                 href="/admin/mots-cles"
                 className="rounded-full bg-[#082a43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0b3a59]"
                 >
-                Gérer les mots-clés
+                    <span style={{ color: "#ffffff" }}>
+        Gérer les mots-clés
+      </span>
                 </Link>
             <Link
               href="/admin/offres"
@@ -152,7 +156,9 @@ export default async function AdminImportPage({
   href="/admin/candidatures"
   className="rounded-full bg-[#082a43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0b3a59]"
 >
+  <span style={{ color: "#ffffff" }}>
   Candidatures
+</span>
 </Link>
             <Link
               href="/offres"

@@ -494,6 +494,9 @@ const newEstablishmentRequests =
               <p className="text-sm font-semibold text-slate-500">
                 Demandes établissements
               </p>
+           <p className="mt-3 text-4xl font-bold text-[#082a43]">
+  {totalEstablishmentRequests}
+</p>
 
               <p className="mt-3 text-4xl font-bold text-[#082a43]">
                 {<Link
