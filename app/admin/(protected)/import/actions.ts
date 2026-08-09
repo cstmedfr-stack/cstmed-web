@@ -160,9 +160,16 @@ try {
       method: "POST",
 
       headers: {
-        "Content-Type": "application/json",
-        "x-import-token": adminToken,
-      },
+  "Content-Type": "application/json",
+  "x-import-token": adminToken,
+
+  ...(process.env.VERCEL_AUTOMATION_BYPASS_SECRET
+    ? {
+        "x-vercel-protection-bypass":
+          process.env.VERCEL_AUTOMATION_BYPASS_SECRET,
+      }
+    : {}),
+},
 
       body: JSON.stringify(requestBody),
 
