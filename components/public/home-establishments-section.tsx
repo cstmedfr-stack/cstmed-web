@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import type { Locale } from "@/lib/i18n/config";
-
+import { publicLinks } from "@/lib/site/public-links";
 type HomeEstablishmentsSectionProps = {
   locale: Locale;
 };
@@ -119,7 +119,7 @@ export function HomeEstablishmentsSection({
 
   return (
     <section
-      id="etablissements"
+    
       className="scroll-mt-40 bg-[#082a43] px-5 py-16 text-white sm:px-8 sm:py-20"
     >
       <div className="mx-auto max-w-7xl">
@@ -222,10 +222,15 @@ export function HomeEstablishmentsSection({
               </Link>
 
               <a
-                href="tel:+33628262576"
+             href={`tel:${publicLinks.phoneHref}`}
                 className="inline-flex min-h-13 items-center justify-center rounded-full border border-white/50 bg-white/10 px-7 py-3.5 text-center font-bold text-white transition hover:bg-white/20"
               >
-                {content.secondaryButton}
+             <span>
+              {content.secondaryButton}
+              <span className="ml-2 text-sm font-semibold opacity-80">
+                {publicLinks.phoneDisplay}
+              </span>
+            </span>
               </a>
             </div>
 

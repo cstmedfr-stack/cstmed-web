@@ -57,9 +57,9 @@ export function HomeHero({
           responseLabel:
             "Răspuns la solicitări",
 
-          profilesValue: "48 h",
-          profilesLabel:
-            "Prima selecție de profiluri*",
+          profilesValue: "100%",
+profilesLabel:
+  "Servicii gratuite pentru medici",
 
           imageEyebrow:
             "CSTMed • Sprijin personalizat",
@@ -68,7 +68,7 @@ export function HomeHero({
             "Un singur interlocutor pentru proiectul tău profesional în Franța.",
 
           note:
-            "* În funcție de specialitate și disponibilitatea profilurilor.",
+         "Fără taxe CSTMed de dosar, intermediere sau însoțire pentru medici.",
         }
       : {
           eyebrow:
@@ -99,9 +99,9 @@ export function HomeHero({
           responseLabel:
             "Réponse aux demandes",
 
-          profilesValue: "48 h",
+          profilesValue: "100%",
           profilesLabel:
-            "Première sélection de profils*",
+            "Services gratuits pour les médecins",
 
           imageEyebrow:
             "CSTMed • Accompagnement personnalisé",
@@ -109,8 +109,8 @@ export function HomeHero({
           imageText:
             "Un interlocuteur unique pour votre projet professionnel en France.",
 
-          note:
-            "* Selon la spécialité et la disponibilité des profils adaptés.",
+         note:
+          "Aucun frais CSTMed de dossier, de mise en relation ou d’accompagnement pour les médecins.",
         };
 
   return (
@@ -164,9 +164,9 @@ export function HomeHero({
             </div>
 
             <div className="border-l border-slate-200 p-5 sm:p-6">
-              <p className="text-3xl font-black text-[#0965d8]">
-                {content.profilesValue}
-              </p>
+            <p className="text-3xl font-black text-[#118c87]">
+              {content.profilesValue}
+            </p>
 
               <p className="mt-1 text-sm font-bold leading-5 text-[#082a43]">
                 {content.profilesLabel}

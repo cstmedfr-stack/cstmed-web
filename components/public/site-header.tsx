@@ -1,11 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { HeaderLanguageSwitcher } from "@/components/public/header-language-switcher";
 import { FloatingWhatsApp } from "@/components/public/floating-whatsapp";
+import { HeaderLanguageSwitcher } from "@/components/public/header-language-switcher";
 
-import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import type { Locale } from "@/lib/i18n/config";
 
 import { publicLinks } from "@/lib/site/public-links";
 
@@ -25,8 +25,53 @@ function SearchIcon() {
       strokeWidth="2.3"
       strokeLinecap="round"
     >
-      <circle cx="11" cy="11" r="7" />
+      <circle
+        cx="11"
+        cy="11"
+        r="7"
+      />
+
       <path d="m20 20-4-4" />
+    </svg>
+  );
+}
+
+function PhoneIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className="h-3.5 w-3.5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    >
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.8a2 2 0 0 1-.45 2.11L8.07 9.9a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.32 1.84.55 2.8.68A2 2 0 0 1 22 16.92Z" />
+    </svg>
+  );
+}
+
+function MailIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className="h-3.5 w-3.5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    >
+      <rect
+        x="3"
+        y="5"
+        width="18"
+        height="14"
+        rx="2"
+      />
+
+      <path d="m3 7 9 6 9-6" />
     </svg>
   );
 }
@@ -79,51 +124,25 @@ function InstagramIcon() {
   );
 }
 
-function PhoneIcon() {
+function ChevronDown() {
   return (
     <svg
-      viewBox="0 0 24 24"
+      viewBox="0 0 20 20"
       aria-hidden="true"
-      className="h-3.5 w-3.5"
+      className="h-4 w-4 transition group-open:rotate-180"
       fill="none"
       stroke="currentColor"
       strokeWidth="2"
-      strokeLinecap="round"
     >
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.8a2 2 0 0 1-.45 2.11L8.07 9.9a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.32 1.84.55 2.8.68A2 2 0 0 1 22 16.92Z" />
-    </svg>
-  );
-}
-
-function MailIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      className="h-3.5 w-3.5"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-    >
-      <rect
-        x="3"
-        y="5"
-        width="18"
-        height="14"
-        rx="2"
-      />
-
-      <path d="m3 7 9 6 9-6" />
+      <path d="m5 7.5 5 5 5-5" />
     </svg>
   );
 }
 
 export function SiteHeader({
   locale,
-  labels,
 }: SiteHeaderProps) {
-  const text =
+  const content =
     locale === "ro"
       ? {
           tagline:
@@ -132,20 +151,83 @@ export function SiteHeader({
           search:
             "Caută oferte",
 
+          home:
+            "Acasă",
+
+          doctors:
+            "Medici",
+
           establishments:
-            "Pentru unități medicale",
+            "Unități medicale",
 
-          method:
-            "Metoda noastră",
-
-          sendCv:
-            "Trimite CV-ul",
+          about:
+            "Cine suntem?",
 
           contact:
-            "Contactează-ne",
+            "Contact",
 
-          navigation:
+          menu:
             "Meniu",
+
+          doctorMenu: [
+            {
+              label:
+                "Oferte de muncă",
+              href:
+                `/${locale}/offres`,
+            },
+            {
+              label:
+                "Pregătește-ți proiectul",
+              href:
+                `/${locale}#projet-medical`,
+            },
+            {
+              label:
+                "Specialități medicale",
+              href:
+                `/${locale}#specialites`,
+            },
+            {
+              label:
+                "Însoțire și instalare în Franța",
+              href:
+                `/${locale}#accompagnement-medecins`,
+            },
+            {
+              label:
+                "Demersuri administrative",
+              href:
+                `/${locale}#demarches-administratives`,
+            },
+            {
+              label:
+                "Trimite CV-ul",
+              href:
+                `/${locale}/candidature`,
+            },
+          ],
+
+          aboutMenu: [
+            {
+              label:
+                "Cine suntem?",
+              href:
+                `/${locale}#qui-sommes-nous`,
+            },
+            {
+              label:
+                "Expertiza noastră",
+              href:
+                `/${locale}#expertise`,
+            },
+            {
+              label:
+                "Metoda noastră",
+              href:
+                `/${locale}#methode-cstmed`,
+            },
+          ],
         }
       : {
           tagline:
@@ -154,284 +236,399 @@ export function SiteHeader({
           search:
             "Recherche d’offres",
 
+          home:
+            "Accueil",
+
+          doctors:
+            "Médecins",
+
           establishments:
-            "Pour les établissements",
+            "Établissements",
 
-          method:
-            "Notre méthode",
-
-          sendCv:
-            "Envoyer mon CV",
+          about:
+            "Qui sommes-nous ?",
 
           contact:
-            "Nous contacter",
+            "Contact",
 
-          navigation:
+          menu:
             "Menu",
-        };
 
-  const navigationLinks = [
-    {
-      href: `/${locale}`,
-      label: labels.nav.home,
-    },
-    {
-      href: `/${locale}#medecins`,
-      label: labels.nav.doctors,
-    },
-    {
-      href: `/${locale}#etablissements`,
-      label: text.establishments,
-    },
-    {
-      href: `/${locale}#methode`,
-      label: text.method,
-    },
-  ];
+          doctorMenu: [
+            {
+              label:
+                "Offres d’emploi",
+              href:
+                `/${locale}/offres`,
+            },
+            {
+              label:
+                "Préparer votre projet",
+              href:
+                `/${locale}#projet-medical`,
+            },
+            {
+              label:
+                "Spécialités médicales",
+              href:
+                `/${locale}#specialites`,
+            },
+            {
+              label:
+                "Accompagnement & installation",
+              href:
+                `/${locale}#accompagnement-medecins`,
+            },
+            {
+              label:
+                "Démarches administratives",
+              href:
+                `/${locale}#demarches-administratives`,
+            },
+            {
+              label:
+                "Envoyer mon CV",
+              href:
+                `/${locale}/candidature`,
+            },
+          ],
+
+          aboutMenu: [
+            {
+              label:
+                "Qui sommes-nous ?",
+              href:
+                `/${locale}#qui-sommes-nous`,
+            },
+            {
+              label:
+                "Notre expertise",
+              href:
+                `/${locale}#expertise`,
+            },
+            {
+              label:
+                "Notre méthode",
+              href:
+                `/${locale}#methode-cstmed`,
+            },
+          ],
+        };
 
   return (
     <>
-      <header className="relative z-50 bg-white shadow-sm">
+      {/* BARA DE SUS — NU ESTE STICKY */}
+      <div className="relative z-[60] bg-[#082a43] text-white">
+        <div className="mx-auto flex min-h-9 max-w-[1450px] items-center justify-between gap-4 px-5 py-1.5 text-[11px] sm:px-8">
+          <p className="font-semibold text-slate-200">
+            {content.tagline}
+          </p>
 
-        {/* Bara superioară */}
-        <div className="bg-[#082a43] text-white">
-          <div className="mx-auto flex min-h-9 max-w-[1400px] items-center justify-between gap-4 px-5 py-1.5 text-[11px] sm:px-8">
+          <div className="hidden items-center gap-4 lg:flex">
+            <div className="flex items-center gap-2">
+              {publicLinks.facebook ? (
+                <a
+                  href={publicLinks.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Facebook CSTMed"
+                  className="flex h-7 w-7 items-center justify-center rounded-full border border-white/20 transition hover:border-[#65d9ce] hover:bg-[#65d9ce] hover:text-[#082a43]"
+                >
+                  <FacebookIcon />
+                </a>
+              ) : null}
 
-            <p className="font-semibold text-slate-200">
-              {text.tagline}
-            </p>
-
-            <div className="hidden items-center gap-5 md:flex">
-
-              <div className="flex items-center gap-2.5">
-
-                {publicLinks.facebook ? (
-                  <a
-                    href={publicLinks.facebook}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Facebook CSTMed"
-                    title="Facebook"
-                    className="flex h-7 w-7 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-[#65d9ce] hover:bg-[#65d9ce] hover:text-[#082a43]"
-                  >
-                    <FacebookIcon />
-                  </a>
-                ) : null}
-
-                {publicLinks.instagram ? (
-                  <a
-                    href={publicLinks.instagram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Instagram CSTMed"
-                    title="Instagram"
-                    className="flex h-7 w-7 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-[#65d9ce] hover:bg-[#65d9ce] hover:text-[#082a43]"
-                  >
-                    <InstagramIcon />
-                  </a>
-                ) : null}
-
-              </div>
-
-             <div className="flex items-center gap-4">
-  <a
-    href={`tel:${publicLinks.phoneRomaniaHref}`}
-    className="flex items-center gap-1.5 font-semibold transition hover:text-[#65d9ce]"
-    title="CSTMed România"
-  >
-    <PhoneIcon />
-
-    <span className="font-black text-[#65d9ce]">
-      RO
-    </span>
-
-    {publicLinks.phoneRomaniaDisplay}
-  </a>
-
-  <a
-    href={`tel:${publicLinks.phoneHref}`}
-    className="flex items-center gap-1.5 font-semibold transition hover:text-[#65d9ce]"
-    title="CSTMed France"
-  >
-    <PhoneIcon />
-
-    <span className="font-black text-[#65d9ce]">
-      FR
-    </span>
-
-    {publicLinks.phoneDisplay}
-  </a>
-</div>
-
-              <a
-                href={`mailto:${publicLinks.email}`}
-                className="flex items-center gap-1.5 font-semibold transition hover:text-[#65d9ce]"
-              >
-                <MailIcon />
-                {publicLinks.email}
-              </a>
-
+              {publicLinks.instagram ? (
+                <a
+                  href={publicLinks.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram CSTMed"
+                  className="flex h-7 w-7 items-center justify-center rounded-full border border-white/20 transition hover:border-[#65d9ce] hover:bg-[#65d9ce] hover:text-[#082a43]"
+                >
+                  <InstagramIcon />
+                </a>
+              ) : null}
             </div>
+
+            <a
+              href={`tel:${publicLinks.phoneRomaniaHref}`}
+              className="flex items-center gap-1.5 font-semibold transition hover:text-[#65d9ce]"
+            >
+              <PhoneIcon />
+
+              <span className="font-black text-[#65d9ce]">
+                RO
+              </span>
+
+              {publicLinks.phoneRomaniaDisplay}
+            </a>
+
+            <a
+              href={`tel:${publicLinks.phoneHref}`}
+              className="flex items-center gap-1.5 font-semibold transition hover:text-[#65d9ce]"
+            >
+              <PhoneIcon />
+
+              <span className="font-black text-[#65d9ce]">
+                FR
+              </span>
+
+              {publicLinks.phoneDisplay}
+            </a>
+
+            <a
+              href={`mailto:${publicLinks.email}`}
+              className="flex items-center gap-1.5 font-semibold transition hover:text-[#65d9ce]"
+            >
+              <MailIcon />
+
+              {publicLinks.email}
+            </a>
           </div>
         </div>
+      </div>
 
-        {/* Header principal */}
-        <div className="border-b border-slate-200">
-          <div className="mx-auto flex min-h-[110px] max-w-[1400px] items-center gap-5 px-5 sm:px-8 lg:min-h-[104px]">
+      {/* PARTEA CARE RĂMÂNE PERMANENT VIZIBILĂ */}
+      <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-md backdrop-blur-xl">
+        {/* DESKTOP / TABLETĂ */}
+        <div className="mx-auto flex min-h-[92px] max-w-[1450px] items-center gap-4 px-5 sm:px-8 lg:min-h-[88px]">
+          {/* LOGO */}
+          <Link
+            href={`/${locale}`}
+            aria-label="CSTMed"
+            className="shrink-0"
+          >
+            <Image
+              src="/images/cstmed-logo.png"
+              alt="CSTMed"
+              width={420}
+              height={140}
+              priority
+              className="h-auto w-[145px] object-contain sm:w-[165px] xl:w-[175px]"
+            />
+          </Link>
 
-            {/* Logo */}
+          {/* RECHERCHE D'OFFRES */}
+          <Link
+            href={`/${locale}/offres`}
+            className="hidden min-h-[48px] shrink-0 items-center justify-center gap-2 rounded-full bg-[#0D6EFD] px-5 py-3 text-[11px] font-black uppercase tracking-[0.03em] text-[#082A43] shadow-lg shadow-blue-900/15 transition hover:-translate-y-0.5 hover:bg-[#0B63E5] md:inline-flex xl:min-w-[220px]"
+          >
+            <SearchIcon />
+
+            {content.search}
+          </Link>
+
+          {/* NAVIGAȚIE DESKTOP */}
+          <nav
+            aria-label={content.menu}
+            className="ml-auto hidden items-center gap-1 lg:flex"
+          >
             <Link
               href={`/${locale}`}
-              aria-label="CSTMed"
-              className="shrink-0"
+              className="whitespace-nowrap rounded-full px-3 py-2 text-[12px] font-black text-slate-700 transition hover:bg-slate-100 hover:text-[#0965d8]"
             >
-              <Image
-                src="/images/cstmed-logo.png"
-                alt="CSTMed"
-                width={420}
-                height={140}
-                priority
-                className="h-auto w-[165px] object-contain sm:w-[180px]"
-              />
+              {content.home}
             </Link>
 
-            {/* Recherche d'offres */}
+            {/* MÉDECINS */}
+            <details className="group relative">
+              <summary className="flex cursor-pointer list-none items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-2 text-[12px] font-black text-slate-700 transition hover:bg-slate-100 hover:text-[#0965d8]">
+                {content.doctors}
+
+                <ChevronDown />
+              </summary>
+
+              <div className="absolute left-0 top-[calc(100%+10px)] w-[290px] overflow-hidden rounded-[1.4rem] border border-slate-200 bg-white p-2 shadow-2xl">
+                <div className="px-3 pb-2 pt-2">
+                  <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[#118c87]">
+                    {locale === "ro"
+                      ? "Pentru medici"
+                      : "Pour les médecins"}
+                  </p>
+                </div>
+
+                {content.doctorMenu.map(
+                  (item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="flex items-center justify-between rounded-xl px-3 py-3 text-sm font-bold text-slate-700 transition hover:bg-[#f5f9fb] hover:text-[#0965d8]"
+                    >
+                      {item.label}
+
+                      <span
+                        aria-hidden="true"
+                        className="text-slate-300"
+                      >
+                        →
+                      </span>
+                    </Link>
+                  ),
+                )}
+
+                <div className="mt-2 rounded-xl bg-[#e5f7f5] px-3 py-3 text-xs font-black leading-5 text-[#0c7773]">
+                  {locale === "ro"
+                    ? "✓ Servicii CSTMed 100% gratuite pentru medici"
+                    : "✓ Services CSTMed 100 % gratuits pour les médecins"}
+                </div>
+              </div>
+            </details>
+
+            {/* ÉTABLISSEMENTS */}
             <Link
-              href={`/${locale}/offres`}
-              className="hidden min-h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-[#0D6EFD] px-6 py-3 text-[12px] font-black uppercase tracking-[0.03em] text-[#082A43] shadow-lg shadow-blue-900/15 transition hover:-translate-y-0.5 hover:bg-[#0B63E5] md:inline-flex lg:min-w-[235px]"
+              href={`/${locale}/etablissements`}
+              className="whitespace-nowrap rounded-full px-3 py-2 text-[12px] font-black text-slate-700 transition hover:bg-slate-100 hover:text-[#0965d8]"
             >
-              <SearchIcon />
-
-              {text.search}
+              {content.establishments}
             </Link>
 
-            {/* Navigație desktop */}
-            <nav
-              aria-label={text.navigation}
-              className="ml-auto hidden items-center gap-4 lg:flex xl:gap-6"
-            >
-              {navigationLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="whitespace-nowrap text-[12px] font-bold text-slate-700 transition hover:text-[#0965d8] xl:text-[13px]"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
+            {/* QUI SOMMES-NOUS */}
+            <details className="group relative">
+              <summary className="flex cursor-pointer list-none items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-2 text-[12px] font-black text-slate-700 transition hover:bg-slate-100 hover:text-[#0965d8]">
+                {content.about}
 
-            {/* Dreapta */}
-            <div className="ml-auto flex shrink-0 items-center gap-3 lg:ml-0">
+                <ChevronDown />
+              </summary>
 
-              <HeaderLanguageSwitcher
-                locale={locale}
-              />
+              <div className="absolute right-0 top-[calc(100%+10px)] w-[260px] overflow-hidden rounded-[1.4rem] border border-slate-200 bg-white p-2 shadow-2xl">
+                {content.aboutMenu.map(
+                  (item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="flex items-center justify-between rounded-xl px-3 py-3 text-sm font-bold text-slate-700 transition hover:bg-[#f5f9fb] hover:text-[#0965d8]"
+                    >
+                      {item.label}
 
-              <Link
-                href={`/${locale}#contact`}
-                className="hidden whitespace-nowrap rounded-full bg-[#118c87] px-5 py-3 text-[12px] font-black text-white transition hover:-translate-y-0.5 hover:bg-[#0c7773] xl:inline-flex"
-              >
-                {text.contact}
-              </Link>
+                      <span
+                        aria-hidden="true"
+                        className="text-slate-300"
+                      >
+                        →
+                      </span>
+                    </Link>
+                  ),
+                )}
+              </div>
+            </details>
 
-            </div>
-
-          </div>
-
-          {/* Recherche d'offres pe tabletă / telefon */}
-          <div className="px-5 pb-4 md:hidden sm:px-8">
             <Link
-              href={`/${locale}/offres`}
-              className="flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#0D6EFD] px-6 py-3 text-[12px] font-black uppercase tracking-[0.03em] text-[#082A43] shadow-lg"
+              href={`/${locale}#contact`}
+              className="whitespace-nowrap rounded-full px-3 py-2 text-[12px] font-black text-slate-700 transition hover:bg-slate-100 hover:text-[#0965d8]"
             >
-              <SearchIcon />
-              {text.search}
+              {content.contact}
             </Link>
+          </nav>
+
+          {/* LIMBĂ */}
+          <div className="ml-auto shrink-0 lg:ml-2">
+            <HeaderLanguageSwitcher
+              locale={locale}
+            />
           </div>
         </div>
 
-        {/* Meniu mobil */}
-        <div className="border-b border-slate-200 bg-white lg:hidden">
-          <div className="mx-auto max-w-[1400px] px-5 sm:px-8">
+        {/* RECHERCHE D'OFFRES PE MOBIL */}
+        <div className="px-5 pb-3 md:hidden sm:px-8">
+          <Link
+            href={`/${locale}/offres`}
+            className="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-full bg-[#0D6EFD] px-6 py-3 text-[11px] font-black uppercase tracking-[0.03em] text-[#082A43] shadow-lg"
+          >
+            <SearchIcon />
 
+            {content.search}
+          </Link>
+        </div>
+
+        {/* MENIU MOBIL */}
+        <div className="border-t border-slate-200 lg:hidden">
+          <div className="px-5 sm:px-8">
             <details className="group">
-
-              <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between text-sm font-bold text-[#082a43]">
-
+              <summary className="flex min-h-[48px] cursor-pointer list-none items-center justify-between text-sm font-black text-[#082a43]">
                 <span>
-                  {text.navigation}
+                  {content.menu}
                 </span>
 
                 <span className="text-xl transition group-open:rotate-45">
                   +
                 </span>
-
               </summary>
 
-              <div className="grid gap-1 border-t border-slate-100 pb-5 pt-3">
+              <div className="border-t border-slate-100 pb-5 pt-3">
+                <Link
+                  href={`/${locale}`}
+                  className="block rounded-xl px-4 py-3 text-sm font-black text-slate-700 hover:bg-slate-100"
+                >
+                  {content.home}
+                </Link>
 
-                {navigationLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="rounded-xl px-4 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-100 hover:text-[#0965d8]"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+                {/* MOBILE MÉDECINS */}
+                <div className="mt-2 rounded-[1.3rem] bg-[#f5f9fb] p-2">
+                  <p className="px-3 pb-2 pt-2 text-xs font-black uppercase tracking-[0.14em] text-[#118c87]">
+                    {content.doctors}
+                  </p>
+
+                  {content.doctorMenu.map(
+                    (item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className="block rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 hover:bg-white hover:text-[#0965d8]"
+                      >
+                        {item.label}
+                      </Link>
+                    ),
+                  )}
+
+                  <p className="mx-2 mt-2 rounded-xl bg-[#e5f7f5] px-3 py-2.5 text-xs font-black leading-5 text-[#0c7773]">
+                    {locale === "ro"
+                      ? "✓ 100% gratuit pentru medici"
+                      : "✓ 100 % gratuit pour les médecins"}
+                  </p>
+                </div>
 
                 <Link
-                  href={`/${locale}/candidature`}
-                  className="rounded-xl px-4 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-100 hover:text-[#0965d8]"
+                  href={`/${locale}/etablissements`}
+                  className="mt-2 block rounded-xl px-4 py-3 text-sm font-black text-slate-700 hover:bg-slate-100"
                 >
-                  {text.sendCv}
+                  {content.establishments}
                 </Link>
+
+                {/* MOBILE QUI SOMMES-NOUS */}
+                <div className="mt-2 rounded-[1.3rem] bg-[#f5f9fb] p-2">
+                  <p className="px-3 pb-2 pt-2 text-xs font-black uppercase tracking-[0.14em] text-[#118c87]">
+                    {content.about}
+                  </p>
+
+                  {content.aboutMenu.map(
+                    (item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className="block rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 hover:bg-white hover:text-[#0965d8]"
+                      >
+                        {item.label}
+                      </Link>
+                    ),
+                  )}
+                </div>
 
                 <Link
                   href={`/${locale}#contact`}
-                  className="mt-2 rounded-full bg-[#118c87] px-5 py-3 text-center text-sm font-bold text-white"
+                  className="mt-2 block rounded-xl px-4 py-3 text-sm font-black text-slate-700 hover:bg-slate-100"
                 >
-                  {text.contact}
+                  {content.contact}
                 </Link>
-
-                <div className="mt-4 flex items-center gap-3">
-
-                  {publicLinks.facebook ? (
-                    <a
-                      href={publicLinks.facebook}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 text-[#082a43]"
-                      aria-label="Facebook CSTMed"
-                    >
-                      <FacebookIcon />
-                    </a>
-                  ) : null}
-
-                  {publicLinks.instagram ? (
-                    <a
-                      href={publicLinks.instagram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 text-[#082a43]"
-                      aria-label="Instagram CSTMed"
-                    >
-                      <InstagramIcon />
-                    </a>
-                  ) : null}
-
-                </div>
-
               </div>
             </details>
-
           </div>
         </div>
-
       </header>
 
-      <FloatingWhatsApp locale={locale} />
+      <FloatingWhatsApp
+        locale={locale}
+      />
     </>
   );
 }

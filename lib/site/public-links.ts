@@ -19,11 +19,11 @@ export const publicLinks = {
 
   // România
   phoneRomaniaDisplay:
-    "+40 770 909 566",
+    "+40 (0) 770 909 566",
 
   phoneRomaniaHref:
     "+40770909566",
 
   whatsappNumber:
-    "33628262576",
+    "40770909566",
 } as const;

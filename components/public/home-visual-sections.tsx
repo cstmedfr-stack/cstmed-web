@@ -144,8 +144,7 @@ export function HomeVisualSections({
   return (
     <>
       <section
-         id="methode"
-  className="relative isolate scroll-mt-40 overflow-hidden bg-cover bg-center bg-scroll md:bg-fixed"
+  className="relative isolate overflow-hidden bg-cover bg-center bg-scroll md:bg-fixed"
         style={{
           backgroundImage:
             "url('/images/home/hospital-parallax.jpg')",
@@ -191,10 +190,8 @@ export function HomeVisualSections({
         </div>
       </section>
 
-      <section
-  id="medecins"
-  className="scroll-mt-40 bg-[#f5f9fb] px-5 py-16 sm:px-8 sm:py-20"
->
+      <section className="bg-[#f5f9fb] px-5 py-16 sm:px-8 sm:py-20">
+
         <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2">
           <div className="relative min-h-[420px] overflow-hidden rounded-[2rem] shadow-xl sm:min-h-[540px]">
             <Image
@@ -216,9 +213,9 @@ export function HomeVisualSections({
 
               <p className="mt-1 font-bold">
                 {locale === "ro"
-                  ? "Răspuns la candidatura și proiectul tău"
-                  : "Une réponse à votre candidature et à votre projet"}
-              </p>
+              ? "Primul răspuns în maximum 24 de ore lucrătoare"
+              : "Premier retour sous 24 heures ouvrées"}
+             </p>
             </div>
           </div>
 
