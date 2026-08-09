@@ -511,11 +511,15 @@ const newEstablishmentRequests =
               <span className="text-2xl">📋</span>
 
               <h2 className="mt-4 font-bold">
-                Gérer les offres
+             <span style={{ color: "#ffffff" }}>
+  Gérer les offres
+</span>
               </h2>
 
               <p className="mt-2 text-sm leading-6 text-slate-300">
-                Vérifier, modifier et publier.
+           <span style={{ color: "#ffffff" }}>
+  Vérifier, modifier et publier.
+</span>
               </p>
             </Link>
 

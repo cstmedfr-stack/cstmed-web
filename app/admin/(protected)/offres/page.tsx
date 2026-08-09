@@ -1,45 +1,62 @@
 import Image from "next/image";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/auth/require-admin";
+import { createAdminClient } from "@/lib/supabase/admin";
+
+import { JobStatusActions } from "./job-status-actions";
 
 export const dynamic = "force-dynamic";
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 20;
+
+type JobStatus =
+  | "draft"
+  | "published"
+  | "rejected"
+  | "archived";
+
+type StatusFilter =
+  | JobStatus
+  | "all";
 
 type SearchParameters = {
   q?: string | string[];
-  specialty?: string | string[];
-  location?: string | string[];
-  contract?: string | string[];
-  sort?: string | string[];
+  status?: string | string[];
   page?: string | string[];
 };
 
-type JobsPageProps = {
+type AdminOffersPageProps = {
   searchParams: Promise<SearchParameters>;
 };
 
-type SortOrder = "newest" | "oldest";
-
 type Job = {
   id: string;
+  source_job_id: string;
   title: string;
   specialty: string | null;
+  company_name: string | null;
   location_label: string | null;
   city: string | null;
   postal_code: string | null;
   contract_type: string | null;
-  salary_text: string | null;
-  description: string | null;
+  status: JobStatus;
   france_travail_published_at: string | null;
   created_at: string;
 };
 
-type JobFilterRow = {
-  specialty: string | null;
-  contract_type: string | null;
+const statusLabels: Record<JobStatus, string> = {
+  draft: "Brouillon",
+  published: "Publiée",
+  rejected: "Refusée",
+  archived: "Archivée",
+};
+
+const statusClasses: Record<JobStatus, string> = {
+  draft: "bg-amber-100 text-amber-800",
+  published: "bg-emerald-100 text-emerald-700",
+  rejected: "bg-red-100 text-red-700",
+  archived: "bg-slate-200 text-slate-700",
 };
 
 function getParameter(
@@ -56,257 +73,227 @@ function getPositiveInteger(
   value: string,
   fallback = 1,
 ) {
-  const parsedValue = Number(value);
+  const parsed = Number(value);
 
   if (
-    !Number.isInteger(parsedValue) ||
-    parsedValue < 1
+    !Number.isInteger(parsed) ||
+    parsed < 1
   ) {
     return fallback;
   }
 
-  return parsedValue;
+  return parsed;
 }
 
 function cleanSearchValue(
   value: string,
-  maximumLength = 100,
 ) {
   return value
-    .slice(0, maximumLength)
+    .slice(0, 120)
     .replace(/[,%()]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
 
-function formatDate(value: string | null) {
+function formatDate(
+  value: string | null,
+) {
   if (!value) {
-    return null;
+    return "Date non précisée";
   }
 
-  return new Intl.DateTimeFormat("fr-FR", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  }).format(new Date(value));
+  return new Intl.DateTimeFormat(
+    "fr-FR",
+    {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    },
+  ).format(new Date(value));
 }
 
-function shortenDescription(
-  description: string | null,
-) {
-  if (!description) {
-    return "Consultez cette opportunité médicale et contactez CSTMed pour être accompagné dans votre candidature.";
-  }
-
-  const cleanDescription = description
-    .replace(/\s+/g, " ")
-    .trim();
-
-  if (cleanDescription.length <= 230) {
-    return cleanDescription;
-  }
-
-  return `${cleanDescription
-    .slice(0, 230)
-    .trim()}…`;
-}
-
-function uniqueSortedValues(
-  values: Array<string | null>,
-) {
-  return Array.from(
-    new Set(
-      values
-        .map((value) => value?.trim())
-        .filter(
-          (value): value is string =>
-            Boolean(value),
-        ),
-    ),
-  ).sort((first, second) =>
-    first.localeCompare(second, "fr", {
-      sensitivity: "base",
-    }),
-  );
-}
-
-function createJobsUrl(options: {
+function createAdminOffersUrl(options: {
+  status: StatusFilter;
+  q?: string;
   page?: number;
-  q: string;
-  specialty: string;
-  location: string;
-  contract: string;
-  sort: SortOrder;
 }) {
-  const parameters = new URLSearchParams();
+  const parameters =
+    new URLSearchParams();
+
+  if (options.status !== "draft") {
+    parameters.set(
+      "status",
+      options.status,
+    );
+  }
 
   if (options.q) {
     parameters.set("q", options.q);
   }
 
-  if (options.specialty) {
-    parameters.set(
-      "specialty",
-      options.specialty,
-    );
-  }
-
-  if (options.location) {
-    parameters.set(
-      "location",
-      options.location,
-    );
-  }
-
-  if (options.contract) {
-    parameters.set(
-      "contract",
-      options.contract,
-    );
-  }
-
-  if (options.sort !== "newest") {
-    parameters.set("sort", options.sort);
-  }
-
-  if (options.page && options.page > 1) {
+  if (
+    options.page &&
+    options.page > 1
+  ) {
     parameters.set(
       "page",
       String(options.page),
     );
   }
 
-  const queryString = parameters.toString();
+  const query =
+    parameters.toString();
 
-  return queryString
-    ? `/offres?${queryString}`
-    : "/offres";
+  return query
+    ? `/admin/offres?${query}`
+    : "/admin/offres";
 }
 
-export default async function JobsPage({
+export default async function AdminOffersPage({
   searchParams,
-}: JobsPageProps) {
-  const parameters = await searchParams;
+}: AdminOffersPageProps) {
+  await requireAdmin();
+
+  const parameters =
+    await searchParams;
+
+  const requestedStatus =
+    getParameter(
+      parameters.status,
+    );
+
+  const allowedStatuses: StatusFilter[] = [
+    "all",
+    "draft",
+    "published",
+    "rejected",
+    "archived",
+  ];
+
+  const status: StatusFilter =
+    allowedStatuses.includes(
+      requestedStatus as StatusFilter,
+    )
+      ? (requestedStatus as StatusFilter)
+      : "draft";
 
   const q = cleanSearchValue(
     getParameter(parameters.q),
   );
 
-  const specialty = getParameter(
-    parameters.specialty,
-  ).slice(0, 150);
-
-  const location = cleanSearchValue(
-    getParameter(parameters.location),
-    120,
-  );
-
-  const contract = getParameter(
-    parameters.contract,
-  ).slice(0, 100);
-
-  const sort: SortOrder =
-    getParameter(parameters.sort) === "oldest"
-      ? "oldest"
-      : "newest";
-
-  const requestedPage = getPositiveInteger(
-    getParameter(parameters.page),
-  );
+  const currentPage =
+    getPositiveInteger(
+      getParameter(parameters.page),
+    );
 
   const from =
-    (requestedPage - 1) * PAGE_SIZE;
+    (currentPage - 1) *
+    PAGE_SIZE;
 
-  const to = from + PAGE_SIZE - 1;
+  const to =
+    from + PAGE_SIZE - 1;
 
-  const supabase = await createClient();
+  const supabase =
+    createAdminClient();
 
-  /*
-   * Această interogare este folosită numai pentru
-   * opțiunile filtrelor. RLS permite publicului să
-   * primească doar ofertele publicate.
-   */
-  const { data: filterRowsData } =
-    await supabase
+  const [
+    totalResult,
+    draftResult,
+    publishedResult,
+    rejectedResult,
+    archivedResult,
+  ] = await Promise.all([
+    supabase
       .from("jobs")
-      .select("specialty, contract_type")
-      .eq("status", "published")
-      .order("specialty", {
-        ascending: true,
+      .select("id", {
+        count: "exact",
+        head: true,
+      }),
+
+    supabase
+      .from("jobs")
+      .select("id", {
+        count: "exact",
+        head: true,
       })
-      .limit(1000);
+      .eq("status", "draft"),
 
-  const filterRows =
-    (filterRowsData ?? []) as JobFilterRow[];
+    supabase
+      .from("jobs")
+      .select("id", {
+        count: "exact",
+        head: true,
+      })
+      .eq(
+        "status",
+        "published",
+      ),
 
-  const specialties = uniqueSortedValues(
-    filterRows.map(
-      (item) => item.specialty,
-    ),
-  );
+    supabase
+      .from("jobs")
+      .select("id", {
+        count: "exact",
+        head: true,
+      })
+      .eq(
+        "status",
+        "rejected",
+      ),
 
-  const contractTypes = uniqueSortedValues(
-    filterRows.map(
-      (item) => item.contract_type,
-    ),
-  );
+    supabase
+      .from("jobs")
+      .select("id", {
+        count: "exact",
+        head: true,
+      })
+      .eq(
+        "status",
+        "archived",
+      ),
+  ]);
 
   let jobsQuery = supabase
     .from("jobs")
     .select(
       `
         id,
+        source_job_id,
         title,
         specialty,
+        company_name,
         location_label,
         city,
         postal_code,
         contract_type,
-        salary_text,
-        description,
+        status,
         france_travail_published_at,
         created_at
       `,
       {
         count: "exact",
       },
-    )
-    .eq("status", "published");
-
-  if (specialty) {
-    jobsQuery = jobsQuery.eq(
-      "specialty",
-      specialty,
     );
-  }
 
-  if (contract) {
-    jobsQuery = jobsQuery.eq(
-      "contract_type",
-      contract,
-    );
+  if (status !== "all") {
+    jobsQuery =
+      jobsQuery.eq(
+        "status",
+        status,
+      );
   }
 
   if (q) {
-    const searchPattern = `%${q}%`;
+    const searchPattern =
+      `%${q}%`;
 
     jobsQuery = jobsQuery.or(
       [
         `title.ilike.${searchPattern}`,
         `specialty.ilike.${searchPattern}`,
-        `description.ilike.${searchPattern}`,
-      ].join(","),
-    );
-  }
-
-  if (location) {
-    const locationPattern = `%${location}%`;
-
-    jobsQuery = jobsQuery.or(
-      [
-        `location_label.ilike.${locationPattern}`,
-        `city.ilike.${locationPattern}`,
-        `postal_code.ilike.${locationPattern}`,
+        `company_name.ilike.${searchPattern}`,
+        `location_label.ilike.${searchPattern}`,
+        `city.ilike.${searchPattern}`,
+        `source_job_id.ilike.${searchPattern}`,
       ].join(","),
     );
   }
@@ -316,190 +303,163 @@ export default async function JobsPage({
     count,
     error,
   } = await jobsQuery
-    .order("france_travail_published_at", {
-      ascending: sort === "oldest",
-      nullsFirst: false,
-    })
     .order("created_at", {
-      ascending: sort === "oldest",
+      ascending: false,
     })
     .range(from, to);
 
-  const jobs = (data ?? []) as Job[];
-  const totalJobs = count ?? 0;
+  const jobs =
+    (data ?? []) as Job[];
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(totalJobs / PAGE_SIZE),
-  );
+  const totalJobs =
+    count ?? 0;
 
-  if (
-    totalJobs > 0 &&
-    requestedPage > totalPages
-  ) {
-    redirect(
-      createJobsUrl({
-        page: totalPages,
-        q,
-        specialty,
-        location,
-        contract,
-        sort,
-      }),
+  const totalPages =
+    Math.max(
+      1,
+      Math.ceil(
+        totalJobs / PAGE_SIZE,
+      ),
     );
-  }
 
-  const firstDisplayed =
-    totalJobs === 0 ? 0 : from + 1;
+  const counts = {
+    all: totalResult.count ?? 0,
+    draft: draftResult.count ?? 0,
+    published:
+      publishedResult.count ?? 0,
+    rejected:
+      rejectedResult.count ?? 0,
+    archived:
+      archivedResult.count ?? 0,
+  };
 
-  const lastDisplayed = Math.min(
-    from + jobs.length,
-    totalJobs,
-  );
-
-  const previousUrl = createJobsUrl({
-    page: requestedPage - 1,
-    q,
-    specialty,
-    location,
-    contract,
-    sort,
-  });
-
-  const nextUrl = createJobsUrl({
-    page: requestedPage + 1,
-    q,
-    specialty,
-    location,
-    contract,
-    sort,
-  });
-
-  const hasFilters =
-    Boolean(q) ||
-    Boolean(specialty) ||
-    Boolean(location) ||
-    Boolean(contract) ||
-    sort !== "newest";
+  const statusTabs: Array<{
+    value: StatusFilter;
+    label: string;
+    count: number;
+  }> = [
+    {
+      value: "draft",
+      label: "Brouillons",
+      count: counts.draft,
+    },
+    {
+      value: "published",
+      label: "Publiées",
+      count: counts.published,
+    },
+    {
+      value: "rejected",
+      label: "Refusées",
+      count: counts.rejected,
+    },
+    {
+      value: "archived",
+      label: "Archivées",
+      count: counts.archived,
+    },
+    {
+      value: "all",
+      label: "Toutes",
+      count: counts.all,
+    },
+  ];
 
   return (
     <main className="min-h-screen bg-[#f5f9fb] text-[#102435]">
-      <div className="bg-[#082a43] text-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-5 px-5 py-2.5 text-xs sm:px-8 sm:text-sm">
-          <p>
-            Recrutement médical • France – Europe
-          </p>
-
-          <div className="flex items-center gap-5">
-            <Link
-                        href="/admin/candidatures"
-                        className="rounded-full bg-[#082a43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0b3a59]"
-                        >
-                        Candidatures
-                        </Link>
-            <a
-              href="tel:+33628262576"
-              className="hidden transition hover:text-[#8ce1d8] sm:inline"
-            >
-              +33 (0) 6 28 26 25 76
-            </a>
-
-            <a
-              href="mailto:contact@cstmed.fr"
-              className="transition hover:text-[#8ce1d8]"
-            >
-              contact@cstmed.fr
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 py-4 sm:px-8">
-          <Link
-            href="/"
-            aria-label="CSTMed – Accueil"
-          >
+      {/* HEADER ADMIN */}
+      <header className="border-b border-slate-200 bg-white">
+        <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-4 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
+          <Link href="/admin">
             <Image
               src="/images/cstmed-logo.png"
-              alt="CSTMed – Parce que ta valeur doit être appréciée"
-              width={240}
-              height={80}
+              alt="CSTMed"
+              width={220}
+              height={74}
               priority
-              className="h-auto w-[180px] object-contain sm:w-[220px]"
+              className="h-auto w-[190px] object-contain sm:w-[220px]"
             />
           </Link>
 
-          <nav className="hidden items-center gap-6 text-sm font-semibold text-slate-700 lg:flex">
+          <div className="flex flex-wrap items-center gap-3">
             <Link
-              href="/"
-              className="transition hover:text-[#118c87]"
+              href="/admin"
+              className="rounded-full bg-[#082a43] px-5 py-2.5 text-sm font-bold"
             >
-              Accueil
+              <span
+                style={{
+                  color: "#ffffff",
+                }}
+              >
+                Tableau de bord
+              </span>
             </Link>
 
             <Link
-              href="/#medecins"
-              className="transition hover:text-[#118c87]"
+              href="/admin/import"
+              className="rounded-full bg-[#082a43] px-5 py-2.5 text-sm font-bold"
             >
-              Pour les médecins
+              <span
+                style={{
+                  color: "#ffffff",
+                }}
+              >
+                Import France Travail
+              </span>
             </Link>
 
             <Link
-              href="/#etablissements"
-              className="transition hover:text-[#118c87]"
+              href="/admin/candidatures"
+              className="rounded-full bg-[#082a43] px-5 py-2.5 text-sm font-bold"
             >
-              Pour les établissements
+              <span
+                style={{
+                  color: "#ffffff",
+                }}
+              >
+                Candidatures
+              </span>
             </Link>
 
-            <span className="text-[#118c87]">
-              Offres
-            </span>
-          </nav>
-
-          <a
-            href="mailto:contact@cstmed.fr"
-            className="rounded-full bg-[#118c87] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#0c7773]"
-          >
-            Nous contacter
-          </a>
+            <Link
+              href="/fr/offres"
+              target="_blank"
+              className="rounded-full border border-[#118c87] px-5 py-2.5 text-sm font-bold text-[#082a43]"
+            >
+              Voir le site public ↗
+            </Link>
+          </div>
         </div>
       </header>
 
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#082a43] via-[#0c3c5d] to-[#11696d] px-5 py-16 text-white sm:px-8 sm:py-20">
-        <div
-          aria-hidden="true"
-          className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-white/[0.06] blur-3xl"
-        />
-
-        <div className="relative mx-auto max-w-7xl">
-          <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#76e0d5]">
-            Opportunités médicales
+      {/* HERO */}
+      <section className="bg-gradient-to-r from-[#082a43] via-[#0b3a59] to-[#11696d] px-5 py-12 text-white sm:px-8">
+        <div className="mx-auto max-w-7xl">
+          <p className="text-sm font-black uppercase tracking-[0.18em] text-[#65d9ce]">
+            Administration CSTMed
           </p>
 
-          <h1 className="mt-4 max-w-4xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
-            Offres d’emploi pour médecins en
-            France
+          <h1 className="mt-4 text-3xl font-black sm:text-4xl">
+            Gestion des offres
           </h1>
 
-          <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-200">
-            Découvrez les opportunités
-            sélectionnées par CSTMed et bénéficiez
-            d’un accompagnement personnalisé dans
-            votre projet professionnel.
+          <p className="mt-4 max-w-3xl leading-7 text-slate-200">
+            Vérifiez les offres importées depuis France Travail,
+            modifiez-les puis publiez uniquement les opportunités
+            sélectionnées par CSTMed.
           </p>
 
-          <div className="mt-8 flex flex-wrap gap-3 text-sm">
+          <div className="mt-6 flex flex-wrap gap-3 text-sm">
             <span className="rounded-full border border-white/20 bg-white/10 px-4 py-2">
-              ✓ Offres vérifiées avant publication
+              {counts.draft} brouillons
             </span>
 
             <span className="rounded-full border border-white/20 bg-white/10 px-4 py-2">
-              ✓ Accompagnement de la candidature
+              {counts.published} publiées
             </span>
 
             <span className="rounded-full border border-white/20 bg-white/10 px-4 py-2">
-              ✓ Suivi jusqu’à l’intégration
+              {counts.all} offres au total
             </span>
           </div>
         </div>
@@ -507,161 +467,121 @@ export default async function JobsPage({
 
       <section className="px-5 py-10 sm:px-8">
         <div className="mx-auto max-w-7xl">
+          {/* FILTRE STATUT */}
+          <div className="flex flex-wrap gap-2">
+            {statusTabs.map(
+              (tab) => {
+                const active =
+                  tab.value ===
+                  status;
+
+                return (
+                  <Link
+                    key={
+                      tab.value
+                    }
+                    href={createAdminOffersUrl({
+                      status:
+                        tab.value,
+                      q,
+                    })}
+                    className={
+                      active
+                        ? "rounded-full bg-[#082a43] px-5 py-2.5 text-sm font-black shadow-sm"
+                        : "rounded-full border border-slate-300 bg-white px-5 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
+                    }
+                  >
+                    <span
+                      style={{
+                        color:
+                          active
+                            ? "#ffffff"
+                            : undefined,
+                      }}
+                    >
+                      {tab.label}{" "}
+                      ({tab.count})
+                    </span>
+                  </Link>
+                );
+              },
+            )}
+          </div>
+
+          {/* RECHERCHE */}
           <form
             method="get"
-            className="relative -mt-20 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-xl sm:p-8"
+            className="mt-6 rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm"
           >
-            <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-[1.25fr_1fr_1fr_0.8fr]">
-              <div>
-                <label
-                  htmlFor="q"
-                  className="block text-sm font-bold text-[#082a43]"
+            <input
+              type="hidden"
+              name="status"
+              value={status}
+            />
+
+            <div className="flex flex-col gap-3 md:flex-row">
+              <input
+                name="q"
+                type="search"
+                defaultValue={q}
+                placeholder="Rechercher par titre, spécialité, ville, établissement ou référence France Travail..."
+                className="min-h-[48px] flex-1 rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-[#118c87] focus:ring-4 focus:ring-[#118c87]/10"
+              />
+
+              <button
+                type="submit"
+                className="min-h-[48px] rounded-full bg-[#118c87] px-7 py-3 font-black"
+              >
+                <span
+                  style={{
+                    color: "#ffffff",
+                  }}
                 >
-                  Quel poste recherchez-vous ?
-                </label>
+                  Rechercher
+                </span>
+              </button>
 
-                <input
-                  id="q"
-                  name="q"
-                  type="search"
-                  defaultValue={q}
-                  placeholder="Ex. cardiologue, urgentiste…"
-                  className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-[#118c87] focus:ring-4 focus:ring-[#118c87]/10"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="specialty"
-                  className="block text-sm font-bold text-[#082a43]"
+              {q ? (
+                <Link
+                  href={createAdminOffersUrl({
+                    status,
+                  })}
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-slate-300 px-6 py-3 font-bold text-slate-700"
                 >
-                  Spécialité
-                </label>
-
-                <select
-                  id="specialty"
-                  name="specialty"
-                  defaultValue={specialty}
-                  className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-[#118c87] focus:ring-4 focus:ring-[#118c87]/10"
-                >
-                  <option value="">
-                    Toutes les spécialités
-                  </option>
-
-                  {specialties.map(
-                    (specialtyOption) => (
-                      <option
-                        key={specialtyOption}
-                        value={specialtyOption}
-                      >
-                        {specialtyOption}
-                      </option>
-                    ),
-                  )}
-                </select>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="location"
-                  className="block text-sm font-bold text-[#082a43]"
-                >
-                  Localisation
-                </label>
-
-                <input
-                  id="location"
-                  name="location"
-                  type="search"
-                  defaultValue={location}
-                  placeholder="Ville, département ou code postal"
-                  className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-[#118c87] focus:ring-4 focus:ring-[#118c87]/10"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="contract"
-                  className="block text-sm font-bold text-[#082a43]"
-                >
-                  Contrat
-                </label>
-
-                <select
-                  id="contract"
-                  name="contract"
-                  defaultValue={contract}
-                  className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-[#118c87] focus:ring-4 focus:ring-[#118c87]/10"
-                >
-                  <option value="">
-                    Tous les contrats
-                  </option>
-
-                  {contractTypes.map(
-                    (contractOption) => (
-                      <option
-                        key={contractOption}
-                        value={contractOption}
-                      >
-                        {contractOption}
-                      </option>
-                    ),
-                  )}
-                </select>
-              </div>
-            </div>
-
-            <div className="mt-6 flex flex-col gap-4 border-t border-slate-100 pt-6 sm:flex-row sm:items-end sm:justify-between">
-              <div className="w-full sm:max-w-xs">
-                <label
-                  htmlFor="sort"
-                  className="block text-sm font-bold text-[#082a43]"
-                >
-                  Classer les offres
-                </label>
-
-                <select
-                  id="sort"
-                  name="sort"
-                  defaultValue={sort}
-                  className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-[#118c87] focus:ring-4 focus:ring-[#118c87]/10"
-                >
-                  <option value="newest">
-                    Plus récentes
-                  </option>
-
-                  <option value="oldest">
-                    Plus anciennes
-                  </option>
-                </select>
-              </div>
-
-              <div className="flex flex-col gap-3 sm:flex-row">
-                {hasFilters ? (
-                  <Link
-                    href="/offres"
-                    className="rounded-full border border-slate-300 px-6 py-3 text-center font-bold text-slate-700 transition hover:bg-slate-50"
-                  >
-                    Effacer les filtres
-                  </Link>
-                ) : null}
-
-                <button
-                  type="submit"
-                  className="rounded-full bg-[#118c87] px-7 py-3 font-bold text-white shadow-sm transition hover:bg-[#0c7773]"
-                >
-                  Rechercher les offres
-                </button>
-              </div>
+                  Effacer
+                </Link>
+              ) : null}
             </div>
           </form>
 
-          {error ? (
-            <div className="mt-10 rounded-[2rem] border border-red-200 bg-red-50 p-7 text-red-700">
-              <h2 className="font-bold">
-                Les offres ne peuvent pas être
-                affichées actuellement.
+          {/* TITRE LISTE */}
+          <div className="mt-10 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-sm font-black uppercase tracking-[0.15em] text-[#118c87]">
+                Offres à gérer
+              </p>
+
+              <h2 className="mt-2 text-3xl font-black text-[#082a43]">
+                {totalJobs} offre
+                {totalJobs > 1
+                  ? "s"
+                  : ""}
               </h2>
+            </div>
+
+            {totalJobs > 0 ? (
+              <p className="text-sm font-semibold text-slate-500">
+                Page {currentPage} sur{" "}
+                {totalPages}
+              </p>
+            ) : null}
+          </div>
+
+          {error ? (
+            <div className="mt-8 rounded-[2rem] border border-red-200 bg-red-50 p-7 text-red-700">
+              <p className="font-black">
+                Les offres ne peuvent pas être chargées.
+              </p>
 
               <p className="mt-2">
                 {error.message}
@@ -669,73 +589,25 @@ export default async function JobsPage({
             </div>
           ) : null}
 
-          {!error ? (
-            <div className="mt-12 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p className="text-sm font-bold uppercase tracking-[0.16em] text-[#118c87]">
-                  Offres disponibles
-                </p>
-
-                <h2 className="mt-2 text-3xl font-bold text-[#082a43]">
-                  {totalJobs} opportunité
-                  {totalJobs > 1 ? "s" : ""}
-                </h2>
-
-                <p className="mt-2 text-sm text-slate-500">
-                  Résultats {firstDisplayed}–
-                  {lastDisplayed} sur {totalJobs}
-                </p>
-              </div>
-
-              {totalJobs > 0 ? (
-                <p className="text-sm font-semibold text-slate-500">
-                  Page {requestedPage} sur{" "}
-                  {totalPages}
-                </p>
-              ) : null}
-            </div>
-          ) : null}
-
-          {!error && jobs.length === 0 ? (
+          {!error &&
+          jobs.length === 0 ? (
             <div className="mt-8 rounded-[2rem] border border-slate-200 bg-white p-10 text-center shadow-sm">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#e5f7f5] text-2xl">
-                🔎
-              </div>
-
-              <h2 className="mt-6 text-2xl font-bold text-[#082a43]">
-                Aucune offre ne correspond à votre
-                recherche
-              </h2>
-
-              <p className="mx-auto mt-4 max-w-2xl leading-7 text-slate-600">
-                Modifiez les critères ou transmettez
-                directement votre CV à CSTMed. Nous
-                pourrons vous contacter lorsqu’une
-                opportunité adaptée sera disponible.
+              <p className="text-3xl">
+                ✓
               </p>
 
-              <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
-                <Link
-                  href="/offres"
-                  className="rounded-full border border-[#118c87] px-6 py-3 font-bold text-[#118c87] transition hover:bg-[#e5f7f5]"
-                >
-                  Voir toutes les offres
-                </Link>
-
-                <a
-                  href="mailto:contact@cstmed.fr?subject=Candidature%20spontanée%20CSTMed"
-                  className="rounded-full bg-[#118c87] px-6 py-3 font-bold text-white transition hover:bg-[#0c7773]"
-                >
-                  Envoyer mon CV
-                </a>
-              </div>
+              <h2 className="mt-4 text-2xl font-black text-[#082a43]">
+                Aucune offre dans cette catégorie
+              </h2>
             </div>
           ) : null}
 
-          {!error && jobs.length > 0 ? (
-            <div className="mt-8 grid gap-6 lg:grid-cols-2">
+          {/* LISTA BROUILLONS / OFFRES */}
+          {!error &&
+          jobs.length > 0 ? (
+            <div className="mt-7 space-y-4">
               {jobs.map((job) => {
-                const locationText =
+                const location =
                   job.location_label ||
                   [
                     job.postal_code,
@@ -745,73 +617,89 @@ export default async function JobsPage({
                     .join(" ") ||
                   "France";
 
-                const publicationDate =
-                  formatDate(
-                    job.france_travail_published_at,
-                  );
-
                 return (
                   <article
                     key={job.id}
-                    className="group flex flex-col rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#9fded8] hover:shadow-xl"
+                    className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-lg"
                   >
-                    <div className="flex flex-wrap gap-2">
-                      {job.specialty ? (
-                        <span className="rounded-full bg-[#e5f7f5] px-3 py-1.5 text-xs font-bold text-[#0c7773]">
-                          {job.specialty}
-                        </span>
-                      ) : null}
+                    <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span
+                            className={`rounded-full px-3 py-1.5 text-xs font-black ${
+                              statusClasses[
+                                job.status
+                              ]
+                            }`}
+                          >
+                            {
+                              statusLabels[
+                                job.status
+                              ]
+                            }
+                          </span>
 
-                      {job.contract_type ? (
-                        <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">
-                          {job.contract_type}
-                        </span>
-                      ) : null}
-                    </div>
+                          {job.specialty ? (
+                            <span className="rounded-full bg-[#e5f7f5] px-3 py-1.5 text-xs font-bold text-[#0c7773]">
+                              {
+                                job.specialty
+                              }
+                            </span>
+                          ) : null}
 
-                    <h3 className="mt-5 text-2xl font-bold leading-snug text-[#082a43] transition group-hover:text-[#118c87]">
-                      <Link
-                        href={`/offres/${job.id}`}
-                      >
-                        {job.title}
-                      </Link>
-                    </h3>
+                          {job.contract_type ? (
+                            <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600">
+                              {
+                                job.contract_type
+                              }
+                            </span>
+                          ) : null}
+                        </div>
 
-                    <p className="mt-3 font-semibold text-[#118c87]">
-                      📍 {locationText}
-                    </p>
+                        <h3 className="mt-4 text-xl font-black leading-snug text-[#082a43] sm:text-2xl">
+                          {job.title}
+                        </h3>
 
-                    <p className="mt-5 flex-1 leading-7 text-slate-600">
-                      {shortenDescription(
-                        job.description,
-                      )}
-                    </p>
+                        <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-600">
+                          <span>
+                            📍 {location}
+                          </span>
 
-                    {job.salary_text ? (
-                      <div className="mt-5 rounded-2xl bg-[#f5f9fb] px-4 py-3">
-                        <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
-                          Rémunération
-                        </p>
+                          {job.company_name ? (
+                            <span>
+                              🏥{" "}
+                              {
+                                job.company_name
+                              }
+                            </span>
+                          ) : null}
 
-                        <p className="mt-1 text-sm font-semibold text-[#082a43]">
-                          {job.salary_text}
+                          <span>
+                            Réf.{" "}
+                            {
+                              job.source_job_id
+                            }
+                          </span>
+                        </div>
+
+                        <p className="mt-3 text-xs text-slate-400">
+                          Importée le{" "}
+                          {formatDate(
+                            job.created_at,
+                          )}
                         </p>
                       </div>
-                    ) : null}
 
-                    <div className="mt-7 flex flex-col gap-4 border-t border-slate-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
-                      <span className="text-sm text-slate-500">
-                        {publicationDate
-                          ? `Publiée le ${publicationDate}`
-                          : "Offre sélectionnée par CSTMed"}
-                      </span>
-
-                      <Link
-                        href={`/offres/${job.id}`}
-                        className="rounded-full bg-[#118c87] px-5 py-2.5 text-center text-sm font-bold text-white transition hover:bg-[#0c7773]"
-                      >
-                        Voir l’offre
-                      </Link>
+                      <div className="shrink-0 lg:max-w-[390px]">
+                        <JobStatusActions
+                          jobId={
+                            job.id
+                          }
+                          status={
+                            job.status
+                          }
+                        />
+                      </div>
                     </div>
                   </article>
                 );
@@ -819,111 +707,61 @@ export default async function JobsPage({
             </div>
           ) : null}
 
-          {!error && totalPages > 1 ? (
-            <nav
-              aria-label="Pagination des offres"
-              className="mt-10 flex flex-col items-center justify-between gap-4 rounded-3xl border border-slate-200 bg-white p-5 sm:flex-row"
-            >
-              {requestedPage > 1 ? (
-                <Link
-                  href={previousUrl}
-                  className="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
-                >
-                  ← Page précédente
-                </Link>
-              ) : (
-                <span className="rounded-full border border-slate-200 px-5 py-2.5 text-sm font-bold text-slate-300">
-                  ← Page précédente
-                </span>
-              )}
-
-              <span className="text-sm font-semibold text-slate-600">
-                Page {requestedPage} sur{" "}
-                {totalPages}
-              </span>
-
-              {requestedPage < totalPages ? (
-                <Link
-                  href={nextUrl}
-                  className="rounded-full bg-[#118c87] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#0c7773]"
-                >
-                  Page suivante →
-                </Link>
-              ) : (
-                <span className="rounded-full bg-slate-100 px-5 py-2.5 text-sm font-bold text-slate-300">
-                  Page suivante →
-                </span>
-              )}
-            </nav>
-          ) : null}
-
-          <div className="mt-14 overflow-hidden rounded-[2rem] bg-gradient-to-r from-[#0b3a59] to-[#118c87] px-7 py-10 text-white shadow-xl sm:px-10">
-            <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
+          {/* PAGINATION */}
+          {!error &&
+          totalPages > 1 ? (
+            <div className="mt-10 flex flex-col items-center justify-between gap-4 rounded-3xl border border-slate-200 bg-white p-5 sm:flex-row">
               <div>
-                <p className="text-sm font-bold uppercase tracking-[0.16em] text-[#8ce1d8]">
-                  Candidature spontanée
-                </p>
-
-                <h2 className="mt-3 text-3xl font-bold">
-                  Vous ne trouvez pas encore
-                  l’opportunité recherchée ?
-                </h2>
-
-                <p className="mt-4 max-w-2xl leading-7 text-slate-200">
-                  Transmettez-nous votre profil,
-                  votre spécialité et vos critères.
-                  CSTMed pourra vous contacter pour
-                  une future opportunité adaptée.
-                </p>
+                {currentPage >
+                1 ? (
+                  <Link
+                    href={createAdminOffersUrl({
+                      status,
+                      q,
+                      page:
+                        currentPage -
+                        1,
+                    })}
+                    className="inline-flex rounded-full border border-slate-300 px-5 py-2.5 font-bold text-slate-700"
+                  >
+                    ← Précédente
+                  </Link>
+                ) : null}
               </div>
 
-              <a
-                href="mailto:contact@cstmed.fr?subject=Candidature%20spontanée%20CSTMed"
-                className="rounded-full bg-white px-7 py-3.5 text-center font-bold text-[#082a43] transition hover:bg-slate-100"
-              >
-                Déposer ma candidature
-              </a>
+              <p className="text-sm font-bold text-slate-500">
+                Page {currentPage} /{" "}
+                {totalPages}
+              </p>
+
+              <div>
+                {currentPage <
+                totalPages ? (
+                  <Link
+                    href={createAdminOffersUrl({
+                      status,
+                      q,
+                      page:
+                        currentPage +
+                        1,
+                    })}
+                    className="inline-flex rounded-full bg-[#082a43] px-5 py-2.5 font-bold"
+                  >
+                    <span
+                      style={{
+                        color:
+                          "#ffffff",
+                      }}
+                    >
+                      Suivante →
+                    </span>
+                  </Link>
+                ) : null}
+              </div>
             </div>
-          </div>
+          ) : null}
         </div>
       </section>
-
-      <footer className="bg-[#061f33] px-5 py-10 text-slate-300 sm:px-8">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-xl font-bold text-white">
-              CST
-              <span className="text-[#65d9ce]">
-                Med
-              </span>
-            </p>
-
-            <p className="mt-2 text-sm">
-              Recrutement médical France – Europe
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-5 text-sm">
-            <Link
-              href="/"
-              className="hover:text-white"
-            >
-              Accueil
-            </Link>
-
-            <a
-              href="mailto:contact@cstmed.fr"
-              className="hover:text-white"
-            >
-              Contact
-            </a>
-
-            <span>
-              © 2026 CSTMed
-            </span>
-          </div>
-        </div>
-      </footer>
     </main>
   );
 }
