@@ -487,38 +487,19 @@ const newEstablishmentRequests =
                 Traductions actuellement publiées
               </p>
             </Link>
-            <Link
-              href="/admin/etablissements"
-              className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-            >
-              <p className="text-sm font-semibold text-slate-500">
-                Demandes établissements
-              </p>
-           <p className="mt-3 text-4xl font-bold text-[#082a43]">
-  {totalEstablishmentRequests}
-</p>
-
-              <p className="mt-3 text-4xl font-bold text-[#082a43]">
-                {<Link
-  href="/admin/etablissements"
-  className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
->
-  <span className="text-2xl">🏥</span>
-
-  <h2 className="mt-4 font-bold text-[#082a43]">
-    Établissements
-  </h2>
-
-  <p className="mt-2 text-sm leading-6 text-slate-500">
-    Consulter les besoins de recrutement.
+ <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+  <p className="text-sm font-semibold text-slate-500">
+    Demandes établissements
   </p>
-</Link>}
-              </p>
 
-              <p className="mt-4 text-xs font-semibold text-blue-700">
-                {newEstablishmentRequests} nouvelles
-              </p>
-            </Link>
+  <p className="mt-3 text-4xl font-bold text-[#082a43]">
+    {totalEstablishmentRequests}
+  </p>
+
+  <p className="mt-4 text-xs font-semibold text-blue-700">
+    {newEstablishmentRequests} nouvelles
+  </p>
+</div>
             
           </div>
 
