@@ -122,46 +122,56 @@ export async function runFranceTravailImport(
     requestBody.cdiOnly = true;
   }
 
-  let result: ImportApiResponse;
+ let result: ImportApiResponse | null = null;
+let importError: string | null = null;
 
-  try {
-    const response = await fetch(
-      `${origin}/api/admin/import-france-travail`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-import-token": adminToken,
-        },
-        body: JSON.stringify(requestBody),
-        cache: "no-store",
+try {
+  const response = await fetch(
+    `${origin}/api/admin/import-france-travail`,
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+        "x-import-token": adminToken,
       },
-    );
 
-    result = (await response.json()) as ImportApiResponse;
+      body: JSON.stringify(requestBody),
 
-    if (!response.ok) {
-      const errorMessage =
-        result.error ??
-        "L’importation France Travail a échoué.";
+      cache: "no-store",
+    },
+  );
 
-      redirect(
-        `/admin/import?error=${encodeURIComponent(
-          errorMessage,
-        )}`,
-      );
-    }
-  } catch (error) {
-    const message =
-      error instanceof Error
-        ? error.message
-        : "Impossible de contacter le service d’importation.";
+  result =
+    (await response.json()) as ImportApiResponse;
 
-    redirect(
-      `/admin/import?error=${encodeURIComponent(message)}`,
-    );
+  if (!response.ok) {
+    importError =
+      result.error ??
+      "L’importation France Travail a échoué.";
   }
+} catch (error) {
+  importError =
+    error instanceof Error
+      ? error.message
+      : "Impossible de contacter le service d’importation.";
+}
 
+if (importError) {
+  redirect(
+    `/admin/import?error=${encodeURIComponent(
+      importError,
+    )}`,
+  );
+}
+
+if (!result) {
+  redirect(
+    `/admin/import?error=${encodeURIComponent(
+      "Aucune réponse reçue du service d’importation.",
+    )}`,
+  );
+}
   const parameters = new URLSearchParams({
     success: "1",
     imported: String(result.importedCount ?? 0),
