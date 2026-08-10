@@ -368,7 +368,7 @@ export default async function AdminOffersPage({
   return (
     <main className="min-h-screen bg-[#f5f9fb] text-[#102435]">
       {/* HEADER ADMIN */}
-      <header className="border-b border-slate-200 bg-white">
+     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-4 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
           <Link href="/admin">
             <Image
@@ -619,9 +619,13 @@ export default async function AdminOffersPage({
 
                 return (
                   <article
-                    key={job.id}
-                    className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-lg"
-                  >
+  key={job.id}
+  className={`rounded-[1.75rem] border bg-white p-6 shadow-sm transition hover:shadow-lg ${
+    job.status === "draft"
+      ? "border-amber-200 border-l-4 border-l-amber-400"
+      : "border-slate-200"
+  }`}
+>
                     <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">

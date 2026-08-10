@@ -177,9 +177,9 @@ export default async function ApplicationDetailsPage({
 
   return (
     <main className="min-h-screen bg-[#f5f9fb] text-[#102435]">
-      <header className="border-b border-slate-200 bg-white">
+<header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-5 px-5 py-4 sm:px-8">
-          <Link href="/">
+         <Link href="/admin">
             <Image
               src="/images/cstmed-logo.png"
               alt="CSTMed"
@@ -199,7 +199,7 @@ export default async function ApplicationDetailsPage({
         </div>
       </header>
 
-      <section className="bg-[#082a43] px-5 py-12 text-white sm:px-8">
+<section className="bg-gradient-to-r from-[#082a43] via-[#0b3a59] to-[#11696d] px-5 py-12 text-white sm:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-wrap items-center gap-3">
             <span
@@ -235,6 +235,25 @@ export default async function ApplicationDetailsPage({
               <h2 className="text-2xl font-bold text-[#082a43]">
                 Coordonnées
               </h2>
+              <div className="mt-5 flex flex-wrap gap-3">
+                <a
+                  href={`mailto:${application.email}`}
+                  className="inline-flex items-center justify-center rounded-full bg-[#0D6EFD] px-5 py-2.5 text-sm font-black shadow-sm transition hover:bg-[#0B63E5]"
+                >
+                  <span style={{ color: "#ffffff" }}>
+                    ✉️ Envoyer un e-mail
+                  </span>
+                </a>
+
+                <a
+                  href={`tel:${application.phone}`}
+                  className="inline-flex items-center justify-center rounded-full bg-[#118c87] px-5 py-2.5 text-sm font-black shadow-sm transition hover:bg-[#0c7773]"
+                >
+                  <span style={{ color: "#ffffff" }}>
+                    ☎️ Appeler
+                  </span>
+                </a>
+              </div>
 
               <dl className="mt-6 grid gap-5 sm:grid-cols-2">
                 <div className="rounded-2xl bg-[#f5f9fb] p-5">
@@ -342,12 +361,14 @@ export default async function ApplicationDetailsPage({
                     </p>
                   ) : null}
 
-                  <Link
-                    href={`/admin/offres/${application.jobs.id}`}
-                    className="mt-5 inline-flex text-sm font-bold text-[#118c87]"
-                  >
-                    Consulter l’offre →
-                  </Link>
+                 <Link
+                href={`/admin/offres/${application.jobs.id}`}
+                className="mt-5 inline-flex items-center justify-center rounded-full border border-[#118c87] bg-white px-5 py-2.5 text-sm font-black transition hover:bg-[#e5f7f5]"
+              >
+                <span style={{ color: "#0c7773" }}>
+                  Consulter l’offre →
+                </span>
+              </Link>
                 </div>
               ) : (
                 <p className="mt-5 font-semibold text-[#118c87]">
@@ -356,8 +377,7 @@ export default async function ApplicationDetailsPage({
               )}
             </section>
           </div>
-
-          <aside className="h-fit space-y-6 lg:sticky lg:top-6">
+<aside className="h-fit space-y-6 lg:sticky lg:top-28">
             <section className="rounded-[2rem] bg-[#082a43] p-7 text-white shadow-xl">
               <p className="text-sm font-bold uppercase tracking-[0.15em] text-[#65d9ce]">
                 Suivi de la candidature
@@ -406,11 +426,13 @@ export default async function ApplicationDetailsPage({
                 />
 
                 <button
-                  type="submit"
-                  className="w-full rounded-full bg-[#118c87] px-6 py-3 font-bold text-white hover:bg-[#0c7773]"
-                >
-                  Télécharger le CV
-                </button>
+            type="submit"
+            className="w-full rounded-full bg-[#118c87] px-6 py-3 font-black shadow-sm transition hover:bg-[#0c7773]"
+          >
+            <span style={{ color: "#ffffff" }}>
+              📄 Télécharger le CV
+            </span>
+            </button>
               </form>
 
               <p className="mt-4 text-xs leading-5 text-slate-500">

@@ -116,9 +116,9 @@ export default async function AdminImportPage({
 
   return (
     <main className="min-h-screen bg-[#f5f9fb] text-[#102435]">
-      <header className="border-b border-slate-200 bg-white">
+  <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-4 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
-          <Link href="/">
+         <Link href="/admin">
             <Image
               src="/images/cstmed-logo.png"
               alt="CSTMed"
@@ -160,9 +160,9 @@ export default async function AdminImportPage({
   Candidatures
 </span>
 </Link>
-            <Link
-              href="/offres"
-              target="_blank"
+           <Link
+  href="/fr/offres"
+  target="_blank"
               className="rounded-full border border-[#118c87] px-5 py-2.5 text-sm font-semibold text-[#118c87] transition hover:bg-[#e5f7f5]"
             >
               Voir le site public ↗
@@ -225,12 +225,14 @@ export default async function AdminImportPage({
                 </div>
               </div>
 
-              <Link
-                href="/admin/offres"
-                className="mt-5 inline-flex font-bold text-[#0c7773]"
-              >
-                Vérifier les offres importées →
-              </Link>
+             <Link
+  href="/admin/offres"
+  className="mt-5 inline-flex min-h-[46px] items-center justify-center rounded-full bg-[#082a43] px-6 py-3 font-black shadow-sm"
+>
+  <span style={{ color: "#ffffff" }}>
+    Vérifier les brouillons importés →
+  </span>
+</Link>
             </div>
           ) : null}
 
@@ -339,11 +341,13 @@ export default async function AdminImportPage({
               </label>
 
               <button
-                type="submit"
-                className="mt-7 w-full rounded-full bg-[#118c87] px-6 py-3.5 font-bold text-white transition hover:bg-[#0c7773]"
-              >
-                Lancer l’importation test
-              </button>
+  type="submit"
+  className="mt-7 w-full rounded-full bg-[#118c87] px-6 py-3.5 font-black transition hover:bg-[#0c7773]"
+>
+  <span style={{ color: "#ffffff" }}>
+    Lancer l’importation test
+  </span>
+</button>
             </form>
 
             <form
@@ -398,13 +402,15 @@ export default async function AdminImportPage({
                 type="submit"
                 className="mt-7 w-full rounded-full bg-[#65d9ce] px-6 py-3.5 font-bold text-[#082a43] transition hover:bg-[#86e3da]"
               >
-                Importer tous les mots-clés
+              <span style={{ color: "#082A43" }}>
+  Importer tous les mots-clés
+</span>
               </button>
 
-              <p className="mt-4 text-center text-xs leading-5 text-slate-400">
-                Pour le premier essai, utilisez d’abord
-                l’importation contrôlée située à gauche.
-              </p>
+             <p className="mt-4 text-center text-xs leading-5 text-slate-400">
+  Les nouvelles offres seront enregistrées comme brouillons
+  et resteront à valider avant publication.
+</p>
             </form>
           </div>
 

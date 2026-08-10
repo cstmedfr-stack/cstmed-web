@@ -88,7 +88,9 @@ export default async function AdminKeywordsPage({
   href="/admin"
   className="rounded-full bg-[#082a43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0b3a59]"
 >
+<span style={{ color: "#ffffff" }}>
   Tableau de bord
+</span>
 </Link>
             <Link
               href="/admin/import"

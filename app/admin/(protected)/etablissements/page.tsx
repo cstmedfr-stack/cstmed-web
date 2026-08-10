@@ -344,7 +344,7 @@ export default async function EstablishmentRequestsPage({
 
   return (
     <main className="min-h-screen bg-[#f5f9fb] text-[#102435]">
-      <header className="border-b border-slate-200 bg-white">
+<header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-4 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
           <Link href="/admin">
             <Image
@@ -362,7 +362,9 @@ export default async function EstablishmentRequestsPage({
               href="/admin"
               className="rounded-full bg-[#082a43] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#0b3a59]"
             >
-              Tableau de bord
+             <span style={{ color: "#ffffff" }}>
+  Tableau de bord
+</span>
             </Link>
 
             <Link
@@ -391,7 +393,7 @@ export default async function EstablishmentRequestsPage({
         </div>
       </header>
 
-      <section className="bg-[#082a43] px-5 py-12 text-white sm:px-8">
+    <section className="bg-gradient-to-r from-[#082a43] via-[#0b3a59] to-[#11696d] px-5 py-12 text-white sm:px-8">
         <div className="mx-auto max-w-7xl">
           <p className="text-sm font-bold uppercase tracking-[0.16em] text-[#65d9ce]">
             Administration CSTMed
@@ -424,10 +426,10 @@ export default async function EstablishmentRequestsPage({
               </p>
             </Link>
 
-            <Link
-              href="/admin/etablissements?status=new"
-              className="rounded-3xl bg-white p-5 shadow-sm"
-            >
+           <Link
+  href="/admin/etablissements?status=new"
+  className="rounded-3xl border border-blue-200 bg-blue-50 p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+>
               <p className="text-sm font-semibold text-slate-500">
                 Nouvelles
               </p>
@@ -555,11 +557,13 @@ export default async function EstablishmentRequestsPage({
               </div>
 
               <button
-                type="submit"
-                className="rounded-full bg-[#118c87] px-7 py-3 font-bold text-white hover:bg-[#0c7773]"
-              >
-                Filtrer
-              </button>
+  type="submit"
+  className="rounded-full bg-[#118c87] px-7 py-3 font-black transition hover:bg-[#0c7773]"
+>
+  <span style={{ color: "#ffffff" }}>
+    Filtrer
+  </span>
+</button>
             </div>
 
             {q || status !== "all" || urgency !== "all" ? (
@@ -604,10 +608,18 @@ export default async function EstablishmentRequestsPage({
                     .join(", ");
 
                   return (
-                    <article
-                      key={request.id}
-                      className="grid gap-5 px-6 py-6 sm:px-8 lg:grid-cols-[1fr_auto] lg:items-center"
-                    >
+                   <article
+  key={request.id}
+  className={`grid gap-5 px-6 py-6 sm:px-8 lg:grid-cols-[1fr_auto] lg:items-center ${
+    request.status === "new"
+      ? "border-l-4 border-l-blue-500 bg-blue-50/30"
+      : request.urgency === "very_urgent"
+        ? "border-l-4 border-l-red-500 bg-red-50/20"
+        : request.urgency === "urgent"
+          ? "border-l-4 border-l-orange-400"
+          : ""
+  }`}
+>
                       <div>
                         <div className="flex flex-wrap items-center gap-2">
                           <span
@@ -665,19 +677,38 @@ export default async function EstablishmentRequestsPage({
                           </span>
                         </div>
 
-                        <p className="mt-3 text-sm text-slate-600">
-                          Contact :{" "}
-                          <strong>{request.contact_name}</strong> —{" "}
-                          {request.email}
-                        </p>
+                        <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+  <span className="font-semibold text-slate-700">
+    👤 {request.contact_name}
+    {request.contact_role
+      ? ` — ${request.contact_role}`
+      : ""}
+  </span>
+
+  <a
+    href={`mailto:${request.email}`}
+    className="font-semibold text-[#0c7773] hover:underline"
+  >
+    ✉️ {request.email}
+  </a>
+
+  <a
+    href={`tel:${request.phone}`}
+    className="font-semibold text-[#0c7773] hover:underline"
+  >
+    ☎️ {request.phone}
+  </a>
+</div>
                       </div>
 
                       <Link
-                        href={`/admin/etablissements/${request.id}`}
-                        className="rounded-full bg-[#118c87] px-6 py-3 text-center text-sm font-bold text-white hover:bg-[#0c7773]"
-                      >
-                        Consulter la demande
-                      </Link>
+  href={`/admin/etablissements/${request.id}`}
+  className="rounded-full bg-[#118c87] px-6 py-3 text-center text-sm font-black shadow-sm transition hover:-translate-y-0.5 hover:bg-[#0c7773]"
+>
+  <span style={{ color: "#ffffff" }}>
+    Consulter la demande →
+  </span>
+</Link>
                     </article>
                   );
                 })}
@@ -704,11 +735,13 @@ export default async function EstablishmentRequestsPage({
 
               {requestedPage < totalPages ? (
                 <Link
-                  href={nextUrl}
-                  className="rounded-full bg-[#118c87] px-5 py-2.5 text-sm font-bold text-white"
-                >
-                  Page suivante →
-                </Link>
+  href={nextUrl}
+  className="rounded-full bg-[#118c87] px-5 py-2.5 text-sm font-bold"
+>
+  <span style={{ color: "#ffffff" }}>
+    Page suivante →
+  </span>
+</Link>
               ) : (
                 <span />
               )}

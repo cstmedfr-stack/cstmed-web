@@ -84,58 +84,70 @@ const applicationStatusClasses: Record<
   archived: "bg-slate-200 text-slate-700",
 };
 
-const jobStatusLabels: Record<JobStatus, string> = {
+const jobStatusLabels: Record<
+  JobStatus,
+  string
+> = {
   draft: "Brouillon",
   published: "Publiée",
   rejected: "Refusée",
   archived: "Archivée",
 };
 
-const jobStatusClasses: Record<JobStatus, string> = {
+const jobStatusClasses: Record<
+  JobStatus,
+  string
+> = {
   draft: "bg-amber-100 text-amber-800",
-  published: "bg-emerald-100 text-emerald-700",
+  published:
+    "bg-emerald-100 text-emerald-700",
   rejected: "bg-red-100 text-red-700",
   archived: "bg-slate-200 text-slate-700",
 };
 
-const importStatusLabels: Record<string, string> = {
+const importStatusLabels: Record<
+  string,
+  string
+> = {
   running: "En cours",
   completed: "Terminée",
   failed: "Échec",
 };
 
-const importStatusClasses: Record<string, string> = {
+const importStatusClasses: Record<
+  string,
+  string
+> = {
   running: "bg-blue-100 text-blue-700",
-  completed: "bg-emerald-100 text-emerald-700",
+  completed:
+    "bg-emerald-100 text-emerald-700",
   failed: "bg-red-100 text-red-700",
 };
 
-function formatDate(value: string | null) {
+function formatDate(
+  value: string | null,
+) {
   if (!value) {
     return "Non terminée";
   }
 
-  return new Intl.DateTimeFormat("fr-FR", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(value));
+  return new Intl.DateTimeFormat(
+    "fr-FR",
+    {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    },
+  ).format(new Date(value));
 }
 
 export default async function AdminDashboardPage() {
-  /*
-   * Verificăm mai întâi că utilizatorul conectat
-   * este administrator.
-   */
   await requireAdmin();
 
-  /*
-   * Clientul secret este folosit numai după verificarea
-   * administratorului și numai în această componentă server.
-   */
-  const supabase = createAdminClient();
+  const supabase =
+    createAdminClient();
 
   const [
     totalJobsResult,
@@ -148,6 +160,8 @@ export default async function AdminDashboardPage() {
     recentApplicationsResult,
     recentJobsResult,
     recentImportsResult,
+    totalEstablishmentRequestsResult,
+    newEstablishmentRequestsResult,
   ] = await Promise.all([
     supabase
       .from("jobs")
@@ -260,27 +274,22 @@ export default async function AdminDashboardPage() {
         ascending: false,
       })
       .limit(1),
+
+    supabase
+      .from("establishment_requests")
+      .select("id", {
+        count: "exact",
+        head: true,
+      }),
+
+    supabase
+      .from("establishment_requests")
+      .select("id", {
+        count: "exact",
+        head: true,
+      })
+      .eq("status", "new"),
   ]);
-
-  const [
-  totalEstablishmentRequestsResult,
-  newEstablishmentRequestsResult,
-] = await Promise.all([
-  supabase
-    .from("establishment_requests")
-    .select("id", {
-      count: "exact",
-      head: true,
-    }),
-
-  supabase
-    .from("establishment_requests")
-    .select("id", {
-      count: "exact",
-      head: true,
-    })
-    .eq("status", "new"),
-]);
 
   const databaseError =
     totalJobsResult.error?.message ??
@@ -293,12 +302,18 @@ export default async function AdminDashboardPage() {
     recentApplicationsResult.error?.message ??
     recentJobsResult.error?.message ??
     recentImportsResult.error?.message ??
-    totalEstablishmentRequestsResult.error?.message ??
-newEstablishmentRequestsResult.error?.message ??
+    totalEstablishmentRequestsResult.error
+      ?.message ??
+    newEstablishmentRequestsResult.error
+      ?.message ??
     null;
 
-  const totalJobs = totalJobsResult.count ?? 0;
-  const draftJobs = draftJobsResult.count ?? 0;
+  const totalJobs =
+    totalJobsResult.count ?? 0;
+
+  const draftJobs =
+    draftJobsResult.count ?? 0;
+
   const publishedJobs =
     publishedJobsResult.count ?? 0;
 
@@ -314,11 +329,13 @@ newEstablishmentRequestsResult.error?.message ??
   const publishedTranslations =
     publishedTranslationsResult.count ?? 0;
 
-    const totalEstablishmentRequests =
-  totalEstablishmentRequestsResult.count ?? 0;
+  const totalEstablishmentRequests =
+    totalEstablishmentRequestsResult.count ??
+    0;
 
-const newEstablishmentRequests =
-  newEstablishmentRequestsResult.count ?? 0;
+  const newEstablishmentRequests =
+    newEstablishmentRequestsResult.count ??
+    0;
 
   const recentApplications =
     (recentApplicationsResult.data ??
@@ -334,40 +351,44 @@ const newEstablishmentRequests =
 
   return (
     <main className="min-h-screen bg-[#f5f9fb] text-[#102435]">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-4 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
-          <Link href="/ro">
+      {/* HEADER */}
+      <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-3 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
+          <Link
+            href="/admin"
+            aria-label="Tableau de bord CSTMed"
+          >
             <Image
               src="/images/cstmed-logo.png"
               alt="CSTMed"
               width={220}
               height={74}
               priority
-              className="h-auto w-[190px] object-contain sm:w-[220px]"
+              className="h-auto w-[180px] object-contain sm:w-[205px]"
             />
           </Link>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5">
             <Link
               href="/ro"
               target="_blank"
-              className="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
             >
-              Site RO ↗
+              🇷🇴 Site RO ↗
             </Link>
 
             <Link
               href="/fr"
               target="_blank"
-              className="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
             >
-              Site FR ↗
+              🇫🇷 Site FR ↗
             </Link>
 
             <form action={logoutAdmin}>
               <button
                 type="submit"
-                className="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-red-300 hover:bg-red-50 hover:text-red-700"
+                className="rounded-full border border-red-200 bg-red-50 px-4 py-2 text-sm font-bold text-red-700 transition hover:bg-red-100"
               >
                 Se déconnecter
               </button>
@@ -376,73 +397,93 @@ const newEstablishmentRequests =
         </div>
       </header>
 
-      <section className="bg-gradient-to-r from-[#082a43] via-[#0b3a59] to-[#11696d] px-5 py-14 text-white sm:px-8">
+      {/* HERO */}
+      <section className="bg-gradient-to-r from-[#082a43] via-[#0b3a59] to-[#11696d] px-5 py-10 text-white sm:px-8">
         <div className="mx-auto max-w-7xl">
-          <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#65d9ce]">
+          <p className="text-sm font-black uppercase tracking-[0.18em] text-[#65d9ce]">
             Administration CSTMed
           </p>
 
-          <h1 className="mt-4 text-3xl font-bold sm:text-4xl">
+          <h1 className="mt-3 text-3xl font-black sm:text-4xl">
             Tableau de bord
           </h1>
 
-          <p className="mt-4 max-w-3xl leading-7 text-slate-300">
-            Consultez les offres, les candidatures,
-            les traductions et les dernières
-            importations depuis un seul espace.
+          <p className="mt-4 max-w-3xl leading-7 text-slate-200">
+            Gérez les offres, les candidatures,
+            les demandes des établissements et
+            les importations France Travail depuis
+            un seul espace.
           </p>
         </div>
       </section>
 
-      <section className="px-5 py-10 sm:px-8">
+      <section className="px-5 py-9 sm:px-8">
         <div className="mx-auto max-w-7xl">
           {databaseError ? (
             <div className="mb-8 rounded-3xl border border-red-200 bg-red-50 p-6 text-red-700">
-              <p className="font-bold">
-                Une partie du tableau de bord n’a pas
-                pu être chargée.
+              <p className="font-black">
+                Une partie du tableau de bord
+                n’a pas pu être chargée.
               </p>
 
-              <p className="mt-2">{databaseError}</p>
+              <p className="mt-2">
+                {databaseError}
+              </p>
             </div>
           ) : null}
 
-         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+          {/* INDICATEURS */}
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+            {/* BROUILLONS */}
             <Link
               href="/admin/offres"
-              className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-              <p className="text-sm font-semibold text-slate-500">
-                Toutes les offres
-              </p>
+              className="group rounded-3xl border border-amber-200 bg-amber-50 p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-black text-amber-800">
+                  Brouillons à vérifier
+                </p>
 
-              <p className="mt-3 text-4xl font-bold text-[#082a43]">
-                {totalJobs}
-              </p>
-
-              <div className="mt-4 flex gap-4 text-xs font-semibold">
-                <span className="text-amber-700">
-                  {draftJobs} brouillons
-                </span>
-
-                <span className="text-emerald-700">
-                  {publishedJobs} publiées
+                <span className="text-xl">
+                  📝
                 </span>
               </div>
+
+              <p className="mt-3 text-4xl font-black text-[#082a43]">
+                {draftJobs}
+              </p>
+
+              <p className="mt-4 text-xs font-bold text-slate-500">
+                {totalJobs} offres au total
+              </p>
+
+              <p className="mt-3 text-xs font-black text-amber-800">
+                Ouvrir les brouillons →
+              </p>
             </Link>
 
+            {/* CANDIDATURES */}
             <Link
               href="/admin/candidatures"
               className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
             >
-              <p className="text-sm font-semibold text-slate-500">
-                Candidatures
-              </p>
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-semibold text-slate-500">
+                  Candidatures
+                </p>
 
-              <p className="mt-3 text-4xl font-bold text-[#082a43]">
+                {newApplications > 0 ? (
+                  <span className="rounded-full bg-blue-100 px-2.5 py-1 text-xs font-black text-blue-700">
+                    {newApplications} nouv.
+                  </span>
+                ) : null}
+              </div>
+
+              <p className="mt-3 text-4xl font-black text-[#082a43]">
                 {totalApplications}
               </p>
 
-              <div className="mt-4 flex gap-4 text-xs font-semibold">
+              <div className="mt-4 flex flex-wrap gap-3 text-xs font-semibold">
                 <span className="text-blue-700">
                   {newApplications} nouvelles
                 </span>
@@ -453,15 +494,16 @@ const newEstablishmentRequests =
               </div>
             </Link>
 
+            {/* OFFRES PUBLIÉES */}
             <Link
               href="/admin/offres?status=published"
-              className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+              className="rounded-3xl border border-emerald-200 bg-emerald-50 p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
             >
-              <p className="text-sm font-semibold text-slate-500">
+              <p className="text-sm font-black text-emerald-800">
                 Offres publiées
               </p>
 
-              <p className="mt-3 text-4xl font-bold text-[#118c87]">
+              <p className="mt-3 text-4xl font-black text-[#118c87]">
                 {publishedJobs}
               </p>
 
@@ -470,6 +512,7 @@ const newEstablishmentRequests =
               </p>
             </Link>
 
+            {/* RO */}
             <Link
               href="/ro/offres"
               target="_blank"
@@ -479,7 +522,7 @@ const newEstablishmentRequests =
                 Traductions roumaines
               </p>
 
-              <p className="mt-3 text-4xl font-bold text-[#118c87]">
+              <p className="mt-3 text-4xl font-black text-[#118c87]">
                 {publishedTranslations}
               </p>
 
@@ -487,157 +530,194 @@ const newEstablishmentRequests =
                 Traductions actuellement publiées
               </p>
             </Link>
- <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-  <p className="text-sm font-semibold text-slate-500">
-    Demandes établissements
-  </p>
 
-  <p className="mt-3 text-4xl font-bold text-[#082a43]">
-    {totalEstablishmentRequests}
-  </p>
-
-  <p className="mt-4 text-xs font-semibold text-blue-700">
-    {newEstablishmentRequests} nouvelles
-  </p>
-</div>
-            
-          </div>
-
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+            {/* ÉTABLISSEMENTS */}
             <Link
-              href="/admin/offres"
-              className="rounded-3xl bg-[#082a43] p-6 text-white shadow-lg transition hover:-translate-y-1"
-            >
-              <span className="text-2xl">📋</span>
-
-              <h2 className="mt-4 font-bold">
-             <span style={{ color: "#ffffff" }}>
-  Gérer les offres
-</span>
-              </h2>
-
-              <p className="mt-2 text-sm leading-6 text-slate-300">
-           <span style={{ color: "#ffffff" }}>
-  Vérifier, modifier et publier.
-</span>
-              </p>
-            </Link>
-
-            <Link
-              href="/admin/candidatures"
-              className="rounded-3xl bg-[#118c87] p-6 text-white shadow-lg transition hover:-translate-y-1"
-            >
-              <span className="text-2xl">👩‍⚕️</span>
-
-              <h2 className="mt-4 font-bold">
-                Candidatures
-              </h2>
-
-              <p className="mt-2 text-sm leading-6 text-white/80">
-                Consulter les profils et les CV.
-              </p>
-            </Link>
-
-<Link
-  href="/admin/etablissements"
-  className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
->
-  <span className="text-2xl">🏥</span>
-
-  <h2 className="mt-4 font-bold text-[#082a43]">
-    Établissements
-  </h2>
-
-  <p className="mt-2 text-sm leading-6 text-slate-500">
-    Consulter les besoins de recrutement.
-  </p>
-</Link>
-
-            <Link
-              href="/admin/import"
+              href="/admin/etablissements"
               className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
             >
-              <span className="text-2xl">⬇️</span>
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold text-slate-500">
+                  Demandes établissements
+                </p>
 
-              <h2 className="mt-4 font-bold text-[#082a43]">
-                Import France Travail
-              </h2>
+                {newEstablishmentRequests >
+                0 ? (
+                  <span className="rounded-full bg-blue-100 px-2.5 py-1 text-xs font-black text-blue-700">
+                    {
+                      newEstablishmentRequests
+                    }{" "}
+                    nouv.
+                  </span>
+                ) : null}
+              </div>
 
-              <p className="mt-2 text-sm leading-6 text-slate-500">
-                Importer de nouvelles offres.
+              <p className="mt-3 text-4xl font-black text-[#082a43]">
+                {
+                  totalEstablishmentRequests
+                }
               </p>
-            </Link>
 
-            <Link
-              href="/admin/mots-cles"
-              className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-            >
-              <span className="text-2xl">🔎</span>
-
-              <h2 className="mt-4 font-bold text-[#082a43]">
-                Mots-clés
-              </h2>
-
-              <p className="mt-2 text-sm leading-6 text-slate-500">
-                Configurer les spécialités.
-              </p>
-            </Link>
-
-            <Link
-              href="/ro/offres"
-              target="_blank"
-              className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-            >
-              <span className="text-2xl">🇷🇴</span>
-
-              <h2 className="mt-4 font-bold text-[#082a43]">
-                Offres roumaines
-              </h2>
-
-              <p className="mt-2 text-sm leading-6 text-slate-500">
-                Vérifier la version publique RO.
-              </p>
-            </Link>
-
-            <Link
-              href="/fr/offres"
-              target="_blank"
-              className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-            >
-              <span className="text-2xl">🇫🇷</span>
-
-              <h2 className="mt-4 font-bold text-[#082a43]">
-                Offres françaises
-              </h2>
-
-              <p className="mt-2 text-sm leading-6 text-slate-500">
-                Vérifier la liste complète.
+              <p className="mt-4 text-xs font-semibold text-blue-700">
+                {
+                  newEstablishmentRequests
+                }{" "}
+                nouvelles
               </p>
             </Link>
           </div>
 
+          {/* ACTIONS PRINCIPALES */}
+          <div className="mt-8">
+            <div className="mb-4 flex items-end justify-between gap-4">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-[#118c87]">
+                  Accès rapide
+                </p>
+
+                <h2 className="mt-1 text-xl font-black text-[#082a43]">
+                  Gestion CSTMed
+                </h2>
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+              <Link
+                href="/admin/offres"
+                className="rounded-3xl bg-[#082a43] p-6 shadow-lg transition hover:-translate-y-1"
+              >
+                <span className="text-2xl">
+                  📋
+                </span>
+
+                <h3 className="mt-4 font-black">
+                  <span
+                    style={{
+                      color: "#ffffff",
+                    }}
+                  >
+                    Gérer les offres
+                  </span>
+                </h3>
+
+                <p className="mt-2 text-sm leading-6">
+                  <span
+                    style={{
+                      color: "#ffffff",
+                    }}
+                  >
+                    Vérifier, modifier et publier.
+                  </span>
+                </p>
+              </Link>
+
+              <Link
+                href="/admin/candidatures"
+                className="rounded-3xl bg-[#118c87] p-6 shadow-lg transition hover:-translate-y-1"
+              >
+                <span className="text-2xl">
+                  👩‍⚕️
+                </span>
+
+                <h3 className="mt-4 font-black">
+                  <span
+                    style={{
+                      color: "#ffffff",
+                    }}
+                  >
+                    Candidatures
+                  </span>
+                </h3>
+
+                <p className="mt-2 text-sm leading-6">
+                  <span
+                    style={{
+                      color: "#ffffff",
+                    }}
+                  >
+                    Consulter les profils et les CV.
+                  </span>
+                </p>
+              </Link>
+
+              <Link
+                href="/admin/etablissements"
+                className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+              >
+                <span className="text-2xl">
+                  🏥
+                </span>
+
+                <h3 className="mt-4 font-black text-[#082a43]">
+                  Établissements
+                </h3>
+
+                <p className="mt-2 text-sm leading-6 text-slate-500">
+                  Consulter les besoins de recrutement.
+                </p>
+              </Link>
+
+              <Link
+                href="/admin/import"
+                className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+              >
+                <span className="text-2xl">
+                  ⬇️
+                </span>
+
+                <h3 className="mt-4 font-black text-[#082a43]">
+                  Import France Travail
+                </h3>
+
+                <p className="mt-2 text-sm leading-6 text-slate-500">
+                  Importer de nouvelles offres.
+                </p>
+              </Link>
+
+              <Link
+                href="/admin/mots-cles"
+                className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+              >
+                <span className="text-2xl">
+                  🔎
+                </span>
+
+                <h3 className="mt-4 font-black text-[#082a43]">
+                  Mots-clés
+                </h3>
+
+                <p className="mt-2 text-sm leading-6 text-slate-500">
+                  Configurer les spécialités.
+                </p>
+              </Link>
+            </div>
+          </div>
+
+          {/* DONNÉES RÉCENTES */}
           <div className="mt-10 grid gap-8 xl:grid-cols-2">
+            {/* CANDIDATURES */}
             <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
               <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5 sm:px-8">
                 <div>
-                  <p className="text-sm font-bold uppercase tracking-[0.14em] text-[#118c87]">
+                  <p className="text-sm font-black uppercase tracking-[0.14em] text-[#118c87]">
                     Candidatures
                   </p>
 
-                  <h2 className="mt-2 text-xl font-bold text-[#082a43]">
+                  <h2 className="mt-2 text-xl font-black text-[#082a43]">
                     Derniers profils reçus
                   </h2>
                 </div>
 
                 <Link
                   href="/admin/candidatures"
-                  className="text-sm font-bold text-[#118c87]"
+                  className="text-sm font-black text-[#118c87]"
                 >
                   Tout voir →
                 </Link>
               </div>
 
-              {recentApplications.length === 0 ? (
+              {recentApplications.length ===
+              0 ? (
                 <div className="p-8 text-center text-slate-500">
                   Aucune candidature reçue.
                 </div>
@@ -646,7 +726,9 @@ const newEstablishmentRequests =
                   {recentApplications.map(
                     (application) => (
                       <Link
-                        key={application.id}
+                        key={
+                          application.id
+                        }
                         href={`/admin/candidatures/${application.id}`}
                         className="block px-6 py-5 transition hover:bg-[#f8fbfc] sm:px-8"
                       >
@@ -656,33 +738,44 @@ const newEstablishmentRequests =
                               <span
                                 className={`rounded-full px-3 py-1 text-xs font-bold ${
                                   applicationStatusClasses[
-                                    application.status
+                                    application
+                                      .status
                                   ]
                                 }`}
                               >
                                 {
                                   applicationStatusLabels[
-                                    application.status
+                                    application
+                                      .status
                                   ]
                                 }
                               </span>
 
                               <span className="text-xs font-bold uppercase text-slate-400">
-                                {application.locale}
+                                {
+                                  application.locale
+                                }
                               </span>
                             </div>
 
-                            <h3 className="mt-3 font-bold text-[#082a43]">
-                              {application.first_name}{" "}
-                              {application.last_name}
+                            <h3 className="mt-3 font-black text-[#082a43]">
+                              {
+                                application.first_name
+                              }{" "}
+                              {
+                                application.last_name
+                              }
                             </h3>
 
-                            <p className="mt-1 text-sm text-[#118c87]">
-                              {application.specialty}
+                            <p className="mt-1 text-sm font-semibold text-[#118c87]">
+                              {
+                                application.specialty
+                              }
                             </p>
 
                             <p className="mt-2 text-sm text-slate-500">
-                              {application.jobs?.title ??
+                              {application.jobs
+                                ?.title ??
                                 "Candidature spontanée"}
                             </p>
                           </div>
@@ -700,21 +793,22 @@ const newEstablishmentRequests =
               )}
             </section>
 
+            {/* OFFRES */}
             <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
               <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5 sm:px-8">
                 <div>
-                  <p className="text-sm font-bold uppercase tracking-[0.14em] text-[#118c87]">
+                  <p className="text-sm font-black uppercase tracking-[0.14em] text-[#118c87]">
                     Offres
                   </p>
 
-                  <h2 className="mt-2 text-xl font-bold text-[#082a43]">
+                  <h2 className="mt-2 text-xl font-black text-[#082a43]">
                     Dernières offres importées
                   </h2>
                 </div>
 
                 <Link
                   href="/admin/offres"
-                  className="text-sm font-bold text-[#118c87]"
+                  className="text-sm font-black text-[#118c87]"
                 >
                   Tout voir →
                 </Link>
@@ -726,71 +820,86 @@ const newEstablishmentRequests =
                 </div>
               ) : (
                 <div className="divide-y divide-slate-100">
-                  {recentJobs.map((job) => (
-                    <Link
-                      key={job.id}
-                      href={`/admin/offres/${job.id}`}
-                      className="block px-6 py-5 transition hover:bg-[#f8fbfc] sm:px-8"
-                    >
-                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                        <div>
-                          <span
-                            className={`rounded-full px-3 py-1 text-xs font-bold ${
-                              jobStatusClasses[
-                                job.status
-                              ]
-                            }`}
-                          >
-                            {
-                              jobStatusLabels[
-                                job.status
-                              ]
-                            }
+                  {recentJobs.map(
+                    (job) => (
+                      <Link
+                        key={job.id}
+                        href={`/admin/offres/${job.id}`}
+                        className="block px-6 py-5 transition hover:bg-[#f8fbfc] sm:px-8"
+                      >
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                          <div>
+                            <span
+                              className={`rounded-full px-3 py-1 text-xs font-bold ${
+                                jobStatusClasses[
+                                  job
+                                    .status
+                                ]
+                              }`}
+                            >
+                              {
+                                jobStatusLabels[
+                                  job
+                                    .status
+                                ]
+                              }
+                            </span>
+
+                            <h3 className="mt-3 font-black text-[#082a43]">
+                              {
+                                job.title
+                              }
+                            </h3>
+
+                            <p className="mt-1 text-sm font-semibold text-[#118c87]">
+                              {job.specialty ??
+                                "Spécialité non précisée"}
+                            </p>
+
+                            <p className="mt-2 text-sm text-slate-500">
+                              {job.location_label ??
+                                "Localisation non précisée"}
+                            </p>
+                          </div>
+
+                          <span className="text-xs text-slate-400">
+                            {formatDate(
+                              job.created_at,
+                            )}
                           </span>
-
-                          <h3 className="mt-3 font-bold text-[#082a43]">
-                            {job.title}
-                          </h3>
-
-                          <p className="mt-1 text-sm text-[#118c87]">
-                            {job.specialty ??
-                              "Spécialité non précisée"}
-                          </p>
-
-                          <p className="mt-2 text-sm text-slate-500">
-                            {job.location_label ??
-                              "Localisation non précisée"}
-                          </p>
                         </div>
-
-                        <span className="text-xs text-slate-400">
-                          {formatDate(job.created_at)}
-                        </span>
-                      </div>
-                    </Link>
-                  ))}
+                      </Link>
+                    ),
+                  )}
                 </div>
               )}
             </section>
           </div>
 
+          {/* IMPORT */}
           <section className="mt-8 rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm sm:p-9">
             <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
               <div>
-                <p className="text-sm font-bold uppercase tracking-[0.14em] text-[#118c87]">
+                <p className="text-sm font-black uppercase tracking-[0.14em] text-[#118c87]">
                   France Travail
                 </p>
 
-                <h2 className="mt-2 text-2xl font-bold text-[#082a43]">
+                <h2 className="mt-2 text-2xl font-black text-[#082a43]">
                   Dernière importation
                 </h2>
               </div>
 
               <Link
                 href="/admin/import"
-                className="rounded-full bg-[#118c87] px-6 py-3 text-center text-sm font-bold text-white"
+                className="rounded-full bg-[#118c87] px-6 py-3 text-center text-sm font-black"
               >
-                Lancer une importation
+                <span
+                  style={{
+                    color: "#ffffff",
+                  }}
+                >
+                  Lancer une importation
+                </span>
               </Link>
             </div>
 
@@ -808,14 +917,17 @@ const newEstablishmentRequests =
                   <span
                     className={`mt-3 inline-flex rounded-full px-3 py-1 text-xs font-bold ${
                       importStatusClasses[
-                        latestImport.status
+                        latestImport
+                          .status
                       ] ??
                       "bg-slate-100 text-slate-700"
                     }`}
                   >
                     {importStatusLabels[
-                      latestImport.status
-                    ] ?? latestImport.status}
+                      latestImport
+                        .status
+                    ] ??
+                      latestImport.status}
                   </span>
                 </div>
 
@@ -824,8 +936,10 @@ const newEstablishmentRequests =
                     Nouvelles
                   </p>
 
-                  <p className="mt-2 text-2xl font-bold text-[#118c87]">
-                    {latestImport.imported_count}
+                  <p className="mt-2 text-2xl font-black text-[#118c87]">
+                    {
+                      latestImport.imported_count
+                    }
                   </p>
                 </div>
 
@@ -834,8 +948,10 @@ const newEstablishmentRequests =
                     Doublons
                   </p>
 
-                  <p className="mt-2 text-2xl font-bold text-amber-600">
-                    {latestImport.duplicate_count}
+                  <p className="mt-2 text-2xl font-black text-amber-600">
+                    {
+                      latestImport.duplicate_count
+                    }
                   </p>
                 </div>
 
@@ -844,8 +960,10 @@ const newEstablishmentRequests =
                     Erreurs
                   </p>
 
-                  <p className="mt-2 text-2xl font-bold text-red-600">
-                    {latestImport.error_count}
+                  <p className="mt-2 text-2xl font-black text-red-600">
+                    {
+                      latestImport.error_count
+                    }
                   </p>
                 </div>
 
@@ -854,7 +972,7 @@ const newEstablishmentRequests =
                     Date
                   </p>
 
-                  <p className="mt-2 text-sm font-bold text-[#082a43]">
+                  <p className="mt-2 text-sm font-black text-[#082a43]">
                     {formatDate(
                       latestImport.completed_at ??
                         latestImport.started_at,
@@ -866,7 +984,9 @@ const newEstablishmentRequests =
 
             {latestImport?.error_message ? (
               <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700">
-                {latestImport.error_message}
+                {
+                  latestImport.error_message
+                }
               </div>
             ) : null}
           </section>

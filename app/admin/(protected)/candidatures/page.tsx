@@ -336,9 +336,9 @@ export default async function ApplicationsPage({
 
   return (
     <main className="min-h-screen bg-[#f5f9fb] text-[#102435]">
-      <header className="border-b border-slate-200 bg-white">
+<header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-4 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
-          <Link href="/">
+        <Link href="/admin">
             <Image
               src="/images/cstmed-logo.png"
               alt="CSTMed"
@@ -354,7 +354,9 @@ export default async function ApplicationsPage({
               href="/admin"
               className="rounded-full bg-[#082a43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0b3a59]"
             >
-              Tableau de bord
+           <span style={{ color: "#ffffff" }}>
+  Tableau de bord
+</span>
             </Link>
             <Link
               href="/admin/offres"
@@ -382,7 +384,7 @@ export default async function ApplicationsPage({
         </div>
       </header>
 
-      <section className="bg-[#082a43] px-5 py-12 text-white sm:px-8">
+   <section className="bg-gradient-to-r from-[#082a43] via-[#0b3a59] to-[#11696d] px-5 py-12 text-white sm:px-8">
         <div className="mx-auto max-w-7xl">
           <p className="text-sm font-bold uppercase tracking-[0.16em] text-[#65d9ce]">
             Administration CSTMed
@@ -417,9 +419,9 @@ export default async function ApplicationsPage({
             </Link>
 
             <Link
-              href="/admin/candidatures?status=new"
-              className="rounded-3xl bg-white p-5 shadow-sm"
-            >
+  href="/admin/candidatures?status=new"
+  className="rounded-3xl border border-blue-200 bg-blue-50 p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+>
               <p className="text-sm font-semibold text-slate-500">
                 Nouvelles
               </p>
@@ -523,12 +525,14 @@ export default async function ApplicationsPage({
                 </select>
               </div>
 
-              <button
-                type="submit"
-                className="rounded-full bg-[#118c87] px-7 py-3 font-bold text-white hover:bg-[#0c7773]"
-              >
-                Filtrer
-              </button>
+             <button
+  type="submit"
+  className="rounded-full bg-[#118c87] px-7 py-3 font-black transition hover:bg-[#0c7773]"
+>
+  <span style={{ color: "#ffffff" }}>
+    Filtrer
+  </span>
+</button>
             </div>
 
             {(q || status !== "all") ? (
@@ -572,10 +576,14 @@ export default async function ApplicationsPage({
                       application.jobs?.city;
 
                     return (
-                      <article
-                        key={application.id}
-                        className="grid gap-5 px-6 py-6 sm:px-8 lg:grid-cols-[1fr_auto] lg:items-center"
-                      >
+                     <article
+  key={application.id}
+  className={`grid gap-5 px-6 py-6 sm:px-8 lg:grid-cols-[1fr_auto] lg:items-center ${
+    application.status === "new"
+      ? "border-l-4 border-l-blue-500 bg-blue-50/30"
+      : ""
+  }`}
+>
                         <div>
                           <div className="flex flex-wrap items-center gap-2">
                             <span
@@ -606,28 +614,44 @@ export default async function ApplicationsPage({
                             {application.last_name}
                           </h2>
 
-                          <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-500">
-                            <span>
-                              {application.email}
-                            </span>
+                         <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-500">
+  <a
+    href={`mailto:${application.email}`}
+    className="font-semibold text-[#0c7773] hover:underline"
+  >
+    ✉️ {application.email}
+  </a>
 
-                            <span>
-                              {application.phone}
-                            </span>
+  <a
+    href={`tel:${application.phone}`}
+    className="font-semibold text-[#0c7773] hover:underline"
+  >
+    ☎️ {application.phone}
+  </a>
 
-                            <span>
-                              {application.city ||
-                                application.country ||
-                                "Localisation non précisée"}
-                            </span>
+  <span>
+    📍{" "}
+    {application.city ||
+      application.country ||
+      "Localisation non précisée"}
+  </span>
 
-                            <span>
-                              Reçue le{" "}
-                              {formatDate(
-                                application.created_at,
-                              )}
-                            </span>
-                          </div>
+  {application.french_level ? (
+    <span>
+      🇫🇷 Français :{" "}
+      <strong>
+        {application.french_level}
+      </strong>
+    </span>
+  ) : null}
+
+  <span>
+    Reçue le{" "}
+    {formatDate(
+      application.created_at,
+    )}
+  </span>
+</div>
 
                           {application.jobs ? (
                             <div className="mt-4 rounded-2xl bg-[#f5f9fb] px-4 py-3 text-sm">
@@ -647,12 +671,14 @@ export default async function ApplicationsPage({
                           )}
                         </div>
 
-                        <Link
-                          href={`/admin/candidatures/${application.id}`}
-                          className="rounded-full bg-[#118c87] px-6 py-3 text-center text-sm font-bold text-white hover:bg-[#0c7773]"
-                        >
-                          Consulter le profil
-                        </Link>
+                              <Link
+        href={`/admin/candidatures/${application.id}`}
+        className="rounded-full bg-[#118c87] px-6 py-3 text-center text-sm font-black shadow-sm transition hover:-translate-y-0.5 hover:bg-[#0c7773]"
+      >
+        <span style={{ color: "#ffffff" }}>
+          Consulter le profil →
+        </span>
+      </Link>
                       </article>
                     );
                   },
@@ -680,12 +706,14 @@ export default async function ApplicationsPage({
               </span>
 
               {requestedPage < totalPages ? (
-                <Link
-                  href={nextUrl}
-                  className="rounded-full bg-[#118c87] px-5 py-2.5 text-sm font-bold text-white"
-                >
-                  Page suivante →
-                </Link>
+              <Link
+  href={nextUrl}
+  className="rounded-full bg-[#118c87] px-5 py-2.5 text-sm font-bold"
+>
+  <span style={{ color: "#ffffff" }}>
+    Page suivante →
+  </span>
+</Link>
               ) : (
                 <span />
               )}
