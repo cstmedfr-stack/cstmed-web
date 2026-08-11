@@ -4,35 +4,35 @@ export const legalConfig = {
   contactEmail: "contact@cstmed.fr",
   phone: "+33 (0) 6 28 26 25 76",
 
-  /*
-   * Aceste informații trebuie completate înainte
-   * de publicarea site-ului.
-   *
-   * Nu introducem încă CST FAMILY HOME SRL sau o
-   * viitoare întreprindere franceză până nu este
-   * stabilită entitatea care exploatează CSTMed.
-   */
   publisher: {
-    legalName: "DE COMPLETAT ÎNAINTE DE PUBLICARE",
-    legalForm: "DE COMPLETAT",
-    registrationNumber: "DE COMPLETAT",
-    registeredOffice: "DE COMPLETAT",
-    vatNumber: "DE COMPLETAT, DACĂ ESTE APLICABIL",
-    publicationDirector: "DE COMPLETAT",
+    legalName: "Diana Codat – CSTMed",
+
+    legalForm:
+      "Personne physique – projet d’activité en cours de création",
+
+    registrationNumber:
+      "Aucun numéro SIREN/SIRET attribué à ce jour",
+
+    registeredOffice:
+      "Cap d'Agde, 34300, France",
+
+    vatNumber:
+      "Aucun numéro de TVA intracommunautaire attribué à ce jour",
+
+    publicationDirector: "Diana Codat",
   },
 
-  /*
-   * Se completează după alegerea serviciului
-   * de producție: Vercel, Hostinger etc.
-   */
   hosting: {
-    companyName: "DE COMPLETAT LA PUBLICAREA SITE-ULUI",
-    address: "DE COMPLETAT",
-    website: "DE COMPLETAT",
+    companyName: "Vercel Inc.",
+
+    address:
+      "440 N Barranca Avenue #4133, Covina, CA 91723, United States",
+
+    website: "https://vercel.com",
   },
 
   dataProviders: [
-    "Supabase – bază de date, autentificare și stocare privată a CV-urilor",
-    "Resend – trimiterea mesajelor electronice tranzacționale",
+    "Supabase",
+    "Resend",
   ],
 } as const;

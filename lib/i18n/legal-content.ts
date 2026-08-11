@@ -31,26 +31,31 @@ function getFrenchDocuments(): LegalDocuments {
       intro:
         "Les présentes mentions légales identifient l’éditeur du site CSTMed et précisent les principales conditions de son utilisation.",
 
-      warning:
-        "Les informations signalées « À COMPLÉTER » devront être remplacées par les données définitives de l’entité exploitant CSTMed avant la mise en ligne publique.",
-
-      lastUpdated: "6 août 2026",
+      lastUpdated: "11 août 2026",
 
       sections: [
         {
           title: "Éditeur du site",
           paragraphs: [
             `Le site CSTMed est édité par : ${legalConfig.publisher.legalName}.`,
-            `Forme juridique : ${legalConfig.publisher.legalForm}.`,
+            `Statut actuel : ${legalConfig.publisher.legalForm}.`,
             `Numéro d’immatriculation : ${legalConfig.publisher.registrationNumber}.`,
             `Numéro de TVA : ${legalConfig.publisher.vatNumber}.`,
-            `Siège social : ${legalConfig.publisher.registeredOffice}.`,
+            `Adresse de contact : ${legalConfig.publisher.registeredOffice}.`,
+          ],
+        },
+        {
+          title: "Situation actuelle de CSTMed",
+          paragraphs: [
+            "CSTMed est actuellement un projet en phase de lancement et de validation de son activité.",
+            "Aucune prestation commerciale n’est facturée par CSTMed tant que l’activité professionnelle n’a pas été immatriculée.",
+            "Les présentes mentions légales seront mises à jour dès l’immatriculation de l’activité afin d’indiquer les informations professionnelles définitives, notamment le numéro SIREN/SIRET et, le cas échéant, le numéro de TVA intracommunautaire.",
           ],
         },
         {
           title: "Directeur de la publication",
           paragraphs: [
-            `Directeur ou directrice de la publication : ${legalConfig.publisher.publicationDirector}.`,
+            `Directrice de la publication : ${legalConfig.publisher.publicationDirector}.`,
           ],
         },
         {
@@ -71,7 +76,8 @@ function getFrenchDocuments(): LegalDocuments {
         {
           title: "Objet du site",
           paragraphs: [
-            "CSTMed présente des opportunités professionnelles dans le domaine médical et propose un accompagnement aux médecins et aux établissements de santé.",
+            "CSTMed présente des opportunités professionnelles dans le domaine médical et propose un accompagnement aux médecins ainsi qu’aux établissements de santé.",
+            "Le site permet notamment aux médecins de consulter des offres et de transmettre volontairement leur candidature et leur CV.",
             "La publication d’une offre sur le site ne constitue ni une promesse d’embauche, ni une garantie de recrutement.",
           ],
         },
@@ -93,7 +99,7 @@ function getFrenchDocuments(): LegalDocuments {
           title: "Responsabilité",
           paragraphs: [
             "CSTMed met en œuvre des moyens raisonnables afin de présenter des informations actualisées, mais ne peut garantir l’absence totale d’erreur ou l’actualité permanente de toutes les offres.",
-            "Les utilisateurs restent responsables de la vérification des conditions du poste et des informations communiquées dans leur candidature.",
+            "Les utilisateurs restent responsables de la vérification des conditions du poste et de l’exactitude des informations communiquées dans leur candidature.",
           ],
         },
       ],
@@ -106,13 +112,13 @@ function getFrenchDocuments(): LegalDocuments {
       intro:
         "Cette politique explique comment CSTMed collecte, utilise, protège et conserve les données personnelles transmises par les candidats et les visiteurs.",
 
-      lastUpdated: "6 août 2026",
+      lastUpdated: "11 août 2026",
 
       sections: [
         {
           title: "Responsable du traitement",
           paragraphs: [
-            `Le responsable du traitement est ${legalConfig.publisher.legalName}, exploitant la marque CSTMed.`,
+            `Le responsable du traitement des données collectées par CSTMed est ${legalConfig.publisher.legalName}.`,
             `Pour toute question relative aux données personnelles : ${legalConfig.contactEmail}.`,
           ],
         },
@@ -132,8 +138,8 @@ function getFrenchDocuments(): LegalDocuments {
           bullets: [
             "Recevoir, enregistrer et examiner les candidatures.",
             "Évaluer l’adéquation du profil avec une offre ou un besoin de recrutement.",
-            "Contacter le candidat et organiser les échanges liés au recrutement.",
-            "Présenter, avec l’accord ou dans le cadre approprié, un profil à un établissement de santé.",
+            "Contacter le candidat et organiser les échanges liés à son projet professionnel.",
+            "Présenter un profil à un établissement de santé lorsque cela est nécessaire dans le cadre de la candidature ou du projet du candidat.",
             "Conserver le profil pour de futures opportunités lorsque le candidat a choisi cette option.",
             "Assurer la sécurité du site et prévenir les utilisations frauduleuses.",
           ],
@@ -141,7 +147,8 @@ function getFrenchDocuments(): LegalDocuments {
         {
           title: "Bases juridiques",
           paragraphs: [
-            "Le traitement d’une candidature repose sur les démarches réalisées à la demande du candidat et sur l’intérêt légitime de CSTMed à gérer les candidatures et les mises en relation professionnelles.",
+            "Le traitement des données transmises dans le cadre d’une candidature est nécessaire à l’examen de la demande du candidat et à la gestion de la mise en relation professionnelle.",
+            "Certains traitements peuvent également reposer sur l’intérêt légitime de CSTMed à assurer le suivi des candidatures et le fonctionnement de son service.",
             "La conservation du profil pour de futures opportunités repose sur le choix facultatif exprimé par le candidat dans le formulaire.",
             "Les traitements nécessaires à la sécurité du service reposent sur l’intérêt légitime de CSTMed à protéger son site, ses utilisateurs et ses données.",
           ],
@@ -157,14 +164,18 @@ function getFrenchDocuments(): LegalDocuments {
         {
           title: "Destinataires",
           bullets: [
-            "Les personnes habilitées au sein de CSTMed.",
-            "Les établissements de santé concernés par une candidature, lorsque la transmission est nécessaire et appropriée.",
+            "Les personnes habilitées à gérer CSTMed et les candidatures reçues.",
+            "Les établissements de santé concernés par une candidature lorsque la transmission du profil est nécessaire et appropriée.",
             "Les prestataires techniques intervenant pour l’hébergement, la base de données, le stockage privé et l’envoi des courriels.",
           ],
         },
         {
           title: "Prestataires techniques",
-          bullets: [...legalConfig.dataProviders],
+          bullets: [
+            "Vercel – hébergement et mise à disposition du site.",
+            "Supabase – base de données, authentification et stockage privé des CV.",
+            "Resend – envoi des courriels transactionnels liés au fonctionnement du service.",
+          ],
         },
         {
           title: "Durées de conservation",
@@ -179,6 +190,7 @@ function getFrenchDocuments(): LegalDocuments {
           paragraphs: [
             "Les CV sont stockés dans un espace privé et ne disposent pas d’une adresse publique permanente.",
             "L’accès administratif est protégé par authentification et les téléchargements de CV utilisent des liens temporaires.",
+            "CSTMed limite l’accès aux candidatures aux personnes qui en ont besoin pour assurer leur traitement.",
             "Malgré les mesures mises en place, aucun service en ligne ne peut garantir une sécurité absolue.",
           ],
         },
@@ -201,7 +213,8 @@ function getFrenchDocuments(): LegalDocuments {
         {
           title: "Transferts et sous-traitants",
           paragraphs: [
-            "Certains prestataires peuvent traiter des données depuis plusieurs régions ou pays. CSTMed sélectionne des prestataires offrant des garanties contractuelles et techniques adaptées.",
+            "Certains prestataires techniques peuvent traiter des données depuis plusieurs régions ou pays.",
+            "CSTMed sélectionne des prestataires proposant des garanties contractuelles, organisationnelles et techniques adaptées à la protection des données.",
           ],
         },
         {
@@ -221,13 +234,13 @@ function getFrenchDocuments(): LegalDocuments {
       intro:
         "Cette page présente les cookies et mécanismes similaires utilisés actuellement sur CSTMed.",
 
-      lastUpdated: "6 août 2026",
+      lastUpdated: "11 août 2026",
 
       sections: [
         {
           title: "Cookies actuellement utilisés",
           bullets: [
-            "Cookie de préférence linguistique : mémorise le choix entre le roumain et le français.",
+            "Cookie ou mécanisme de préférence linguistique : mémorise le choix entre le roumain et le français.",
             "Cookies techniques d’authentification : utilisés uniquement pour sécuriser l’espace d’administration.",
             "Éléments techniques strictement nécessaires au fonctionnement et à la sécurité du site.",
           ],
@@ -242,7 +255,7 @@ function getFrenchDocuments(): LegalDocuments {
         {
           title: "Bandeau de consentement",
           paragraphs: [
-            "Aucun bandeau d’acceptation n’est affiché tant que seuls des cookies strictement nécessaires ou de préférence linguistique sont utilisés.",
+            "Aucun bandeau d’acceptation n’est affiché tant que seuls des cookies strictement nécessaires ou des mécanismes de préférence ne nécessitant pas de consentement sont utilisés.",
             "Si CSTMed ajoute ultérieurement des outils d’analyse, de publicité, des vidéos externes ou des fonctionnalités sociales nécessitant un consentement, un mécanisme permettant d’accepter, de refuser et de retirer le consentement sera mis en place.",
           ],
         },
@@ -250,7 +263,7 @@ function getFrenchDocuments(): LegalDocuments {
           title: "Gestion depuis le navigateur",
           paragraphs: [
             "Vous pouvez supprimer ou bloquer les cookies depuis les réglages de votre navigateur.",
-            "Le blocage de cookies strictement nécessaires peut empêcher certaines fonctionnalités, notamment la mémorisation de la langue ou l’accès à l’administration.",
+            "Le blocage de cookies strictement nécessaires peut empêcher certaines fonctionnalités, notamment l’accès à l’administration.",
           ],
         },
         {
@@ -273,20 +286,25 @@ function getRomanianDocuments(): LegalDocuments {
       intro:
         "Prezentele mențiuni identifică editorul site-ului CSTMed și precizează principalele condiții de utilizare.",
 
-      warning:
-        "Informațiile marcate „DE COMPLETAT” trebuie înlocuite cu datele definitive ale entității care exploatează CSTMed înainte de publicarea site-ului.",
-
-      lastUpdated: "6 august 2026",
+      lastUpdated: "11 august 2026",
 
       sections: [
         {
           title: "Editorul site-ului",
           paragraphs: [
             `Site-ul CSTMed este editat de: ${legalConfig.publisher.legalName}.`,
-            `Forma juridică: ${legalConfig.publisher.legalForm}.`,
+            `Statut actual: ${legalConfig.publisher.legalForm}.`,
             `Număr de înregistrare: ${legalConfig.publisher.registrationNumber}.`,
             `Cod TVA: ${legalConfig.publisher.vatNumber}.`,
-            `Sediu social: ${legalConfig.publisher.registeredOffice}.`,
+            `Adresă de contact: ${legalConfig.publisher.registeredOffice}.`,
+          ],
+        },
+        {
+          title: "Situația actuală a CSTMed",
+          paragraphs: [
+            "CSTMed este în prezent un proiect aflat în faza de lansare și de validare a activității.",
+            "CSTMed nu facturează servicii comerciale înainte de înregistrarea oficială a activității profesionale.",
+            "Prezentele mențiuni legale vor fi actualizate imediat după înregistrarea activității, pentru a include datele profesionale definitive, în special numărul SIREN/SIRET și, dacă este cazul, codul de TVA intracomunitar.",
           ],
         },
         {
@@ -314,6 +332,7 @@ function getRomanianDocuments(): LegalDocuments {
           title: "Obiectul site-ului",
           paragraphs: [
             "CSTMed prezintă oportunități profesionale în domeniul medical și oferă sprijin medicilor și unităților medicale.",
+            "Site-ul permite în special medicilor să consulte oferte și să transmită voluntar candidatura și CV-ul.",
             "Publicarea unei oferte nu reprezintă o promisiune de angajare și nu garantează finalizarea recrutării.",
           ],
         },
@@ -335,7 +354,7 @@ function getRomanianDocuments(): LegalDocuments {
           title: "Răspundere",
           paragraphs: [
             "CSTMed depune eforturi rezonabile pentru prezentarea unor informații actualizate, dar nu poate garanta lipsa totală a erorilor sau disponibilitatea permanentă a ofertelor.",
-            "Utilizatorii trebuie să verifice condițiile postului și informațiile transmise prin candidatură.",
+            "Utilizatorii trebuie să verifice condițiile postului și exactitatea informațiilor transmise prin candidatură.",
           ],
         },
       ],
@@ -348,13 +367,13 @@ function getRomanianDocuments(): LegalDocuments {
       intro:
         "Această politică explică modul în care CSTMed colectează, utilizează, protejează și păstrează datele transmise de candidați și vizitatori.",
 
-      lastUpdated: "6 august 2026",
+      lastUpdated: "11 august 2026",
 
       sections: [
         {
           title: "Operatorul datelor",
           paragraphs: [
-            `Operatorul datelor este ${legalConfig.publisher.legalName}, entitatea care exploatează CSTMed.`,
+            `Operatorul datelor colectate prin CSTMed este ${legalConfig.publisher.legalName}.`,
             `Pentru întrebări privind datele personale: ${legalConfig.contactEmail}.`,
           ],
         },
@@ -374,8 +393,8 @@ function getRomanianDocuments(): LegalDocuments {
           bullets: [
             "Primirea, înregistrarea și analizarea candidaturilor.",
             "Evaluarea potrivirii profilului cu un post sau cu o nevoie de recrutare.",
-            "Contactarea candidatului și organizarea etapelor recrutării.",
-            "Prezentarea profilului către o unitate medicală în cadrul corespunzător.",
+            "Contactarea candidatului și organizarea etapelor legate de proiectul său profesional.",
+            "Prezentarea profilului către o unitate medicală atunci când acest lucru este necesar în cadrul candidaturii sau proiectului candidatului.",
             "Păstrarea profilului pentru alte oportunități, atunci când candidatul a ales această opțiune.",
             "Protejarea site-ului și prevenirea utilizărilor frauduloase.",
           ],
@@ -383,8 +402,9 @@ function getRomanianDocuments(): LegalDocuments {
         {
           title: "Temeiurile prelucrării",
           paragraphs: [
-            "Analizarea candidaturii se bazează pe demersurile solicitate de candidat și pe interesul legitim al CSTMed de a gestiona candidaturile și punerea în legătură profesională.",
-            "Păstrarea profilului pentru alte oportunități se bazează pe alegerea opțională exprimată în formular.",
+            "Prelucrarea datelor transmise printr-o candidatură este necesară pentru analizarea solicitării candidatului și gestionarea punerii în legătură profesionale.",
+            "Anumite prelucrări se pot baza și pe interesul legitim al CSTMed de a asigura urmărirea candidaturilor și funcționarea serviciului.",
+            "Păstrarea profilului pentru alte oportunități se bazează pe alegerea opțională exprimată de candidat în formular.",
             "Măsurile de securitate se bazează pe interesul legitim al CSTMed de a proteja serviciul și datele.",
           ],
         },
@@ -399,14 +419,18 @@ function getRomanianDocuments(): LegalDocuments {
         {
           title: "Destinatarii datelor",
           bullets: [
-            "Persoanele autorizate din cadrul CSTMed.",
-            "Unitățile medicale vizate de o candidatură, atunci când transmiterea este necesară și justificată.",
+            "Persoanele autorizate să gestioneze CSTMed și candidaturile primite.",
+            "Unitățile medicale vizate de o candidatură, atunci când transmiterea profilului este necesară și justificată.",
             "Furnizorii tehnici pentru găzduire, baze de date, stocare privată și e-mailuri.",
           ],
         },
         {
           title: "Furnizori tehnici",
-          bullets: [...legalConfig.dataProviders],
+          bullets: [
+            "Vercel – găzduirea și publicarea site-ului.",
+            "Supabase – bază de date, autentificare și stocarea privată a CV-urilor.",
+            "Resend – trimiterea e-mailurilor tranzacționale necesare funcționării serviciului.",
+          ],
         },
         {
           title: "Durata păstrării",
@@ -421,6 +445,7 @@ function getRomanianDocuments(): LegalDocuments {
           paragraphs: [
             "CV-urile sunt păstrate într-un spațiu privat și nu au o adresă publică permanentă.",
             "Accesul administrativ este protejat prin autentificare, iar descărcarea CV-urilor se face prin legături temporare.",
+            "CSTMed limitează accesul la candidaturi la persoanele care au nevoie de aceste informații pentru prelucrarea lor.",
             "Niciun serviciu online nu poate garanta însă o securitate absolută.",
           ],
         },
@@ -431,8 +456,8 @@ function getRomanianDocuments(): LegalDocuments {
             "Dreptul la rectificare.",
             "Dreptul la ștergere, în condițiile legii.",
             "Dreptul la restricționarea prelucrării.",
-            "Dreptul de opoziție.",
-            "Dreptul de a retrage opțiunea privind oportunitățile viitoare.",
+            "Dreptul de opoziție la prelucrările bazate pe interes legitim.",
+            "Dreptul de a retrage în orice moment opțiunea privind oportunitățile viitoare.",
             "Dreptul la portabilitate, atunci când este aplicabil.",
           ],
           paragraphs: [
@@ -443,7 +468,8 @@ function getRomanianDocuments(): LegalDocuments {
         {
           title: "Furnizori și transferuri",
           paragraphs: [
-            "Anumiți furnizori pot prelucra date din mai multe regiuni sau țări. CSTMed selectează furnizori care oferă garanții contractuale și tehnice adecvate.",
+            "Anumiți furnizori tehnici pot prelucra date din mai multe regiuni sau țări.",
+            "CSTMed selectează furnizori care oferă garanții contractuale, organizatorice și tehnice adecvate pentru protecția datelor.",
           ],
         },
         {
@@ -463,13 +489,13 @@ function getRomanianDocuments(): LegalDocuments {
       intro:
         "Această pagină descrie modulele cookie și mecanismele similare utilizate în prezent de CSTMed.",
 
-      lastUpdated: "6 august 2026",
+      lastUpdated: "11 august 2026",
 
       sections: [
         {
           title: "Module cookie utilizate",
           bullets: [
-            "Preferința de limbă: memorează alegerea dintre română și franceză.",
+            "Cookie sau mecanism de preferință lingvistică: memorează alegerea dintre română și franceză.",
             "Cookie-uri tehnice de autentificare: utilizate pentru protejarea panoului de administrare.",
             "Elemente tehnice strict necesare funcționării și securității site-ului.",
           ],
@@ -484,15 +510,15 @@ function getRomanianDocuments(): LegalDocuments {
         {
           title: "Banda de consimțământ",
           paragraphs: [
-            "Nu este afișată o bandă de acceptare cât timp site-ul utilizează numai cookie-uri strict necesare și de preferință lingvistică.",
-            "Dacă ulterior vor fi adăugate instrumente de analiză, publicitate, materiale video externe sau funcții sociale, va fi implementat un mecanism de acceptare, refuz și retragere a acordului.",
+            "Nu este afișată o bandă de acceptare cât timp site-ul utilizează numai cookie-uri strict necesare sau mecanisme de preferință care nu necesită consimțământ.",
+            "Dacă ulterior vor fi adăugate instrumente de analiză, publicitate, materiale video externe sau funcții sociale care necesită consimțământ, va fi implementat un mecanism de acceptare, refuz și retragere a acordului.",
           ],
         },
         {
           title: "Setările browserului",
           paragraphs: [
             "Cookie-urile pot fi șterse sau blocate din setările browserului.",
-            "Blocarea cookie-urilor necesare poate împiedica memorarea limbii sau funcționarea panoului administrativ.",
+            "Blocarea cookie-urilor necesare poate împiedica funcționarea anumitor componente, în special accesul la panoul administrativ.",
           ],
         },
         {
