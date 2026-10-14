@@ -621,6 +621,17 @@ export default async function AdminOffersPage({
             </div>
           ) : null}
           {!error && jobs.length > 0 ? (
+            <OfferVerification
+              offers={jobs.map((job) => ({
+                id: job.id,
+                title: job.title,
+                reference: job.source_job_id,
+                status: job.status,
+              }))}
+            />
+          ) : null}
+
+          {!error && jobs.length > 0 ? (
             <BulkOffersSelection ids={jobs.map((job) => job.id)}>
           {/* LISTA BROUILLONS / OFFRES */}
           {!error &&
