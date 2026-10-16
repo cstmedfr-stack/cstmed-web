@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { addApplicationActivity } from "../activity-actions";
+import { withdrawTalentPoolConsent } from "../rgpd-actions";
 import {
   downloadApplicationCv,
 } from "../actions";
@@ -34,6 +35,7 @@ type ApplicationDetails = {
   cv_size_bytes: number;
   status: ApplicationStatus;
   consent_at: string;
+  talent_pool_consent_at: string | null;
   created_at: string;
   updated_at: string;
   jobs:
@@ -126,6 +128,7 @@ export default async function ApplicationDetailsPage({
         cv_size_bytes,
         status,
         consent_at,
+        talent_pool_consent_at,
         created_at,
         updated_at,
         jobs (
@@ -456,6 +459,44 @@ export default async function ApplicationDetailsPage({
                 Le lien de téléchargement est temporaire
                 et réservé à l’administrateur connecté.
               </p>
+            </section>
+            <section className="rounded-[2rem] border border-teal-200 bg-white p-7 shadow-sm">
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-[#118c87]">
+                Protection des données – RGPD
+              </p>
+              <h2 className="mt-2 text-xl font-bold text-[#082a43]">
+                Vivier de candidats
+              </h2>
+              {application.talent_pool_consent_at ? (
+                <>
+                  <p className="mt-3 text-sm leading-6 text-slate-700">
+                    Accord enregistré le {formatDate(application.talent_pool_consent_at)}.
+                    Le profil peut être pris en compte pour de futures opportunités.
+                  </p>
+                  <form action={withdrawTalentPoolConsent} className="mt-5 space-y-3">
+                    <input type="hidden" name="applicationId" value={application.id} />
+                    <label className="flex items-start gap-2 text-sm text-slate-700">
+                      <input name="confirmWithdrawal" type="checkbox" value="yes" required className="mt-1" />
+                      Je confirme que le candidat a demandé le retrait de son accord
+                      pour les opportunités futures.
+                    </label>
+                    <button
+                      type="submit"
+                      className="rounded-full border border-amber-500 bg-amber-50 px-5 py-2.5 text-sm font-bold text-amber-900 hover:bg-amber-100"
+                    >
+                      Retirer du vivier
+                    </button>
+                  </form>
+                  <p className="mt-3 text-xs leading-5 text-slate-500">
+                    Cette action n’efface ni la candidature actuelle, ni le CV, ni les notes de suivi.
+                  </p>
+                </>
+              ) : (
+                <p className="mt-3 rounded-xl bg-slate-100 p-4 text-sm font-semibold text-slate-700">
+                  Aucun accord actif pour le vivier de candidats.
+                  Le profil ne doit pas être utilisé pour de nouvelles opportunités.
+                </p>
+              )}
             </section>
             <section className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm">
               <h2 className="font-bold text-[#082a43]">
