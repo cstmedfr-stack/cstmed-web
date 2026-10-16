@@ -31,7 +31,7 @@ function getFrenchDocuments(): LegalDocuments {
       intro:
         "Les présentes mentions légales identifient l’éditeur du site CSTMed et précisent les principales conditions de son utilisation.",
 
-      lastUpdated: "11 août 2026",
+      lastUpdated: "16 octobre 2026",
 
       sections: [
         {
@@ -40,16 +40,15 @@ function getFrenchDocuments(): LegalDocuments {
             `Le site CSTMed est édité par : ${legalConfig.publisher.legalName}.`,
             `Statut actuel : ${legalConfig.publisher.legalForm}.`,
             `Numéro d’immatriculation : ${legalConfig.publisher.registrationNumber}.`,
-            `Numéro de TVA : ${legalConfig.publisher.vatNumber}.`,
+            `Situation TVA : ${legalConfig.publisher.vatNumber}.`,
             `Adresse de contact : ${legalConfig.publisher.registeredOffice}.`,
           ],
         },
         {
-          title: "Situation actuelle de CSTMed",
+          title: "Activité de CSTMed",
           paragraphs: [
-            "CSTMed est actuellement un projet en phase de lancement et de validation de son activité.",
-            "Aucune prestation commerciale n’est facturée par CSTMed tant que l’activité professionnelle n’a pas été immatriculée.",
-            "Les présentes mentions légales seront mises à jour dès l’immatriculation de l’activité afin d’indiquer les informations professionnelles définitives, notamment le numéro SIREN/SIRET et, le cas échéant, le numéro de TVA intracommunautaire.",
+            "CSTMed est le nom commercial utilisé pour une activité de recrutement et de mise en relation professionnelle dans le secteur médical, exercée sous le statut d'entrepreneur individuel.",
+            "Les informations d’immatriculation de l’éditeur figurent ci-dessus.",
           ],
         },
         {
@@ -286,7 +285,7 @@ function getRomanianDocuments(): LegalDocuments {
       intro:
         "Prezentele mențiuni identifică editorul site-ului CSTMed și precizează principalele condiții de utilizare.",
 
-      lastUpdated: "11 august 2026",
+      lastUpdated: "16 octombrie 2026",
 
       sections: [
         {
@@ -295,16 +294,15 @@ function getRomanianDocuments(): LegalDocuments {
             `Site-ul CSTMed este editat de: ${legalConfig.publisher.legalName}.`,
             `Statut actual: ${legalConfig.publisher.legalForm}.`,
             `Număr de înregistrare: ${legalConfig.publisher.registrationNumber}.`,
-            `Cod TVA: ${legalConfig.publisher.vatNumber}.`,
+            `Situație TVA: ${legalConfig.publisher.vatNumber}.`,
             `Adresă de contact: ${legalConfig.publisher.registeredOffice}.`,
           ],
         },
         {
-          title: "Situația actuală a CSTMed",
+          title: "Activitatea CSTMed",
           paragraphs: [
-            "CSTMed este în prezent un proiect aflat în faza de lansare și de validare a activității.",
-            "CSTMed nu facturează servicii comerciale înainte de înregistrarea oficială a activității profesionale.",
-            "Prezentele mențiuni legale vor fi actualizate imediat după înregistrarea activității, pentru a include datele profesionale definitive, în special numărul SIREN/SIRET și, dacă este cazul, codul de TVA intracomunitar.",
+            "CSTMed este denumirea comercială utilizată pentru activitatea de recrutare și punere în legătură profesională în domeniul medical, desfășurată ca întreprinzător individual în Franța.",
+            "Datele de înregistrare ale editorului sunt prezentate mai sus.",
           ],
         },
         {

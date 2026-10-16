@@ -1,3 +1,4 @@
+
 export const legalConfig = {
   brandName: "CSTMed",
 
@@ -8,16 +9,16 @@ export const legalConfig = {
     legalName: "Diana Codat – CSTMed",
 
     legalForm:
-      "Personne physique – projet d’activité en cours de création",
+      "Entrepreneur individuel (micro-entrepreneur)",
 
     registrationNumber:
-      "Aucun numéro SIREN/SIRET attribué à ce jour",
+      "SIREN : 109 754 150 – SIRET : 109 754 150 00018",
 
     registeredOffice:
-      "Cap d'Agde, 34300, France",
+      "Cap d'Agde, 34300 Agde, France",
 
     vatNumber:
-      "Aucun numéro de TVA intracommunautaire attribué à ce jour",
+      "Numéro de TVA intracommunautaire : à confirmer",
 
     publicationDirector: "Diana Codat",
   },
