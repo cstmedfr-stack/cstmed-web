@@ -3,10 +3,12 @@ import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { statuses } from "./partner-form";
+import { deletePartner } from "./delete-actions";
+import { ConfirmDeleteButton } from "./confirm-delete-button";
 
 export const dynamic = "force-dynamic";
 const PAGE_SIZE = 20;
-type SearchParams = { q?: string | string[]; status?: string | string[]; page?: string | string[]; saved?: string };
+type SearchParams = { q?: string | string[]; status?: string | string[]; page?: string | string[]; saved?: string; deleted?: string };
 function value(x?: string | string[]) { return (Array.isArray(x) ? x[0] : x)?.trim() ?? ""; }
 function link(q: string, status: string, page: number) {
   const params = new URLSearchParams();
@@ -51,6 +53,7 @@ export default async function PartnersPage({ searchParams }: {searchParams: Prom
         <p className="font-bold">{total} établissement{total !== 1 ? "s" : ""}</p>
         <Link href="/admin/partenaires/nouveau" style={{color:"#ffffff"}} className="rounded-full bg-[#118c87] px-6 py-3 font-bold">+ Ajouter un établissement</Link>
       </div>
+      {params.deleted === "1" && <p role="status" className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-800">Établissement supprimé.</p>}
       {params.saved === "1" && <p role="status" className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-800">Établissement enregistré.</p>}
       <form method="get" className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-5 sm:grid-cols-[1fr_220px_auto]">
         <input name="q" type="search" defaultValue={q} placeholder="Établissement, ville, contact, spécialité..." className="rounded-xl border border-slate-300 px-4 py-3" />
@@ -73,7 +76,13 @@ export default async function PartnersPage({ searchParams }: {searchParams: Prom
               {partner.specialties_needed && <p className="text-sm">Spécialités : {partner.specialties_needed}</p>}
               {partner.follow_up_at && <p className="text-sm font-semibold text-[#118c87]">Relance : {partner.follow_up_at}</p>}
             </div>
-            <Link href={`/admin/partenaires/${partner.id}`} className="rounded-full border border-[#118c87] px-5 py-2 font-bold text-[#0c7773]">Consulter / modifier →</Link>
+            <div className="flex flex-wrap items-center gap-2">
+              <Link href={`/admin/partenaires/${partner.id}`} className="rounded-full border border-[#118c87] px-5 py-2 font-bold text-[#0c7773]">Consulter / modifier →</Link>
+              <form action={deletePartner}>
+                <input type="hidden" name="partner_id" value={partner.id}/>
+                <ConfirmDeleteButton message={`Supprimer définitivement « ${partner.establishment_name} » ? Impossible si des contrats, médecins, contacts ou e-mails sont associés.`}/>
+              </form>
+            </div>
           </div>
         </article>)}
       </div>
