@@ -319,12 +319,12 @@ export function SiteHeader({
     <>
       {/* BARA DE SUS — NU ESTE STICKY */}
       <div className="relative z-[60] bg-[#082a43] text-white">
-        <div className="mx-auto flex min-h-9 max-w-[1450px] items-center justify-between gap-4 px-5 py-1.5 text-[11px] sm:px-8">
+        <div className="mx-auto flex min-h-9 max-w-[1450px] items-center justify-between gap-4 px-5 py-2 text-[12px] sm:px-8">
           <p className="font-semibold text-slate-200">
             {content.tagline}
           </p>
 
-          <div className="hidden items-center gap-4 lg:flex">
+          <div className="hidden items-center gap-3 lg:flex">
             <div className="flex items-center gap-2">
               {publicLinks.facebook ? (
                 <a
@@ -392,7 +392,7 @@ export function SiteHeader({
       {/* PARTEA CARE RĂMÂNE PERMANENT VIZIBILĂ */}
       <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-md backdrop-blur-xl">
         {/* DESKTOP / TABLETĂ */}
-        <div className="mx-auto flex min-h-[92px] max-w-[1450px] items-center gap-4 px-5 sm:px-8 lg:min-h-[88px]">
+        <div className="mx-auto flex min-h-[92px] max-w-[1450px] items-center gap-4 px-5 sm:px-8 xl:min-h-[92px] xl:gap-3">
           {/* LOGO */}
           <Link
             href={`/${locale}`}
@@ -405,14 +405,14 @@ export function SiteHeader({
               width={420}
               height={140}
               priority
-              className="h-auto w-[145px] object-contain sm:w-[165px] xl:w-[175px]"
+              className="h-auto w-[155px] object-contain sm:w-[170px] xl:w-[175px]"
             />
           </Link>
 
           {/* RECHERCHE D'OFFRES */}
           <Link
             href={`/${locale}/offres`}
-            className="hidden min-h-[48px] shrink-0 items-center justify-center gap-2 rounded-full bg-[#0D6EFD] px-5 py-3 text-[11px] font-black uppercase tracking-[0.03em] text-[#082A43] shadow-lg shadow-blue-900/15 transition hover:-translate-y-0.5 hover:bg-[#0B63E5] md:inline-flex xl:min-w-[220px]"
+            className="hidden min-h-[48px] shrink-0 items-center justify-center gap-2 rounded-full bg-[#0D6EFD] px-5 py-3 text-[13px] font-extrabold uppercase tracking-[0.03em] text-[#082A43] shadow-lg shadow-blue-900/15 transition hover:-translate-y-0.5 hover:bg-[#0B63E5] md:inline-flex xl:min-w-[220px]"
           >
             <SearchIcon />
 
@@ -422,18 +422,18 @@ export function SiteHeader({
           {/* NAVIGAȚIE DESKTOP */}
           <nav
             aria-label={content.menu}
-            className="ml-auto hidden items-center gap-1 lg:flex"
+            className="ml-auto hidden items-center gap-0.5 xl:flex"
           >
             <Link
               href={`/${locale}`}
-              className="whitespace-nowrap rounded-full px-3 py-2 text-[12px] font-black text-slate-700 transition hover:bg-slate-100 hover:text-[#0965d8]"
+              className="whitespace-nowrap rounded-full px-2.5 py-2.5 text-[15px] font-semibold text-[#082a43] transition hover:bg-slate-100 hover:text-[#0965d8]"
             >
               {content.home}
             </Link>
 
             {/* MÉDECINS */}
             <details className="group relative">
-              <summary className="flex cursor-pointer list-none items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-2 text-[12px] font-black text-slate-700 transition hover:bg-slate-100 hover:text-[#0965d8]">
+              <summary className="flex cursor-pointer list-none items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-2.5 text-[15px] font-semibold text-[#082a43] transition hover:bg-slate-100 hover:text-[#0965d8]">
                 {content.doctors}
 
                 <ChevronDown />
@@ -478,14 +478,14 @@ export function SiteHeader({
             {/* ÉTABLISSEMENTS */}
             <Link
               href={`/${locale}/etablissements`}
-              className="whitespace-nowrap rounded-full px-3 py-2 text-[12px] font-black text-slate-700 transition hover:bg-slate-100 hover:text-[#0965d8]"
+              className="whitespace-nowrap rounded-full px-2.5 py-2.5 text-[15px] font-semibold text-[#082a43] transition hover:bg-slate-100 hover:text-[#0965d8]"
             >
               {content.establishments}
             </Link>
 
             {/* QUI SOMMES-NOUS */}
             <details className="group relative">
-              <summary className="flex cursor-pointer list-none items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-2 text-[12px] font-black text-slate-700 transition hover:bg-slate-100 hover:text-[#0965d8]">
+              <summary className="flex cursor-pointer list-none items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-2.5 text-[15px] font-semibold text-[#082a43] transition hover:bg-slate-100 hover:text-[#0965d8]">
                 {content.about}
 
                 <ChevronDown />
@@ -515,14 +515,14 @@ export function SiteHeader({
 
             <Link
               href={`/${locale}#contact`}
-              className="whitespace-nowrap rounded-full px-3 py-2 text-[12px] font-black text-slate-700 transition hover:bg-slate-100 hover:text-[#0965d8]"
+              className="whitespace-nowrap rounded-full px-2.5 py-2.5 text-[15px] font-semibold text-[#082a43] transition hover:bg-slate-100 hover:text-[#0965d8]"
             >
               {content.contact}
             </Link>
           </nav>
 
           {/* LIMBĂ */}
-          <div className="ml-auto shrink-0 lg:ml-2">
+          <div className="ml-auto shrink-0 xl:ml-2">
             <HeaderLanguageSwitcher
               locale={locale}
             />
@@ -533,7 +533,7 @@ export function SiteHeader({
         <div className="px-5 pb-3 md:hidden sm:px-8">
           <Link
             href={`/${locale}/offres`}
-            className="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-full bg-[#0D6EFD] px-6 py-3 text-[11px] font-black uppercase tracking-[0.03em] text-[#082A43] shadow-lg"
+            className="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-full bg-[#0D6EFD] px-6 py-3 text-[13px] font-extrabold uppercase tracking-[0.03em] text-[#082A43] shadow-lg"
           >
             <SearchIcon />
 
@@ -542,10 +542,10 @@ export function SiteHeader({
         </div>
 
         {/* MENIU MOBIL */}
-        <div className="border-t border-slate-200 lg:hidden">
+        <div className="border-t border-slate-200 xl:hidden">
           <div className="px-5 sm:px-8">
             <details className="group">
-              <summary className="flex min-h-[48px] cursor-pointer list-none items-center justify-between text-sm font-black text-[#082a43]">
+              <summary className="flex min-h-[48px] cursor-pointer list-none items-center justify-between text-base font-bold text-[#082a43]">
                 <span>
                   {content.menu}
                 </span>
@@ -558,7 +558,7 @@ export function SiteHeader({
               <div className="border-t border-slate-100 pb-5 pt-3">
                 <Link
                   href={`/${locale}`}
-                  className="block rounded-xl px-4 py-3 text-sm font-black text-slate-700 hover:bg-slate-100"
+                  className="block rounded-xl px-4 py-3 text-base font-semibold text-slate-700 hover:bg-slate-100"
                 >
                   {content.home}
                 </Link>
@@ -574,7 +574,7 @@ export function SiteHeader({
                       <Link
                         key={item.href}
                         href={item.href}
-                        className="block rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 hover:bg-white hover:text-[#0965d8]"
+                        className="block rounded-xl px-3 py-2.5 text-[15px] font-medium text-slate-700 hover:bg-white hover:text-[#0965d8]"
                       >
                         {item.label}
                       </Link>
@@ -590,7 +590,7 @@ export function SiteHeader({
 
                 <Link
                   href={`/${locale}/etablissements`}
-                  className="mt-2 block rounded-xl px-4 py-3 text-sm font-black text-slate-700 hover:bg-slate-100"
+                  className="mt-2 block rounded-xl px-4 py-3 text-base font-semibold text-slate-700 hover:bg-slate-100"
                 >
                   {content.establishments}
                 </Link>
@@ -606,7 +606,7 @@ export function SiteHeader({
                       <Link
                         key={item.href}
                         href={item.href}
-                        className="block rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 hover:bg-white hover:text-[#0965d8]"
+                        className="block rounded-xl px-3 py-2.5 text-[15px] font-medium text-slate-700 hover:bg-white hover:text-[#0965d8]"
                       >
                         {item.label}
                       </Link>
@@ -616,7 +616,7 @@ export function SiteHeader({
 
                 <Link
                   href={`/${locale}#contact`}
-                  className="mt-2 block rounded-xl px-4 py-3 text-sm font-black text-slate-700 hover:bg-slate-100"
+                  className="mt-2 block rounded-xl px-4 py-3 text-base font-semibold text-slate-700 hover:bg-slate-100"
                 >
                   {content.contact}
                 </Link>
