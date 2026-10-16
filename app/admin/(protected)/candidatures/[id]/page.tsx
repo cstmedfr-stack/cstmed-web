@@ -5,6 +5,7 @@ import { requireAdmin } from "@/lib/auth/require-admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { addApplicationActivity } from "../activity-actions";
 import { withdrawTalentPoolConsent } from "../rgpd-actions";
+import { deleteApplicationAndCv } from "../delete-actions";
 import {
   downloadApplicationCv,
 } from "../actions";
@@ -166,6 +167,17 @@ export default async function ApplicationDetailsPage({
     follow_up_at: string | null;
     created_at: string;
   }>;
+  // Une presentation a un etablissement bloque la suppression automatique.
+  const { count: presentationCount, error: presentationError } =
+    await createAdminClient()
+      .from("candidate_presentations")
+      .select("id", { count: "exact", head: true })
+      .eq("application_id", id);
+  if (presentationError) {
+    throw new Error(`Controle des presentations impossible : ${presentationError.message}`);
+  }
+  const hasPresentations = (presentationCount ?? 0) > 0;
+
   const location = [
     application.city,
     application.country,
@@ -496,6 +508,47 @@ export default async function ApplicationDetailsPage({
                   Aucun accord actif pour le vivier de candidats.
                   Le profil ne doit pas être utilisé pour de nouvelles opportunités.
                 </p>
+              )}
+            </section>
+            <section className="rounded-[2rem] border border-red-200 bg-white p-7 shadow-sm">
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-red-700">
+                Protection des données – Suppression
+              </p>
+              <h2 className="mt-2 text-xl font-bold text-[#082a43]">
+                Supprimer la candidature et le CV
+              </h2>
+              {hasPresentations ? (
+                <p className="mt-4 rounded-xl bg-amber-50 p-4 text-sm leading-6 text-amber-900">
+                  Suppression automatique indisponible : ce médecin a été associé à
+                  au moins un établissement. Examinez le dossier et les obligations
+                  de conservation avant de traiter sa demande RGPD.
+                </p>
+              ) : (
+                <>
+                  <p className="mt-3 text-sm leading-6 text-slate-700">
+                    Cette opération supprime définitivement la candidature, ses
+                    notes de suivi internes et son CV privé. Elle est irréversible.
+                    Réservée aux demandes vérifiées et aux données pouvant être effacées.
+                  </p>
+                  <form action={deleteApplicationAndCv} className="mt-5 space-y-4">
+                    <input type="hidden" name="applicationId" value={application.id} />
+                    <label className="block text-sm font-bold text-slate-800">
+                      Pour confirmer, saisir SUPPRIMER
+                      <input name="confirmation" required pattern="SUPPRIMER"
+                        autoComplete="off" placeholder="SUPPRIMER"
+                        className="mt-2 w-full rounded-xl border border-red-300 px-3 py-2.5 font-normal" />
+                    </label>
+                    <label className="flex items-start gap-2 text-sm text-slate-700">
+                      <input type="checkbox" name="verifiedRequest" value="yes" required className="mt-1" />
+                      J’ai vérifié la demande et l’absence d’obligation de conservation.
+                    </label>
+                    <button type="submit"
+                      className="rounded-full bg-red-700 px-5 py-3 text-sm font-black text-white hover:bg-red-800"
+                      style={{ color: "#ffffff" }}>
+                      Supprimer définitivement le dossier et le CV
+                    </button>
+                  </form>
+                </>
               )}
             </section>
             <section className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm">
