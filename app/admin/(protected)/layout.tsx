@@ -1,3 +1,4 @@
+
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -9,6 +10,7 @@ const adminLinks = [
   { href: "/admin", label: "Tableau de bord" },
   { href: "/admin/offres", label: "Offres" },
   { href: "/admin/candidatures", label: "Candidatures" },
+  { href: "/admin/conservation", label: "Conservation RGPD" },
   { href: "/admin/etablissements", label: "Demandes établissements" },
   { href: "/admin/partenaires", label: "Partenaires" },
   { href: "/admin/prospection", label: "Prospection & E-mails" },
@@ -56,10 +58,12 @@ export default async function ProtectedAdminLayout({
             href="/admin"
             className="shrink-0 rounded-lg bg-[#082a43] px-3 py-2 text-sm font-black"
           >
-            <span style={{ color: "#ffffff" }}>CSTMed Admin</span>
+            <span style={{ color: "#ffffff" }}>
+              CSTMed Admin
+            </span>
           </Link>
 
-          {/* Horizontal scroll keeps every destination accessible on mobile. */}
+          {/* Meniu cu derulare orizontală pe ecrane mici */}
           <div className="flex min-w-0 flex-1 items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:thin]">
             {adminLinks.map((item) => (
               <Link
@@ -73,6 +77,7 @@ export default async function ProtectedAdminLayout({
           </div>
         </div>
       </nav>
+
       {children}
     </>
   );
