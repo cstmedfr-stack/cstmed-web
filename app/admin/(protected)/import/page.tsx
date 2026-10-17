@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 
 type ImportPageProps = {
   searchParams: Promise<{
+    batch?: string;
     success?: string;
     imported?: string;
     duplicates?: string;
@@ -21,6 +22,7 @@ type ImportKeyword = {
   enabled: boolean;
   jobs_per_keyword: number;
   cdi_only: boolean;
+  professional_category: string;
 };
 
 type ImportRun = {
@@ -65,6 +67,9 @@ export default async function AdminImportPage({
 }: ImportPageProps) {
   const query = await searchParams;
   const supabase = createAdminClient();
+  const requestedBatch = Number(query.batch ?? "0");
+  const batchOffset = Number.isSafeInteger(requestedBatch) && requestedBatch >= 0 && requestedBatch % 10 === 0
+    ? requestedBatch : 0;
 
   const [keywordsResult, runsResult] = await Promise.all([
     supabase
@@ -75,7 +80,8 @@ export default async function AdminImportPage({
           keyword,
           enabled,
           jobs_per_keyword,
-          cdi_only
+          cdi_only,
+          professional_category
         `,
       )
       .eq("enabled", true)
@@ -105,6 +111,15 @@ export default async function AdminImportPage({
 
   const keywords =
     (keywordsResult.data ?? []) as ImportKeyword[];
+
+  const categoryLabels: Record<string, string> = {
+    medecins: "Médecins", dentistes: "Chirurgiens-dentistes",
+    pharmaciens: "Pharmaciens", infirmiers: "Infirmiers / Infirmières",
+  };
+  const groups = ["medecins", "dentistes", "pharmaciens", "infirmiers"];
+  const totalBatches = Math.ceil(keywords.length / 10);
+  const isFinished = batchOffset >= keywords.length;
+  const currentBatch = Math.floor(batchOffset / 10) + 1;
 
   const importRuns =
     (runsResult.data ?? []) as ImportRun[];
@@ -291,20 +306,19 @@ export default async function AdminImportPage({
                   id="keyword"
                   name="keyword"
                   required
-                  defaultValue="cardiologue"
+                  defaultValue=""
                   className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-[#118c87] focus:ring-4 focus:ring-[#118c87]/10"
                 >
                   <option value="">
                     Sélectionner une spécialité
                   </option>
 
-                  {keywords.map((item) => (
-                    <option
-                      key={item.id}
-                      value={item.keyword}
-                    >
-                      {item.keyword}
-                    </option>
+                  {groups.map((group) => (
+                    <optgroup key={group} label={categoryLabels[group]}>
+                      {keywords.filter((item) => item.professional_category === group).map((item) => (
+                        <option key={item.id} value={item.keyword}>{item.keyword}</option>
+                      ))}
+                    </optgroup>
                   ))}
                 </select>
               </div>
@@ -357,21 +371,22 @@ export default async function AdminImportPage({
               <input
                 type="hidden"
                 name="mode"
-                value="all"
+                value="batch"
               />
 
+              <input type="hidden" name="batchOffset" value={batchOffset} />
               <p className="text-sm font-bold uppercase tracking-[0.15em] text-[#65d9ce]">
                 Importation complète
               </p>
 
               <h2 className="mt-3 text-2xl font-bold">
-                Importer toutes les spécialités
+                Importer par lots de 10 mots-clés
               </h2>
 
               <p className="mt-3 leading-7 text-slate-300">
-                Les {keywords.length} mots-clés actifs seront
-                recherchés successivement. Toutes les nouvelles
-                offres entreront comme brouillons.
+                {keywords.length} mots-clés actifs, répartis en {totalBatches} lots.
+                Chaque opération traite au maximum 10 mots-clés. Les offres
+                restent en brouillon.
               </p>
 
               <div className="mt-7 rounded-2xl border border-white/10 bg-white/[0.07] p-5">
@@ -398,12 +413,16 @@ export default async function AdminImportPage({
                 </span>
               </label>
 
+              <p className="mt-6 text-sm font-semibold text-[#65d9ce]">
+                {isFinished ? "Tous les lots sont parcourus." : `Lot ${currentBatch} / ${totalBatches} — mots-clés ${batchOffset + 1} à ${Math.min(batchOffset + 10, keywords.length)}`}
+              </p>
               <button
                 type="submit"
-                className="mt-7 w-full rounded-full bg-[#65d9ce] px-6 py-3.5 font-bold text-[#082a43] transition hover:bg-[#86e3da]"
+                disabled={isFinished}
+                className="mt-7 w-full rounded-full bg-[#65d9ce] px-6 py-3.5 font-bold text-[#082a43] transition hover:bg-[#86e3da] disabled:opacity-50"
               >
               <span style={{ color: "#082A43" }}>
-  Importer tous les mots-clés
+  {isFinished ? "Lots terminés" : `Lancer le lot ${currentBatch}`}
 </span>
               </button>
 

@@ -2,23 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 type BulkStatus = "published" | "rejected" | "archived" | "draft";
 type BulkResult = { ok: boolean; message: string; updated?: number };
-
 const statuses: BulkStatus[] = ["published", "rejected", "archived", "draft"];
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export async function updateJobsStatusesBulk(
-  ids: string[],
-  status: BulkStatus,
-): Promise<BulkResult> {
-  if (!statuses.includes(status)) {
-    return { ok: false, message: "Statut non valide." };
-  }
-
-  // Limite volontaire : uniquement les offres affichées sur une page.
+export async function updateJobsStatusesBulk(ids: string[], status: BulkStatus): Promise<BulkResult> {
+  if (!statuses.includes(status)) return { ok: false, message: "Statut non valide." };
   if (!Array.isArray(ids) || ids.length < 1 || ids.length > 20 ||
-      ids.some((id) => typeof id !== "string" || !/^[0-9a-fA-F-]{36}$/.test(id)) ||
+      ids.some((id) => typeof id !== "string" || !UUID.test(id)) ||
       new Set(ids).size !== ids.length) {
     return { ok: false, message: "Sélection non valide (maximum 20 offres)." };
   }
@@ -26,32 +20,44 @@ export async function updateJobsStatusesBulk(
   const supabase = await createClient();
   const { data: claimsData, error: claimsError } = await supabase.auth.getClaims();
   const userId = claimsData?.claims?.sub;
-
   if (claimsError || !userId) {
     return { ok: false, message: "Session expirée. Veuillez vous reconnecter." };
   }
-
-  const { data: admin, error: adminError } = await supabase
-    .from("admin_users")
-    .select("user_id")
-    .eq("user_id", userId)
-    .maybeSingle();
-
+  const { data: admin, error: adminError } = await supabase.from("admin_users")
+    .select("user_id").eq("user_id", userId).maybeSingle();
   if (adminError || !admin) {
     return { ok: false, message: "Vous n'avez pas les droits d'administration." };
   }
 
-  // Actualiser uniquement les lignes identifiées. Ne jamais faire une mise à jour sans .in("id", ...).
-  const { data, error } = await supabase
-    .from("jobs")
-    .update({ status })
-    .in("id", ids)
-    .select("id");
-
-  if (error) {
-    return { ok: false, message: `Mise à jour impossible : ${error.message}` };
+  if (status === "published") {
+    // The browser's checkbox is not proof. Enforce a server-side API check.
+    const service = createAdminClient();
+    const { data: jobs, error: jobsError } = await service.from("jobs")
+      .select("id,source,source_job_id").in("id", ids);
+    if (jobsError || jobs?.length !== ids.length) {
+      return { ok: false, message: "Impossible de vérifier les offres sélectionnées." };
+    }
+    if (jobs.some((job) => job.source !== "france_travail" || !job.source_job_id)) {
+      return { ok: false, message: "Publication en lot réservée aux offres France Travail. Examinez les autres offres séparément." };
+    }
+    const { data: checks, error: checksError } = await service.from("job_ft_verifications")
+      .select("job_id,state,checked_at").in("job_id", ids);
+    if (checksError) return { ok: false, message: checksError.message };
+    const byId = new Map((checks ?? []).map((check) => [check.job_id, check]));
+    const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+    const unverified = ids.filter((id) => {
+      const check = byId.get(id);
+      return !check || check.state !== "active" || !Number.isFinite(Date.parse(check.checked_at)) ||
+        Date.parse(check.checked_at) < cutoff;
+    });
+    if (unverified.length > 0) {
+      return { ok: false, message: `${unverified.length} offre(s) ne disposent pas d'une vérification France Travail active datant de moins de 24 h. Vérifiez la page avant de publier.` };
+    }
   }
 
+  const { data, error } = await supabase.from("jobs").update({ status })
+    .in("id", ids).select("id");
+  if (error) return { ok: false, message: `Mise à jour impossible : ${error.message}` };
   const updated = data?.length ?? 0;
   revalidatePath("/admin/offres");
   revalidatePath("/admin");
@@ -62,7 +68,6 @@ export async function updateJobsStatusesBulk(
     revalidatePath(`/fr/offres/${id}`);
     revalidatePath(`/ro/offres/${id}`);
   }
-
   return {
     ok: updated === ids.length,
     updated,

@@ -20,6 +20,7 @@ type StatusFilter =
 type SearchParameters = {
   q?: string | string[];
   status?: string | string[];
+  category?: string | string[];
   page?: string | string[];
   specialty?: string | string[];
   department?: string | string[];
@@ -42,6 +43,7 @@ type Job = {
   postal_code: string | null;
   contract_type: string | null;
   status: JobStatus;
+  professional_category: string | null;
   france_travail_published_at: string | null;
   created_at: string;
 };
@@ -104,6 +106,7 @@ function formatDate(
 }
 function createAdminOffersUrl(options: {
   status: StatusFilter;
+  category?: string;
   q?: string;
   page?: number;
   specialty?: string;
@@ -121,7 +124,7 @@ function createAdminOffersUrl(options: {
       options.status,
     );
   }
-  for (const key of ["q", "specialty", "department", "city", "contract", "period", "old"] as const) {
+  for (const key of ["category", "q", "specialty", "department", "city", "contract", "period", "old"] as const) {
     const value = options[key];
     if (value) parameters.set(key, value);
   }
@@ -163,6 +166,10 @@ export default async function AdminOffersPage({
     )
       ? (requestedStatus as StatusFilter)
       : "draft";
+  const requestedCategory = getParameter(parameters.category);
+  const category = ["all", "medecins", "dentistes", "pharmaciens", "infirmiers"].includes(requestedCategory)
+    ? requestedCategory
+    : "all";
   const q = cleanSearchValue(
     getParameter(parameters.q),
   );
@@ -173,7 +180,7 @@ export default async function AdminOffersPage({
   const rawPeriod = getParameter(parameters.period);
   const period = ["7", "30", "90"].includes(rawPeriod) ? rawPeriod : "";
   const old = getParameter(parameters.old) === "1" ? "1" : "";
-  const activeFilters = { specialty, department, city, contract, period, old };
+  const activeFilters = { category, specialty, department, city, contract, period, old };
   const filterUrl = (page?: number, nextStatus: StatusFilter = status, nextQ = q) =>
     createAdminOffersUrl({ status: nextStatus, q: nextQ, page, ...activeFilters });
   const currentPage =
@@ -238,71 +245,31 @@ export default async function AdminOffersPage({
         "archived",
       ),
   ]);
-  let jobsQuery = supabase
-    .from("jobs")
-    .select(
-      `
-        id,
-        source_job_id,
-        title,
-        specialty,
-        company_name,
-        location_label,
-        city,
-        postal_code,
-        contract_type,
-        status,
-        france_travail_published_at,
-        created_at
-      `,
-      {
-        count: "exact",
-      },
-    );
-  if (status !== "all") {
-    jobsQuery =
-      jobsQuery.eq(
-        "status",
-        status,
-      );
-  }
-  if (q) {
-    const searchPattern =
-      `%${q}%`;
-    jobsQuery = jobsQuery.or(
-      [
-        `title.ilike.${searchPattern}`,
-        `specialty.ilike.${searchPattern}`,
-        `company_name.ilike.${searchPattern}`,
-        `location_label.ilike.${searchPattern}`,
-        `city.ilike.${searchPattern}`,
-        `source_job_id.ilike.${searchPattern}`,
-      ].join(","),
-    );
-  }
-  if (specialty) jobsQuery = jobsQuery.ilike("specialty", `%${specialty}%`);
-  if (department) jobsQuery = jobsQuery.ilike("postal_code", `${department}%`);
-  if (city) jobsQuery = jobsQuery.ilike("city", `%${city}%`);
-  if (contract) jobsQuery = jobsQuery.ilike("contract_type", `%${contract}%`);
-  if (old) {
-    const threshold = new Date();
-    threshold.setDate(threshold.getDate() - 30);
-    jobsQuery = jobsQuery.lt("created_at", threshold.toISOString());
-  }
-  if (period) {
-    const cutoff = new Date();
-    cutoff.setUTCDate(cutoff.getUTCDate() - Number(period));
-    jobsQuery = jobsQuery.gte("created_at", cutoff.toISOString());
-  }
-  const {
-    data,
-    count,
-    error,
-  } = await jobsQuery
-    .order("created_at", {
-      ascending: false,
-    })
-    .range(from, to);
+  // RPC Supabase : recherche insensible aux accents, filtres et pagination côté serveur.
+  // Cette fonction SQL est limitée au rôle service_role, après requireAdmin().
+ 
+const { data, count, error } = await supabase
+  .rpc(
+    "search_admin_jobs",
+    {
+      p_q: q,
+      p_category: category,
+      p_status: status,
+      p_specialty: specialty,
+      p_department: department,
+      p_city: city,
+      p_contract: contract,
+      p_period: period ? Number(period) : null,
+      p_old: old === "1",
+    },
+    { count: "exact" }
+  )
+  .select(
+    "id,source_job_id,title,specialty,professional_category,company_name,location_label,city,postal_code,contract_type,status,france_travail_published_at,created_at"
+  )
+  .order("created_at", { ascending: false })
+  .range(from, to);
+
   const jobs =
     (data ?? []) as Job[];
   const totalJobs =
@@ -315,7 +282,7 @@ export default async function AdminOffersPage({
       ),
     );
   // Dacă pagina solicitată depășește ultima pagină, revenim la ultima.
-  if (currentPage > totalPages) {
+  if (!error && currentPage > totalPages) {
     redirect(filterUrl(totalPages));
   }
   // Primele 10 pagini sunt mereu accesibile; pentru paginile îndepărtate
@@ -515,9 +482,19 @@ export default async function AdminOffersPage({
                 className="min-h-[48px] flex-1 rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-[#118c87] focus:ring-4 focus:ring-[#118c87]/10"
               />
               <input type="hidden" name="old" value={old} />
-              <div className="grid w-full gap-3 md:grid-cols-2 lg:grid-cols-5">
+              <div className="grid w-full gap-3 md:grid-cols-2 lg:grid-cols-3">
                 <label className="flex flex-col gap-1 text-sm font-bold text-[#082a43]">
-                  Spécialité médicale
+                  Catégorie professionnelle
+                  <select name="category" defaultValue={category} className="rounded-xl border border-slate-300 bg-white p-3 font-normal">
+                    <option value="all">Toutes les professions</option>
+                    <option value="medecins">Médecins</option>
+                    <option value="dentistes">Chirurgiens-dentistes</option>
+                    <option value="pharmaciens">Pharmaciens</option>
+                    <option value="infirmiers">Infirmiers / Infirmières</option>
+                  </select>
+                </label>
+                <label className="flex flex-col gap-1 text-sm font-bold text-[#082a43]">
+                  Spécialité ou métier
                   <input name="specialty" defaultValue={specialty} placeholder="Ex. cardiologue" className="rounded-xl border border-slate-300 bg-white p-3 font-normal" />
                 </label>
                 <label className="flex flex-col gap-1 text-sm font-bold text-[#082a43]">
@@ -560,7 +537,7 @@ export default async function AdminOffersPage({
                   Rechercher
                 </span>
               </button>
-              {(q || specialty || department || city || contract || period) ? (
+              {(q || category !== "all" || specialty || department || city || contract || period || old) ? (
                 <Link
                   href={createAdminOffersUrl({
                     status,
@@ -673,7 +650,12 @@ export default async function AdminOffersPage({
                               ]
                             }
                           </span>
-                          {job.specialty ? (
+                          {job.professional_category ? (
+                    <span className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-800">
+                      {({ medecins: "Médecins", dentistes: "Dentistes", pharmaciens: "Pharmaciens", infirmiers: "Infirmiers" } as Record<string, string>)[job.professional_category] ?? job.professional_category}
+                    </span>
+                  ) : null}
+                  {job.specialty ? (
                             <span className="rounded-full bg-[#e5f7f5] px-3 py-1.5 text-xs font-bold text-[#0c7773]">
                               {
                                 job.specialty

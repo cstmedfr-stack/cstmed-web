@@ -38,6 +38,7 @@ type JobsPageProps = {
   searchParams: Promise<{
     q?: string;
     specialty?: string;
+    category?: string;
     location?: string;
     contract?: string;
     sort?: string;
@@ -180,6 +181,10 @@ export default async function JobsPage({
   const filters = {
     q: clean(query.q),
 
+    professionalCategory: (["medecins", "dentistes", "pharmaciens", "infirmiers"].includes(query.category ?? "")
+      ? query.category
+      : "all") as "all" | "medecins" | "dentistes" | "pharmaciens" | "infirmiers",
+
     specialty: clean(
       query.specialty,
       150,
@@ -230,6 +235,10 @@ export default async function JobsPage({
 
     if (filters.q) {
       parameters.set("q", filters.q);
+    }
+
+    if (filters.professionalCategory !== "all") {
+      parameters.set("category", filters.professionalCategory);
     }
 
     if (filters.specialty) {
@@ -294,7 +303,7 @@ export default async function JobsPage({
             method="get"
             className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-2xl shadow-slate-900/10 sm:p-8"
           >
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-5">
               <div>
                 <label
                   htmlFor="q"
@@ -313,6 +322,19 @@ export default async function JobsPage({
                   }
                   className={fieldClassName}
                 />
+              </div>
+
+              <div>
+                <label htmlFor="category" className="block text-sm font-black text-[#082a43]">
+                  {lang === "ro" ? "Categorie profesională" : "Catégorie professionnelle"}
+                </label>
+                <select id="category" name="category" defaultValue={filters.professionalCategory} className={fieldClassName}>
+                  <option value="all">{lang === "ro" ? "Toate profesiile" : "Toutes les professions"}</option>
+                  <option value="medecins">{lang === "ro" ? "Medici" : "Médecins"}</option>
+                  <option value="dentistes">{lang === "ro" ? "Medici dentiști" : "Chirurgiens-dentistes"}</option>
+                  <option value="pharmaciens">{lang === "ro" ? "Farmaciști" : "Pharmaciens"}</option>
+                  <option value="infirmiers">{lang === "ro" ? "Asistenți medicali" : "Infirmiers / Infirmières"}</option>
+                </select>
               </div>
 
               <div>
@@ -568,6 +590,17 @@ export default async function JobsPage({
                     <div className="grid gap-7 lg:grid-cols-[1fr_auto] lg:items-center">
                       <div>
                         <div className="flex flex-wrap items-center gap-2">
+                          {job.professionalCategory ? (
+                            <span className="inline-flex rounded-full bg-slate-100 px-3 py-1.5 text-xs font-black text-slate-700">
+                              {({
+                                medecins: lang === "ro" ? "Medici" : "Médecins",
+                                dentistes: lang === "ro" ? "Medici dentiști" : "Chirurgiens-dentistes",
+                                pharmaciens: lang === "ro" ? "Farmaciști" : "Pharmaciens",
+                                infirmiers: lang === "ro" ? "Asistenți medicali" : "Infirmiers",
+                              } as Record<string, string>)[job.professionalCategory] ?? job.professionalCategory}
+                            </span>
+                          ) : null}
+
                           {job.specialty ? (
                             <span className="inline-flex rounded-full bg-[#e5f7f5] px-3 py-1.5 text-xs font-black text-[#0c7773]">
                               {job.specialty}
