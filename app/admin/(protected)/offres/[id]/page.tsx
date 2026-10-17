@@ -3,6 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { JobStatusActions } from "../job-status-actions";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { confirmJobContentReview } from "../review-actions";
+import { jobSignature } from "../review-helper";
 import {  saveRomanianTranslation,  updateJobDetails,} from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -43,6 +46,7 @@ type Job = {
   status: JobStatus;
   france_travail_published_at: string | null;
   created_at: string;
+  professional_category: string | null;
 };
 
 const statusLabels: Record<JobStatus, string> = {
@@ -109,7 +113,8 @@ const saved = query.saved;
         source_url,
         status,
         france_travail_published_at,
-        created_at
+        created_at,
+        professional_category
       `,
     )
     .eq("id", id)
@@ -124,6 +129,14 @@ const saved = query.saved;
   }
 
   const job = data as Job;
+  const adminService = createAdminClient();
+  const [{ data: verification }, { data: contentReview }] = await Promise.all([
+    adminService.from("job_ft_verifications").select("state,note,checked_at").eq("job_id", id).maybeSingle(),
+    adminService.from("job_admin_reviews").select("content_signature,reviewed_at").eq("job_id", id).maybeSingle(),
+  ]);
+  const reviewCurrent = !!contentReview && contentReview.content_signature === jobSignature(job);
+  const verificationCurrent = verification?.state === "active" && Date.parse(verification.checked_at) >= Date.now() - 24 * 60 * 60 * 1000;
+
 const {
   data: romanianTranslation,
   error: translationError,
@@ -605,6 +618,27 @@ if (translationError) {
                   status={job.status}
                 />
               </div>
+            </div>
+
+            <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+              <h2 className="text-lg font-black text-[#082a43]">Contrôle avant publication</h2>
+              <p className="mt-3 text-sm text-slate-700">
+                France Travail : <strong>{verificationCurrent ? "Accessible (moins de 24 h)" : verification?.state === "unavailable" ? "Introuvable — à confirmer" : "À vérifier / contrôle expiré"}</strong>
+              </p>
+              {verification?.checked_at ? <p className="mt-1 text-xs text-slate-500">Vérifié le {formatDate(verification.checked_at)}. L'accessibilité ne garantit pas la disponibilité du poste.</p> : null}
+              <p className="mt-3 text-sm text-slate-700">Contenu : <strong>{reviewCurrent ? "Examiné (version actuelle)" : "Examen nécessaire"}</strong></p>
+              <p className="mt-2 text-xs text-slate-500">Vérifiez profession, spécialité, employeur, contrat, salaire, localisation et source. Enregistrez d'abord les modifications éventuelles.</p>
+              <form action={confirmJobContentReview} className="mt-4 space-y-3">
+                <input type="hidden" name="jobId" value={job.id} />
+                <label className="flex items-start gap-2 text-sm text-slate-700">
+                  <input type="checkbox" name="confirmed" value="yes" required className="mt-1 accent-[#118c87]" />
+                  Je confirme avoir examiné les informations actuellement enregistrées.
+                </label>
+                <button type="submit" className="w-full rounded-full bg-[#118c87] px-4 py-2.5 font-bold" style={{ color: "#ffffff" }}>
+                  Confirmer l’examen du contenu
+                </button>
+              </form>
+              <p className="mt-3 text-xs text-slate-500">Toute modification ultérieure des informations contrôlées invalide cette confirmation pour la publication en lot.</p>
             </div>
 
             <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">

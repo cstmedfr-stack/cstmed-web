@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { REVIEW_FIELDS, jobSignature, type ReviewableJob } from "./review-helper";
 
 type BulkStatus = "published" | "rejected" | "archived" | "draft";
 type BulkResult = { ok: boolean; message: string; updated?: number };
@@ -53,6 +54,15 @@ export async function updateJobsStatusesBulk(ids: string[], status: BulkStatus):
     if (unverified.length > 0) {
       return { ok: false, message: `${unverified.length} offre(s) ne disposent pas d'une vérification France Travail active datant de moins de 24 h. Vérifiez la page avant de publier.` };
     }
+    const { data: reviewed, error: reviewError } = await service.from("job_admin_reviews")
+      .select("job_id,content_signature").in("job_id", ids);
+    if (reviewError) return { ok: false, message: reviewError.message };
+    const reviewMap = new Map((reviewed ?? []).map((entry) => [entry.job_id, entry.content_signature]));
+    const { data: currentJobs, error: currentError } = await service.from("jobs")
+      .select(`id,${REVIEW_FIELDS}`).in("id", ids);
+    if (currentError || currentJobs?.length !== ids.length) return { ok: false, message: "Contrôle du contenu impossible." };
+    const missingReview = currentJobs.filter((job) => reviewMap.get(job.id) !== jobSignature(job as ReviewableJob));
+    if (missingReview.length) return { ok: false, message: `${missingReview.length} offre(s) n'ont pas de confirmation d'examen valide pour leur version actuelle. Ouvrez chaque fiche et confirmez l'examen du contenu.` };
   }
 
   const { data, error } = await supabase.from("jobs").update({ status })

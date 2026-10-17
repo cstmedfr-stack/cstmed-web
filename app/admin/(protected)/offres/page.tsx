@@ -247,11 +247,8 @@ export default async function AdminOffersPage({
   ]);
   // RPC Supabase : recherche insensible aux accents, filtres et pagination côté serveur.
   // Cette fonction SQL est limitée au rôle service_role, après requireAdmin().
- 
-const { data, count, error } = await supabase
-  .rpc(
-    "search_admin_jobs",
-    {
+  const { data, count, error } = await supabase
+    .rpc("search_admin_jobs", {
       p_q: q,
       p_category: category,
       p_status: status,
@@ -261,17 +258,39 @@ const { data, count, error } = await supabase
       p_contract: contract,
       p_period: period ? Number(period) : null,
       p_old: old === "1",
-    },
-    { count: "exact" }
-  )
-  .select(
-    "id,source_job_id,title,specialty,professional_category,company_name,location_label,city,postal_code,contract_type,status,france_travail_published_at,created_at"
-  )
-  .order("created_at", { ascending: false })
-  .range(from, to);
-
+    }, { count: "exact" })
+    .select(
+      "id,source_job_id,title,specialty,professional_category,company_name,location_label,city,postal_code,contract_type,status,france_travail_published_at,created_at",
+    )
+    .order("created_at", { ascending: false })
+    .range(from, to);
   const jobs =
     (data ?? []) as Job[];
+  // Statut des contrôles uniquement pour les offres affichées sur cette page.
+  // La pagination globale reste gérée par la recherche Supabase.
+  const currentIds = jobs.map((job) => job.id);
+  const service = createAdminClient();
+  const [verificationResponse, reviewResponse] = currentIds.length
+    ? await Promise.all([
+        service.from("job_ft_verifications").select("job_id,state,checked_at").in("job_id", currentIds),
+        service.from("job_admin_reviews").select("job_id,reviewed_at,content_signature").in("job_id", currentIds),
+      ])
+    : [{ data: [], error: null }, { data: [], error: null }];
+  const verifications = new Map((verificationResponse.data ?? []).map((row) => [row.job_id, row]));
+  const reviews = new Map((reviewResponse.data ?? []).map((row) => [row.job_id, row]));
+  const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+  const verifiedRecently = (id: string) => {
+    const v = verifications.get(id);
+    return Boolean(v && v.state === "active" && Date.parse(v.checked_at) >= cutoff);
+  };
+  // Le contrôle manuel est visible dans le détail de l'offre, avec empreinte.
+  const pagePriority = [...jobs].sort((a, b) => {
+    const score = (id: string) => verifiedRecently(id) ? 0 : verifications.get(id)?.state === "unavailable" ? 2 : 1;
+    return score(a.id) - score(b.id);
+  });
+  const availableOnPage = currentIds.filter(verifiedRecently).length;
+  const needsCheckOnPage = currentIds.filter((id) => !verifiedRecently(id) && verifications.get(id)?.state !== "unavailable").length;
+  const unavailableOnPage = currentIds.filter((id) => verifications.get(id)?.state === "unavailable").length;
   const totalJobs =
     count ?? 0;
   const totalPages =
@@ -598,6 +617,13 @@ const { data, count, error } = await supabase
             </div>
           ) : null}
           {!error && jobs.length > 0 ? (
+            <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
+              <p className="font-black text-[#082a43]">Priorités de contrôle — uniquement sur cette page ({jobs.length} offres)</p>
+              <p className="mt-2">{availableOnPage} accessibles (contrôle FT &lt; 24 h) · {needsCheckOnPage} à vérifier · {unavailableOnPage} introuvables / à confirmer</p>
+              <p className="mt-1 text-xs text-slate-500">Les offres restent paginées globalement par date. L’ordre ci-dessous est priorisé sur cette page seulement.</p>
+            </div>
+          ) : null}
+          {!error && jobs.length > 0 ? (
             <OfferVerification
               offers={jobs.map((job) => ({
                 id: job.id,
@@ -614,7 +640,7 @@ const { data, count, error } = await supabase
           {!error &&
           jobs.length > 0 ? (
             <div className="mt-7 space-y-4">
-              {jobs.map((job) => {
+              {pagePriority.map((job) => {
                 const location =
                   job.location_label ||
                   [
@@ -655,6 +681,10 @@ const { data, count, error } = await supabase
                       {({ medecins: "Médecins", dentistes: "Dentistes", pharmaciens: "Pharmaciens", infirmiers: "Infirmiers" } as Record<string, string>)[job.professional_category] ?? job.professional_category}
                     </span>
                   ) : null}
+                          <span className={`rounded-full px-3 py-1.5 text-xs font-bold ${verifiedRecently(job.id) ? "bg-emerald-100 text-emerald-800" : verifications.get(job.id)?.state === "unavailable" ? "bg-amber-100 text-amber-900" : "bg-slate-100 text-slate-700"}`}>
+                            {verifiedRecently(job.id) ? "FT accessible · 24 h" : verifications.get(job.id)?.state === "unavailable" ? "FT introuvable · à confirmer" : "Vérification nécessaire"}
+                          </span>
+                          {reviews.has(job.id) ? <span className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-800">Examen enregistré — validité à contrôler</span> : null}
                   {job.specialty ? (
                             <span className="rounded-full bg-[#e5f7f5] px-3 py-1.5 text-xs font-bold text-[#0c7773]">
                               {
