@@ -807,6 +807,12 @@ export default async function ApplicationPage({
   help={labels.cvHelp}
 />
 
+                  <p className="rounded-xl bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-600">
+                    {lang === "ro"
+                      ? "CV acceptat: PDF, DOC sau DOCX, maximum 4 MB. Dacă ai trimis deja o candidatură pentru același post, contactează-ne pentru actualizarea dosarului."
+                      : "CV accepté : PDF, DOC ou DOCX, 4 Mo maximum. Si vous avez déjà postulé à cette offre, contactez-nous pour mettre à jour votre dossier."}
+                  </p>
+
                   <div className="rounded-[1.5rem] border border-[#9fded8] bg-[#e5f7f5] p-5">
                     <p className="text-sm leading-6 text-slate-700">
                       {

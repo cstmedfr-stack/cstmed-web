@@ -177,6 +177,12 @@ export default async function ApplicationDetailsPage({
     throw new Error(`Controle des presentations impossible : ${presentationError.message}`);
   }
   const hasPresentations = (presentationCount ?? 0) > 0;
+  const nextFollowUp = activities
+    .filter(item => !!item.follow_up_at)
+    .sort((a, b) => (a.follow_up_at ?? "").localeCompare(b.follow_up_at ?? ""))[0];
+  const followUpToday = new Date().toISOString().slice(0, 10);
+  const followUpOverdue = !!nextFollowUp?.follow_up_at && nextFollowUp.follow_up_at < followUpToday;
+
 
   const location = [
     application.city,
@@ -333,6 +339,16 @@ export default async function ApplicationDetailsPage({
               <section className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm sm:p-9">
                 <p className="text-xs font-black uppercase tracking-[0.15em] text-[#118c87]">Espace interne CSTMed</p>
                 <h2 className="mt-2 text-2xl font-bold text-[#082a43]">Suivi du recrutement</h2>
+                 {nextFollowUp?.follow_up_at ? (
+                   <div className={`mt-5 rounded-2xl p-4 ${followUpOverdue ? "bg-red-50 text-red-900" : "bg-teal-50 text-teal-900"}`}>
+                     <p className="font-bold">{followUpOverdue ? "⚠ Relance à effectuer" : "📅 Prochaine relance"}</p>
+                     <p className="mt-1 text-sm">{new Intl.DateTimeFormat("fr-FR", { dateStyle: "long", timeZone: "UTC" }).format(new Date(`${nextFollowUp.follow_up_at}T12:00:00Z`))}</p>
+                     <p className="mt-2 whitespace-pre-wrap text-sm">{nextFollowUp.note}</p>
+                   </div>
+                 ) : (
+                   <p className="mt-4 rounded-xl bg-slate-50 p-3 text-sm text-slate-600">Aucune date de relance n’est programmée.</p>
+                 )}
+
                 <p className="mt-2 text-sm text-slate-600">Notes et échanges réservés à l’administration. Les actions sont enregistrées avec leur date.</p>
                 <form action={addApplicationActivity} className="mt-6 grid gap-4">
                   <input type="hidden" name="applicationId" value={application.id} />

@@ -91,6 +91,31 @@ export default async function ApplicationsPage({ searchParams }: Props) {
   const from = (requestedPage - 1) * PAGE_SIZE;
   const { data, count, error } = await query.order("created_at", { ascending: false }).range(from, from + PAGE_SIZE - 1);
   const applications = (data ?? []) as unknown as ApplicationRow[];
+  // Relances liées uniquement aux candidatures présentes sur cette page.
+  // Le suivi est privé et chargé après la vérification requireAdmin().
+  const reminders = new Map<string, { date: string; note: string }>();
+  if (!error && applications.length > 0) {
+    const { data: followUps, error: followError } = await supabase
+      .from("application_activities")
+      .select("application_id, follow_up_at, note")
+      .in("application_id", applications.map(item => item.id))
+      .not("follow_up_at", "is", null)
+      .order("follow_up_at", { ascending: true })
+      .limit(500);
+    if (followError) {
+      console.error("Cannot load application follow-ups:", followError.message);
+    } else {
+      for (const activity of followUps ?? []) {
+        if (!activity.follow_up_at || reminders.has(activity.application_id)) continue;
+        reminders.set(activity.application_id, {
+          date: activity.follow_up_at,
+          note: activity.note ?? "",
+        });
+      }
+    }
+  }
+  const today = new Date().toISOString().slice(0, 10);
+
   const totalFiltered = count ?? 0;
   const totalPages = Math.max(1, Math.ceil(totalFiltered / PAGE_SIZE));
   const urlFor = (page?: number, nextStatus: StatusFilter = status) => url({ status: nextStatus, q, specialty, city, french, page });
@@ -126,7 +151,7 @@ export default async function ApplicationsPage({ searchParams }: Props) {
         <div className="mx-auto max-w-7xl">
           <p className="text-sm font-bold uppercase tracking-widest text-[#65d9ce]">Administration CSTMed</p>
           <h1 className="mt-3 text-3xl font-black sm:text-4xl">Candidatures médicales</h1>
-          <p className="mt-3 text-slate-200">Consultez les profils des médecins et suivez l’avancement de leurs candidatures.</p>
+          <p className="mt-3 text-slate-200">Consultez les candidatures des professionnels de santé et les relances à effectuer.</p>
         </div>
       </section>
       <section className="px-5 py-9 sm:px-8"><div className="mx-auto max-w-7xl">
@@ -160,10 +185,17 @@ export default async function ApplicationsPage({ searchParams }: Props) {
         {!error && applications.length > 0 ? <div className="mt-6 divide-y divide-slate-100 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
           {applications.map(a => {
             const location = a.jobs?.location_label || a.jobs?.city;
+             const reminder = reminders.get(a.id);
+             const overdue = !!reminder && reminder.date < today;
+
             return <article key={a.id} className={`flex flex-col justify-between gap-5 px-6 py-6 lg:flex-row lg:items-center ${a.status === "new" ? "border-l-4 border-l-blue-500 bg-blue-50/30" : ""}`}>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2"><span className={`rounded-full px-3 py-1 text-xs font-bold ${classes[a.status] ?? "bg-slate-100 text-slate-700"}`}>{labels[a.status] ?? a.status}</span><span className="rounded-full bg-[#e5f7f5] px-3 py-1 text-xs font-bold text-[#0c7773]">{a.specialty}</span><span className="text-xs font-bold uppercase text-slate-400">{a.locale}</span></div>
                 <h3 className="mt-3 text-xl font-bold text-[#082a43]">{a.first_name} {a.last_name}</h3>
+                 {reminder && <p className={`mt-2 inline-flex rounded-lg px-3 py-1.5 text-xs font-bold ${overdue ? "bg-red-100 text-red-800" : reminder.date === today ? "bg-amber-100 text-amber-900" : "bg-teal-50 text-teal-800"}`}>
+                   {overdue ? "⚠ Relance en retard" : reminder.date === today ? "⏰ Relance aujourd’hui" : "📅 Prochaine relance"} : {new Intl.DateTimeFormat("fr-FR", {day:"2-digit",month:"2-digit",year:"numeric",timeZone:"UTC"}).format(new Date(`${reminder.date}T12:00:00Z`))}
+                 </p>}
+
                 <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-600">
                   <a className="break-all font-semibold text-[#0c7773] hover:underline" href={`mailto:${a.email}`}>✉️ {a.email}</a>
                   <a className="font-semibold text-[#0c7773] hover:underline" href={`tel:${a.phone}`}>☎️ {a.phone}</a>
