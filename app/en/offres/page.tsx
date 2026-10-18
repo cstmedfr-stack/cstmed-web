@@ -29,6 +29,70 @@ export default async function EnglishOffers({searchParams}:{searchParams:Promise
  <p className="mt-7 text-lg font-bold">{result.total} published opportunities</p>
  <div className="mt-5 space-y-4">{result.jobs.map(job=><article key={job.id} className="rounded-3xl border bg-white p-6 shadow-sm"><div className="flex flex-wrap gap-2 text-xs font-semibold text-[#0c7773]"><span>{names[(job.professionalCategory as ProfessionalCategory)]??"Healthcare"}</span>{job.specialty&&<span>· {job.specialty}</span>}</div><h2 className="mt-3 text-2xl font-black text-[#082a43]">{job.title}</h2><p className="mt-2 text-slate-600">📍 {job.locationLabel || [job.postalCode,job.city].filter(Boolean).join(" ") || "France"}</p>{job.description&&<p className="mt-3 line-clamp-3 whitespace-pre-line leading-7 text-slate-600">{job.description}</p>}<div className="mt-5 flex flex-wrap gap-3"><Link href={`/fr/offres/${job.id}`} className="rounded-full bg-[#118c87] px-5 py-3 font-bold text-white" style={{color:"#fff"}}>View original job (French) →</Link><Link href={`/en/candidature?jobId=${job.id}`} className="rounded-full border border-[#118c87] px-5 py-3 font-bold text-[#0c7773]">Apply in English</Link></div></article>)}</div>
  {result.jobs.length===0&&<p className="mt-6 rounded-xl bg-white p-6">No jobs match these filters.</p>}
- <nav aria-label="Pagination" className="mt-7 flex items-center justify-between gap-4">{filters.page>1?<Link href={pageUrl(filters.page-1)} className="font-bold underline">← Previous</Link>:<span/>}<span>Page {filters.page} of {pages}</span>{filters.page<pages?<Link href={pageUrl(filters.page+1)} className="font-bold underline">Next →</Link>:<span/>}</nav>
+ 
+{pages > 1 && (
+  <nav
+    aria-label="Job offers pagination"
+    className="mt-10 flex flex-wrap items-center justify-center gap-2 rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm"
+  >
+    {filters.page > 1 ? (
+      <Link
+        href={pageUrl(filters.page - 1)}
+        className="flex h-11 min-w-11 items-center justify-center rounded-xl border border-slate-200 font-bold text-[#082a43] hover:bg-[#e5f7f5]"
+        aria-label="Previous page"
+      >
+        ←
+      </Link>
+    ) : (
+      <span className="flex h-11 min-w-11 items-center justify-center rounded-xl border border-slate-200 text-slate-300">
+        ←
+      </span>
+    )}
+
+    {Array.from(
+      { length: Math.min(pages, 5) },
+      (_, index) =>
+        Math.max(
+          1,
+          Math.min(filters.page - 2, pages - 4)
+        ) + index
+    ).map((pageNumber) => (
+      <Link
+        key={pageNumber}
+        href={pageUrl(pageNumber)}
+        aria-current={
+          pageNumber === filters.page ? "page" : undefined
+        }
+        className={`flex h-11 min-w-11 items-center justify-center rounded-xl px-3 text-sm font-black transition ${
+          pageNumber === filters.page
+            ? "bg-[#118c87] text-white"
+            : "border border-slate-200 bg-white text-[#082a43] hover:bg-[#e5f7f5]"
+        }`}
+        style={
+          pageNumber === filters.page
+            ? { color: "#ffffff" }
+            : undefined
+        }
+      >
+        {pageNumber}
+      </Link>
+    ))}
+
+    {filters.page < pages ? (
+      <Link
+        href={pageUrl(filters.page + 1)}
+        className="flex h-11 min-w-11 items-center justify-center rounded-xl border border-slate-200 font-bold text-[#082a43] hover:bg-[#e5f7f5]"
+        aria-label="Next page"
+      >
+        →
+      </Link>
+    ) : (
+      <span className="flex h-11 min-w-11 items-center justify-center rounded-xl border border-slate-200 text-slate-300">
+        →
+      </span>
+    )}
+  </nav>
+)}
+
  </section><EnglishFooter /></main>;
 }
