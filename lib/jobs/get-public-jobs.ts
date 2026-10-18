@@ -46,19 +46,8 @@ type OriginalJobRow = {
   created_at: string;
 };
 
-type TranslationRow = {
-  title: string | null;
-  summary: string | null;
-  description: string | null;
-  jobs: OriginalJobRow;
-};
-
-function normalize(value: string): string {
-  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/œ/g, "oe").replace(/æ/g, "ae").toLowerCase();
-}
-
 function uniqueValues(values: Array<string | null>) {
-  return Array.from(new Set(values.map((v) => v?.trim()).filter((v): v is string => Boolean(v))))
+  return Array.from(new Set(values.map((value) => value?.trim()).filter((value): value is string => Boolean(value))))
     .sort((a, b) => a.localeCompare(b, "fr", { sensitivity: "base" }));
 }
 
@@ -79,87 +68,44 @@ function mapOriginalJob(job: OriginalJobRow): PublicJob {
   };
 }
 
-export async function getPublicJobs(locale: Locale, filters: PublicJobFilters) {
+// Parametrul locale este pastrat pentru compatibilitate cu paginile RO/FR.
+// In ambele limbi se returneaza doar originalul francez publicat.
+// Pentru pagina separata /en/offres, se poate apela getPublicJobs("fr", filters).
+export async function getPublicJobs(_locale: Locale, filters: PublicJobFilters) {
   const supabase = await createClient();
   const category = filters.professionalCategory === "all" ? "" : filters.professionalCategory;
 
-  if (locale === "fr") {
-    // Fetch filter options independently of the current search, but restrict to published jobs.
-    const { data: filterRows, error: filterError } = await supabase
-      .from("jobs")
-      .select("specialty, contract_type, professional_category")
-      .eq("status", "published")
-      .limit(1000);
-    if (filterError) throw new Error(filterError.message);
-    const categoryFilterRows = category
-      ? (filterRows ?? []).filter((row) => row.professional_category === category)
-      : (filterRows ?? []);
+  // Optiunile de filtre se preiau din ofertele publicate, indiferent de limba.
+  const { data: filterRows, error: filterError } = await supabase
+    .from("jobs")
+    .select("specialty, contract_type, professional_category")
+    .eq("status", "published")
+    .limit(1000);
+  if (filterError) throw new Error(filterError.message);
 
-    const from = (filters.page - 1) * filters.pageSize;
-    const { data, count, error } = await supabase.rpc("search_public_jobs", {
+  const categoryFilterRows = category
+    ? (filterRows ?? []).filter((row) => row.professional_category === category)
+    : (filterRows ?? []);
+
+  const from = (filters.page - 1) * filters.pageSize;
+  const { data, count, error } = await supabase
+    .rpc("search_public_jobs", {
       p_q: filters.q,
       p_category: filters.professionalCategory,
       p_specialty: filters.specialty,
       p_location: filters.location,
       p_contract: filters.contract,
     }, { count: "exact" })
-      .select("id,title,description,specialty,professional_category,location_label,city,postal_code,contract_type,salary_text,france_travail_published_at,created_at")
-      .order("france_travail_published_at", { ascending: filters.sort === "oldest", nullsFirst: false })
-      .order("created_at", { ascending: filters.sort === "oldest" })
-      .range(from, from + filters.pageSize - 1);
+    .select("id,title,description,specialty,professional_category,location_label,city,postal_code,contract_type,salary_text,france_travail_published_at,created_at")
+    .order("france_travail_published_at", { ascending: filters.sort === "oldest", nullsFirst: false })
+    .order("created_at", { ascending: filters.sort === "oldest" })
+    .range(from, from + filters.pageSize - 1);
 
-    if (error) throw new Error(error.message);
-    return {
-      jobs: ((data ?? []) as OriginalJobRow[]).map(mapOriginalJob),
-      total: count ?? 0,
-      specialties: uniqueValues(categoryFilterRows.map((r) => r.specialty)),
-      contractTypes: uniqueValues(categoryFilterRows.map((r) => r.contract_type)),
-    };
-  }
-
-  // Romanian site deliberately shows translated AND published jobs only.
-  const { data, error } = await supabase
-    .from("job_translations")
-    .select(`title,summary,description,jobs!inner (
-      id,title,description,specialty,professional_category,location_label,city,
-      postal_code,contract_type,salary_text,france_travail_published_at,created_at,status
-    )`)
-    .eq("locale", "ro")
-    .eq("status", "published")
-    .eq("jobs.status", "published")
-    .limit(1000);
   if (error) throw new Error(error.message);
-
-  const allJobs = ((data ?? []) as unknown as TranslationRow[]).map((translation) => ({
-    ...mapOriginalJob(translation.jobs),
-    title: translation.title?.trim() || translation.jobs.title,
-    description: translation.summary?.trim() || translation.description?.trim() || translation.jobs.description,
-  }));
-
-  const categoryJobs = category ? allJobs.filter((job) => job.professionalCategory === category) : allJobs;
-  const specialties = uniqueValues(categoryJobs.map((j) => j.specialty));
-  const contractTypes = uniqueValues(categoryJobs.map((j) => j.contractType));
-
-  const q = normalize(filters.q);
-  const location = normalize(filters.location);
-  const filteredJobs = categoryJobs.filter((job) => {
-    if (filters.specialty && job.specialty !== filters.specialty) return false;
-    if (filters.contract && job.contractType !== filters.contract) return false;
-    if (q && !normalize([job.title, job.description, job.specialty].filter(Boolean).join(" ")).includes(q)) return false;
-    if (location && !normalize([job.locationLabel, job.city, job.postalCode].filter(Boolean).join(" ")).includes(location)) return false;
-    return true;
-  });
-
-  filteredJobs.sort((a, b) => {
-    const first = new Date(a.publishedAt ?? a.createdAt).getTime();
-    const second = new Date(b.publishedAt ?? b.createdAt).getTime();
-    return filters.sort === "oldest" ? first - second : second - first;
-  });
-  const from = (filters.page - 1) * filters.pageSize;
   return {
-    jobs: filteredJobs.slice(from, from + filters.pageSize),
-    total: filteredJobs.length,
-    specialties,
-    contractTypes,
+    jobs: ((data ?? []) as OriginalJobRow[]).map(mapOriginalJob),
+    total: count ?? 0,
+    specialties: uniqueValues(categoryFilterRows.map((row) => row.specialty)),
+    contractTypes: uniqueValues(categoryFilterRows.map((row) => row.contract_type)),
   };
 }

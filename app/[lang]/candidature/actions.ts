@@ -218,9 +218,30 @@ function isAuthenticCv(bytes: Uint8Array, extension: AllowedExtension): boolean 
 
 
 
-function redirectWithError(locale: Locale, message: string, jobId?: string): never {
+const ENGLISH_ERROR_MESSAGES: Record<string, string> = {
+  "Complétez tous les champs obligatoires.": "Please complete all required fields.",
+  "L’adresse e-mail n’est pas valide.": "Please enter a valid email address.",
+  "Le numéro de téléphone n’est pas valide.": "Please enter a valid telephone number.",
+  "Le niveau de français n’est pas valide.": "Please select a valid French language level.",
+  "Vous devez accepter le traitement de votre candidature.": "Please confirm that you have read the privacy information and ask us to process your application.",
+  "Veuillez joindre votre CV.": "Please attach your CV.",
+  "Le CV dépasse la limite de 4 Mo.": "Your CV must be no larger than 4 MB.",
+  "Le CV doit être au format PDF, DOC ou DOCX.": "Please upload a PDF, DOC or DOCX file.",
+  "Le type du fichier CV ne correspond pas à son extension.": "The file content type does not match its extension.",
+  "Le fichier CV ne possède pas la structure d’un document PDF, DOC ou DOCX valide. Choisissez un autre fichier.": "The CV is not a valid PDF, DOC or DOCX document. Please choose another file.",
+  "Le CV n’a pas pu être téléchargé. Veuillez réessayer.": "Your CV could not be uploaded. Please try again.",
+  "La candidature n’a pas pu être enregistrée. Veuillez réessayer.": "Your application could not be saved. Please try again.",
+  "L’offre sélectionnée n’est pas valide.": "The selected job is invalid.",
+  "L’offre sélectionnée n’est plus disponible.": "This job is no longer available.",
+  "La vérification de la candidature a échoué. Réessayez plus tard.": "We could not verify your application. Please try again later.",
+  "Vous avez déjà candidaté à cette offre ces 7 derniers jours. Contactez CSTMed pour mettre à jour votre dossier.": "You have already applied for this job in the last 7 days. Contact CSTMed to update your application.",
+  "Trop de tentatives d’envoi. Veuillez réessayer dans une heure.": "Too many submissions. Please try again in an hour.",
+  "La vérification de l’envoi est temporairement indisponible. Veuillez réessayer plus tard.": "Submission verification is temporarily unavailable. Please try again later.",
+};
 
-  const parameters = new URLSearchParams({ error: message });
+function redirectWithError(locale: Locale | "en", message: string, jobId?: string): never {
+
+  const parameters = new URLSearchParams({ error: locale === "en" ? (ENGLISH_ERROR_MESSAGES[message] ?? "Your application could not be submitted. Please check the information and try again.") : message });
 
   if (jobId && uuidPattern.test(jobId)) parameters.set("jobId", jobId);
 
@@ -353,6 +374,8 @@ export async function submitApplication(formData: FormData) {
   const requestedLocale = getText(formData, "locale", 2);
 
   const locale: Locale = isLocale(requestedLocale) ? requestedLocale : "ro";
+  const formLanguage = getText(formData, "formLanguage", 2);
+  const displayLocale: Locale | "en" = formLanguage === "en" && locale === "fr" ? "en" : locale;
 
   const requestedJobId = getText(formData, "jobId", 36);
 
@@ -362,7 +385,7 @@ export async function submitApplication(formData: FormData) {
 
   if (getText(formData, "website", 200)) {
 
-    redirect(`/${locale}/candidature/merci`);
+    redirect(`/${displayLocale}/candidature/merci`);
 
   }
 
@@ -394,7 +417,7 @@ export async function submitApplication(formData: FormData) {
 
   if (!firstName || !lastName || !email || !phone || !specialty) {
 
-    redirectWithError(locale, locale === "ro"
+    redirectWithError(displayLocale, locale === "ro"
 
       ? "Completează toate câmpurile obligatorii."
 
@@ -404,7 +427,7 @@ export async function submitApplication(formData: FormData) {
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
 
-    redirectWithError(locale, locale === "ro"
+    redirectWithError(displayLocale, locale === "ro"
 
       ? "Adresa de e-mail nu este validă."
 
@@ -414,7 +437,7 @@ export async function submitApplication(formData: FormData) {
 
   if (phone.replace(/\D/g, "").length < 7) {
 
-    redirectWithError(locale, locale === "ro"
+    redirectWithError(displayLocale, locale === "ro"
 
       ? "Numărul de telefon nu este valid."
 
@@ -424,7 +447,7 @@ export async function submitApplication(formData: FormData) {
 
   if (frenchLevelValue && !isFrenchLevel(frenchLevelValue)) {
 
-    redirectWithError(locale, locale === "ro"
+    redirectWithError(displayLocale, locale === "ro"
 
       ? "Nivelul de limba franceză nu este valid."
 
@@ -434,7 +457,7 @@ export async function submitApplication(formData: FormData) {
 
   if (!consent) {
 
-    redirectWithError(locale, locale === "ro"
+    redirectWithError(displayLocale, locale === "ro"
 
       ? "Trebuie să îți exprimi acordul pentru transmiterea candidaturii."
 
@@ -448,7 +471,7 @@ export async function submitApplication(formData: FormData) {
 
   if (!(cvValue instanceof File) || cvValue.size === 0) {
 
-    redirectWithError(locale, locale === "ro"
+    redirectWithError(displayLocale, locale === "ro"
 
       ? "Atașează CV-ul."
 
@@ -458,7 +481,7 @@ export async function submitApplication(formData: FormData) {
 
   if (cvValue.size > MAX_CV_SIZE) {
 
-    redirectWithError(locale, locale === "ro"
+    redirectWithError(displayLocale, locale === "ro"
 
       ? "CV-ul depășește limita de 4 MB."
 
@@ -470,7 +493,7 @@ export async function submitApplication(formData: FormData) {
 
   if (!extension) {
 
-    redirectWithError(locale, locale === "ro"
+    redirectWithError(displayLocale, locale === "ro"
 
       ? "CV-ul trebuie să fie în format PDF, DOC sau DOCX."
 
@@ -484,7 +507,7 @@ export async function submitApplication(formData: FormData) {
 
       cvValue.type !== "application/octet-stream") {
 
-    redirectWithError(locale, locale === "ro"
+    redirectWithError(displayLocale, locale === "ro"
 
       ? "Tipul fișierului CV nu corespunde extensiei."
 
@@ -496,7 +519,7 @@ export async function submitApplication(formData: FormData) {
 
   const supabase = createAdminClient();
 
-  await enforceApplicationRateLimit(supabase, locale, email, requestedJobId);
+await enforceApplicationRateLimit(supabase, locale, email, requestedJobId);
 
 
 
@@ -508,7 +531,7 @@ export async function submitApplication(formData: FormData) {
 
     if (!uuidPattern.test(requestedJobId)) {
 
-      redirectWithError(locale, locale === "ro"
+      redirectWithError(displayLocale, locale === "ro"
 
         ? "Oferta selectată nu este validă."
 
@@ -530,7 +553,7 @@ export async function submitApplication(formData: FormData) {
 
     if (selectedJobError || !selectedJob) {
 
-      redirectWithError(locale, locale === "ro"
+      redirectWithError(displayLocale, locale === "ro"
 
         ? "Oferta selectată nu mai este disponibilă."
 
@@ -560,12 +583,12 @@ export async function submitApplication(formData: FormData) {
       .maybeSingle();
     if (duplicateError) {
       console.error("Duplicate application check failed:", duplicateError.message);
-      redirectWithError(locale, locale === "ro"
+      redirectWithError(displayLocale, locale === "ro"
         ? "Nu am putut verifica candidatura. Încearcă mai târziu."
         : "La vérification de la candidature a échoué. Réessayez plus tard.", jobId);
     }
     if (existingApplication) {
-      redirectWithError(locale, locale === "ro"
+      redirectWithError(displayLocale, locale === "ro"
         ? "Ai trimis deja o candidatură pentru acest post în ultimele 7 zile. Contactează CSTMed pentru actualizarea dosarului."
         : "Vous avez déjà candidaté à cette offre ces 7 derniers jours. Contactez CSTMed pour mettre à jour votre dossier.", jobId);
     }
@@ -585,7 +608,7 @@ export async function submitApplication(formData: FormData) {
 
   if (!isAuthenticCv(new Uint8Array(cvContent), extension)) {
 
-    redirectWithError(locale, locale === "ro"
+    redirectWithError(displayLocale, locale === "ro"
 
       ? "Fișierul CV nu are structura unui document PDF, DOC sau DOCX valid. Încarcă un alt fișier."
 
@@ -615,7 +638,7 @@ export async function submitApplication(formData: FormData) {
 
     console.error("CV upload failed:", uploadError.message);
 
-    redirectWithError(locale, locale === "ro"
+    redirectWithError(displayLocale, locale === "ro"
 
       ? "CV-ul nu a putut fi încărcat. Încearcă din nou."
 
@@ -671,7 +694,7 @@ export async function submitApplication(formData: FormData) {
 
     await supabase.storage.from("candidate-cvs").remove([cvPath]);
 
-    redirectWithError(locale, locale === "ro"
+    redirectWithError(displayLocale, locale === "ro"
 
       ? "Candidatura nu a putut fi înregistrată. Încearcă din nou."
 
@@ -713,6 +736,6 @@ export async function submitApplication(formData: FormData) {
 
   const successParameters = new URLSearchParams({ reference: applicationId });
 
-  redirect(`/${locale}/candidature/merci?${successParameters.toString()}`);
+  redirect(`/${displayLocale}/candidature/merci?${successParameters.toString()}`);
 
 }

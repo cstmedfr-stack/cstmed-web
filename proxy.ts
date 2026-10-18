@@ -1,3 +1,4 @@
+
 import { NextResponse, type NextRequest } from "next/server";
 
 import {
@@ -22,52 +23,45 @@ function getPreferredLocale(request: NextRequest): Locale {
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  /*
-   * Zona de administrare nu primește prefix /ro sau /fr.
-   * Păstrăm actualizarea sesiunii Supabase.
-   */
- if (
-  pathname === "/admin" ||
-  pathname.startsWith("/admin/") ||
-  pathname === "/salon/expomedics" ||
-  pathname.startsWith("/salon/expomedics/")
-) {
-  return updateSession(request);
-}
+  // Admin: păstrăm actualizarea sesiunii Supabase
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+    return updateSession(request);
+  }
 
-if (pathname === "/en") {
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-cstmed-locale", "en");
+  // Formular ExpoMedics: rută independentă de /ro și /fr
+  if (
+    pathname === "/salon/expomedics" ||
+    pathname.startsWith("/salon/expomedics/")
+  ) {
+    return updateSession(request);
+  }
 
-  return NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
-}
+  // Versiunea engleză: permitem TOATE subpaginile /en/*
+  if (pathname === "/en" || pathname.startsWith("/en/")) {
+    const requestHeaders = new Headers(request.headers);
 
+    requestHeaders.set("x-cstmed-locale", "en");
+
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
+  }
+
+  // Rutele normale RO și FR
   const firstSegment = pathname.split("/")[1];
 
-  /*
-   * Orice rută publică fără limbă este redirecționată.
-   * /          -> /ro
-   * /offres    -> /ro/offres
-   */
   if (!isLocale(firstSegment)) {
     const locale = getPreferredLocale(request);
     const url = request.nextUrl.clone();
 
     url.pathname =
-      pathname === "/"
-        ? `/${locale}`
-        : `/${locale}${pathname}`;
+      pathname === "/" ? `/${locale}` : `/${locale}${pathname}`;
 
     return NextResponse.redirect(url);
   }
 
-  /*
-   * Trimitem limba și către RootLayout, pentru atributul html lang.
-   */
   const requestHeaders = new Headers(request.headers);
 
   requestHeaders.set("x-cstmed-locale", firstSegment);
