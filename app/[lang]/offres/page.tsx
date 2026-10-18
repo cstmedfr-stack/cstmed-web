@@ -698,44 +698,69 @@ export default async function JobsPage({
           )}
 
           {/* PAGINARE */}
-          {totalPages > 1 ? (
-            <nav className="mt-10 flex items-center justify-between gap-4 rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm">
-              {filters.page > 1 ? (
-                <Link
-                  href={createPageUrl(
-                    filters.page - 1,
-                  )}
-                  className="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-bold text-slate-700 transition hover:border-[#118c87] hover:text-[#118c87]"
-                >
-                  ←{" "}
-                  {labels.previousPage}
-                </Link>
-              ) : (
-                <span />
-              )}
+         
+{/* PAGINARE */}
+{totalPages > 1 && (
+  <nav
+    aria-label="Pagination des offres"
+    className="mt-10 flex flex-wrap items-center justify-center gap-2 rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm"
+  >
+    <Link
+      href={createPageUrl(Math.max(1, filters.page - 1))}
+      aria-disabled={filters.page === 1}
+      tabIndex={filters.page === 1 ? -1 : undefined}
+      className={`rounded-xl border px-4 py-2 font-bold ${
+        filters.page === 1
+          ? "pointer-events-none opacity-40"
+          : "hover:border-[#118c87]"
+      }`}
+    >
+      ←
+    </Link>
 
-              <span className="text-sm font-semibold text-slate-500">
-                {labels.page}{" "}
-                {filters.page}{" "}
-                {labels.on}{" "}
-                {totalPages}
-              </span>
+    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+      (pageNumber) => (
+        <Link
+          key={pageNumber}
+          href={createPageUrl(pageNumber)}
+          aria-current={
+            pageNumber === filters.page ? "page" : undefined
+          }
+          className={`flex h-11 min-w-11 items-center justify-center rounded-xl px-3 text-sm font-black transition ${
+            pageNumber === filters.page
+              ? "bg-[#118c87] text-white"
+              : "border border-slate-200 bg-white text-[#082a43] hover:bg-[#e5f7f5]"
+          }`}
+          style={
+            pageNumber === filters.page
+              ? { color: "#ffffff" }
+              : undefined
+          }
+        >
+          {pageNumber}
+        </Link>
+      )
+    )}
 
-              {filters.page <
-              totalPages ? (
-                <Link
-                  href={createPageUrl(
-                    filters.page + 1,
-                  )}
-                  className="rounded-full bg-[#118c87] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#0c7773]"
-                >
-                  {labels.nextPage} →
-                </Link>
-              ) : (
-                <span />
-              )}
-            </nav>
-          ) : null}
+    <Link
+      href={createPageUrl(
+        Math.min(totalPages, filters.page + 1)
+      )}
+      aria-disabled={filters.page === totalPages}
+      tabIndex={
+        filters.page === totalPages ? -1 : undefined
+      }
+      className={`rounded-xl border px-4 py-2 font-bold ${
+        filters.page === totalPages
+          ? "pointer-events-none opacity-40"
+          : "hover:border-[#118c87]"
+      }`}
+    >
+      →
+    </Link>
+  </nav>
+)}
+
         </div>
       </section>
 
