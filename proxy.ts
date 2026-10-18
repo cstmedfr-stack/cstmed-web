@@ -26,9 +26,25 @@ export async function proxy(request: NextRequest) {
    * Zona de administrare nu primește prefix /ro sau /fr.
    * Păstrăm actualizarea sesiunii Supabase.
    */
-  if (pathname.startsWith("/admin")) {
-    return updateSession(request);
-  }
+ if (
+  pathname === "/admin" ||
+  pathname.startsWith("/admin/") ||
+  pathname === "/salon/expomedics" ||
+  pathname.startsWith("/salon/expomedics/")
+) {
+  return updateSession(request);
+}
+
+if (pathname === "/en") {
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-cstmed-locale", "en");
+
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
+}
 
   const firstSegment = pathname.split("/")[1];
 
